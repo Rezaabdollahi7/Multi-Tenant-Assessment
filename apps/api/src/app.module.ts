@@ -10,6 +10,7 @@ import { ActivityModule } from './modules/activity/activity.module';
 import { ProjectModule } from './modules/project/project.module';
 import { FindingModule } from './modules/finding/finding.module';
 import { DashboardModule } from './modules/dashboard/dashboard.module';
+import { HealthModule } from './modules/health/health.module';
 
 @Module({
   imports: [
@@ -22,6 +23,7 @@ import { DashboardModule } from './modules/dashboard/dashboard.module';
     ProjectModule,
     FindingModule,
     DashboardModule,
+    HealthModule,
   ],
 })
 export class AppModule {}

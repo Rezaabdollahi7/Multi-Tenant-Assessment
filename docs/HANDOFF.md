@@ -3,13 +3,13 @@
 The current state of the work, written for whoever picks it up next: a teammate, a reviewer, or a new AI session. Update it at the end of every work session; replace stale content rather than appending.
 
 **Last updated:** 1405/07/30 (2026-10-22)
-**Current milestone:** M1 · API hardening, one item left: the Docker full stack (see `docs/ROADMAP.md`)
+**Current milestone:** M1 done once the API hardening and Docker PRs merge; next is M2 · Web foundation (see `docs/ROADMAP.md`)
 
 ## Where things stand
 
 - **API (`apps/api`):** reviewed and hardened (PR `refactor/api-hardening`). All routes under `/api`, typed response DTOs on every route, strict TypeScript, env validated at startup, OTP state in Redis, deterministic seed, 10 unit and 15 e2e tests (e2e run in CI against Postgres and Redis). `apps/api/README.md` documents the security model and routes.
 - **Web (`apps/web`):** clean slate. Leftover boilerplate from an earlier project was removed; what remains is shadcn primitives in `components/ui`, `cn` in `lib/utils`, `useIsMobile`, the neutral shadcn theme (light and dark tokens), an English LTR root layout and a placeholder home page. Lint, typecheck, tests and build pass. TanStack Query is not installed yet.
-- **Infrastructure:** `docker/compose.yml` runs only Postgres and Redis. Web runs on :3000, the API on :3001.
+- **Infrastructure:** `docker compose -f docker/compose.yml up --build` runs Postgres, Redis, the API (seeds on first start, health-checked at `/api/health`) and the web app (Next.js standalone) with no configuration. Web on :3000, API on :3001. The web app rewrites `/api/*` to the API, baked in at build time from `API_URL`.
 - **Docs:** glossary, ADRs 0001–0004, rules, architecture and roadmap are written.
 - **Quality gates:** CI runs format check, lint, typecheck, unit tests and build on every PR and on `main`. A Husky pre-commit hook runs lint-staged (ESLint and Prettier on staged files). pnpm is pinned to 11.25.0.
 - **Tooling:** Claude Code is the only AI assistant; all agent skills live in `.agents/skills` and are linked into `.claude/skills`.
@@ -28,9 +28,8 @@ All recorded in `docs/adr/` and `GLOSSARY.md`. In short:
 
 ## Next steps
 
-1. Merge the API hardening PR.
-2. `feat/docker-full-stack`: Dockerfiles for api and web, compose runs everything with one command, API seeds on first start.
-3. Start M2 (web foundation): generate API types from `/docs-json`, API client, rewrites, `proxy.ts`, TanStack Query.
+1. Merge the API hardening PR, then the Docker PR.
+2. Start M2 (web foundation): generate API types from `/docs-json`, API client with refresh-and-retry, `proxy.ts`, protected layout, TanStack Query, app shell.
 
 ## Open issues and risks
 
