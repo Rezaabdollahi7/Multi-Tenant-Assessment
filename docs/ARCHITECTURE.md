@@ -173,6 +173,7 @@ src/
 │   ├── ui/               # shadcn primitives
 │   └── shared/           # SeverityBadge, StatusBadge, DataTable, SearchInput,
 │                         # FilterSelect, StatCard, EmptyState, ErrorState, Can
+├── hooks/                # app-wide React hooks
 └── lib/                  # api client, session, query client, utils
 ```
 

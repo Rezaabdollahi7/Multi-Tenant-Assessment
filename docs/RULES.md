@@ -40,10 +40,11 @@ src/
 ├── features/<feature>/  # api/ components/ hooks/ schemas/ (create a folder only when it has a file)
 ├── components/ui/       # shadcn primitives, kept close to upstream
 ├── components/shared/   # our reusable components, each with a story
+├── hooks/               # app-wide React hooks
 └── lib/                 # api client, session, generic utilities
 ```
 
-A feature may import from `components/`, `lib/` and its own folder. Features do not import from each other; shared needs move to `components/shared` or `lib`.
+A feature may import from `components/`, `hooks/`, `lib/` and its own folder. Features do not import from each other; shared needs move to `components/shared` or `lib`.
 
 ### State (see ADR 0003)
 

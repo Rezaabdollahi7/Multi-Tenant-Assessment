@@ -66,15 +66,15 @@ In development/test (`NODE_ENV` is `development` or `test`), the OTP is fixed to
 
 | Permission       | VIEWER | ANALYST | ADMIN |
 | ---------------- | :----: | :-----: | :---: |
-| `dashboard:read` | ✅     | ✅      | ✅    |
-| `project:read`   | ✅     | ✅      | ✅    |
-| `member:read`    | ✅     | ✅      | ✅    |
-| `activity:read`  | ✅     | ✅      | ✅    |
-| `finding:read`   | ✅     | ✅      | ✅    |
-| `finding:create` | ❌     | ✅      | ✅    |
-| `finding:update` | ❌     | ✅      | ✅    |
-| `finding:delete` | ❌     | ❌      | ✅    |
-| `member:manage`  | ❌     | ❌      | ✅    |
+| `dashboard:read` |   ✅   |   ✅    |  ✅   |
+| `project:read`   |   ✅   |   ✅    |  ✅   |
+| `member:read`    |   ✅   |   ✅    |  ✅   |
+| `activity:read`  |   ✅   |   ✅    |  ✅   |
+| `finding:read`   |   ✅   |   ✅    |  ✅   |
+| `finding:create` |   ❌   |   ✅    |  ✅   |
+| `finding:update` |   ❌   |   ✅    |  ✅   |
+| `finding:delete` |   ❌   |   ❌    |  ✅   |
+| `member:manage`  |   ❌   |   ❌    |  ✅   |
 
 ## Endpoints
 
