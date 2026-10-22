@@ -19,15 +19,18 @@ export class ApiError extends Error {
   }
 }
 
-type ApiResult<T> =
-  | { data: T; error?: never; response: Response }
-  | { data?: never; error: unknown; response: Response };
+type FetchResult = { data?: unknown; error?: unknown; response: Response };
 
-/** Returns the data of an openapi-fetch result, or throws an ApiError. */
-export async function unwrap<T>(result: Promise<ApiResult<T>>): Promise<T> {
+/**
+ * Returns the data of an openapi-fetch result, or throws an ApiError.
+ * For bodiless responses (204) the result is simply awaited.
+ */
+export async function unwrap<R extends FetchResult>(
+  result: Promise<R>,
+): Promise<Exclude<R["data"], undefined>> {
   const { data, error, response } = await result;
   if (error !== undefined || !response.ok) {
     throw new ApiError(response.status, error);
   }
-  return data as T;
+  return data as Exclude<R["data"], undefined>;
 }

@@ -10,6 +10,9 @@ import { createSessionRenewal } from "./session-renewal";
 export const api = createClient<paths>({
   baseUrl: globalThis.location?.origin ?? "",
   credentials: "same-origin",
+  // Resolve fetch per call rather than capturing it at import time, so
+  // instrumentation installed later (e.g. MSW in tests) is honoured.
+  fetch: (request) => globalThis.fetch(request),
 });
 
 api.use(

@@ -86,7 +86,7 @@ sequenceDiagram
     B->>W: POST /api/auth/verify-otp {phone, code}
     W->>A: (rewrite)
     A->>R: compare and delete code
-    A-->>B: Set-Cookie access (15 min, path /) + refresh (14 d, path /api/auth)
+    A-->>B: Set-Cookie access (15 min, path /) + refresh (14 d, path /)
     Note over B,A: later, the access token expires
     B->>W: GET /api/findings → 401
     B->>W: POST /api/auth/refresh (refresh cookie)
@@ -102,9 +102,13 @@ sequenceDiagram
 
 ### 4.2 Route protection in the web app
 
-1. `proxy.ts` runs before every request: no session cookie on a protected route → redirect to `/login?next=…`; a session cookie on `/login` → redirect to `/dashboard`.
-2. The protected layout (a Server Component) loads `/auth/me` with the request's cookies. An invalid session redirects to login before any page renders.
-3. The User and their Permissions are passed to a client provider, so client components can ask `useCan('finding:create')`.
+1. `proxy.ts` runs before every page request ([ADR 0005](./adr/0005-session-renewal-in-the-web-proxy.md)):
+   - access token present and more than 30 s from expiry → continue;
+   - otherwise, with a refresh cookie → call `/api/auth/refresh`, forward the rotated cookies to the browser **and** to the page being rendered, continue;
+   - renewal refused, or no session at all → redirect to `/login?next=…` (with `reason=session_expired` when a session existed).
+2. The protected layout (a Server Component) loads `/auth/me` with the request's cookies. An invalid session redirects to sign-in before any page renders. `/login` itself redirects a signed-in User to `next`.
+3. The User and their Permissions are passed to `SessionProvider`, so client components use `useCurrentUser()`, `useCan('finding:create')` or `<Can permission="finding:create">`.
+4. In the browser, the API client renews the same way on a `401` (one shared refresh for concurrent requests) and otherwise sends the User to `/login?reason=session_expired&next=…`.
 
 The proxy is a fast first gate; the layout check and the API are the real enforcement.
 
