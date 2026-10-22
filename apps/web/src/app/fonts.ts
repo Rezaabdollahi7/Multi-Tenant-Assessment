@@ -1,10 +1,16 @@
-import localFont from "next/font/local";
+import { Fira_Code, Fira_Sans } from "next/font/google";
 
-export const rubik = localFont({
-  src: [
-    { path: "./fonts/Rubik-Regular.ttf", weight: "400", style: "normal" },
-    { path: "./fonts/Rubik-Medium.ttf", weight: "500", style: "normal" },
-  ],
+export const firaSans = Fira_Sans({
+  subsets: ["latin"],
+  weight: ["400", "500", "600", "700"],
+  variable: "--font-fira-sans",
   display: "swap",
-  variable: "--font-rubik",
+});
+
+/** Identifiers, codes and other values that read better monospaced. */
+export const firaCode = Fira_Code({
+  subsets: ["latin"],
+  weight: ["400", "500"],
+  variable: "--font-fira-code",
+  display: "swap",
 });

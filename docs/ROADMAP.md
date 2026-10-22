@@ -38,6 +38,7 @@ Each milestone is delivered as one or more pull requests into `main`. Tick items
 - [x] TanStack Query provider
 - [ ] Query-key factories (per feature, with the feature); Zustand UI store
 - [ ] `Can` / `useCan` from `/auth/me` Permissions
+- [x] Design system: tokens, Severity palette, Fira fonts, clean shadcn new-york primitives, light/dark/system themes (`docs/design-system.md`)
 - [ ] App shell: responsive sidebar, header with User menu, theme toggle (light / dark / system)
 - [ ] MSW handlers shared by tests and Storybook
 
