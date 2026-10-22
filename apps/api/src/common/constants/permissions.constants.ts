@@ -4,7 +4,6 @@ export type Permission =
   | 'dashboard:read'
   | 'project:read'
   | 'member:read'
-  | 'member:manage'
   | 'finding:read'
   | 'finding:create'
   | 'finding:update'
@@ -25,11 +24,7 @@ const ANALYST_PERMS: Permission[] = [
   'finding:update',
 ];
 
-const ADMIN_PERMS: Permission[] = [
-  ...ANALYST_PERMS,
-  'member:manage',
-  'finding:delete',
-];
+const ADMIN_PERMS: Permission[] = [...ANALYST_PERMS, 'finding:delete'];
 
 export const ROLE_PERMISSIONS: Record<Roles, Permission[]> = {
   [Roles.ADMIN]: ADMIN_PERMS,

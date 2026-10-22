@@ -14,7 +14,6 @@ describe('ROLE_PERMISSIONS', () => {
     expect(perms).not.toContain('finding:create');
     expect(perms).not.toContain('finding:update');
     expect(perms).not.toContain('finding:delete');
-    expect(perms).not.toContain('member:manage');
   });
 
   it('ANALYST inherits VIEWER and adds create/update', () => {
@@ -25,16 +24,14 @@ describe('ROLE_PERMISSIONS', () => {
     expect(perms).toContain('finding:create');
     expect(perms).toContain('finding:update');
     expect(perms).not.toContain('finding:delete');
-    expect(perms).not.toContain('member:manage');
   });
 
-  it('ADMIN inherits ANALYST and adds manage/delete', () => {
+  it('ADMIN inherits ANALYST and adds delete', () => {
     const perms = ROLE_PERMISSIONS[Roles.ADMIN];
     for (const p of ROLE_PERMISSIONS[Roles.ANALYST]) {
       expect(perms).toContain(p);
     }
     expect(perms).toContain('finding:delete');
-    expect(perms).toContain('member:manage');
   });
 
   it('covers exactly the expected permission set', () => {
@@ -42,7 +39,6 @@ describe('ROLE_PERMISSIONS', () => {
       'dashboard:read',
       'project:read',
       'member:read',
-      'member:manage',
       'finding:read',
       'finding:create',
       'finding:update',

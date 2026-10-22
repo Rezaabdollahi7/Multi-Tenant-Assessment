@@ -1,5 +1,4 @@
 import { RequestOtpDto } from '@auth/dto/req-otp.dto';
-import { SummaryUserDataDto } from '@auth/dto/summary-user-otp.dto';
 import { VrifyOtpDto } from '@auth/dto/vrify-otp.dto';
 import { RefreshToken } from '@auth/entities/refresh-token.entity';
 import { User } from '@auth/entities/user.entity';
@@ -298,23 +297,6 @@ export class AuthService {
     }
 
     return { success: true };
-  }
-
-  async SummaryUser(summaryUserDto: SummaryUserDataDto, userId: string) {
-    const user = await this.userRepository.findOne({
-      where: { id: userId },
-    });
-
-    if (!user) {
-      throw new NotFoundException('User not found');
-    }
-
-    user.name = summaryUserDto.fullName;
-    await this.userRepository.save(user);
-
-    return {
-      message: 'User information updated successfully',
-    };
   }
 
   async Me(userId: string) {

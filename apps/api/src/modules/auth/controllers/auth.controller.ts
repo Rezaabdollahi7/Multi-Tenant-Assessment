@@ -1,5 +1,4 @@
 import { RequestOtpDto } from '@auth/dto/req-otp.dto';
-import { SummaryUserDataDto } from '@auth/dto/summary-user-otp.dto';
 import { VrifyOtpDto } from '@auth/dto/vrify-otp.dto';
 import {
   accessTokenExpireTimeByMilliSecond,
@@ -16,7 +15,6 @@ import {
   Get,
   HttpCode,
   HttpStatus,
-  Patch,
   Post,
   Res,
 } from '@nestjs/common';
@@ -126,16 +124,5 @@ export class AuthController {
   @ApiResponse({ status: 200, description: 'Current user' })
   Me(@UserInfo('sub') userId: string) {
     return this.authService.Me(userId);
-  }
-
-  @Patch('summary-user')
-  @HttpCode(HttpStatus.OK)
-  @ApiOperation({ summary: 'Update current user name' })
-  @ApiResponse({ status: 200, description: 'User updated' })
-  SummaryUser(
-    @Body() summaryUserDto: SummaryUserDataDto,
-    @UserInfo('sub') userId: string,
-  ) {
-    return this.authService.SummaryUser(summaryUserDto, userId);
   }
 }
