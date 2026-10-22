@@ -25,12 +25,10 @@
         "CORS_ORIGIN"
       ]
     },
-
     "dev": {
       "cache": false,
       "persistent": true
     },
-
     "lint": {
       "dependsOn": ["^lint"],
       "env": [
@@ -52,7 +50,6 @@
         "CORS_ORIGIN"
       ]
     },
-
     "check-types": {
       "dependsOn": ["^check-types"],
       "env": [
@@ -74,9 +71,6 @@
         "CORS_ORIGIN"
       ]
     },
-
-    "test": {
-      "dependsOn": ["build"]
-    }
+    "test": {}
   }
 }

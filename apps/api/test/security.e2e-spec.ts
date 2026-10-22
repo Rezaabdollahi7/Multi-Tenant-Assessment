@@ -341,7 +341,7 @@ describe('Security & Multi-Tenancy (e2e)', () => {
       { severity: FindingSeverity.LOW },
     ];
 
-    const created = [];
+    const created: Finding[] = [];
     for (let i = 0; i < toCreate.length; i++) {
       const f = await findingsRepo.save(
         findingsRepo.create({

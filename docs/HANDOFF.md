@@ -11,6 +11,7 @@ The current state of the work, written for whoever picks it up next: a teammate,
 - **Web (`apps/web`):** clean slate. Leftover boilerplate from an earlier project was removed; what remains is shadcn primitives in `components/ui`, `cn` in `lib/utils`, `useIsMobile`, the neutral shadcn theme (light and dark tokens), an English LTR root layout and a placeholder home page. Lint, typecheck, tests and build pass. TanStack Query is not installed yet.
 - **Infrastructure:** `docker/compose.yml` runs only Postgres and Redis. Web runs on :3000, the API on :3001.
 - **Docs:** glossary, ADRs 0001–0004, rules, architecture and roadmap are written.
+- **Quality gates:** CI runs format check, lint, typecheck, unit tests and build on every PR and on `main`. A Husky pre-commit hook runs lint-staged (ESLint and Prettier on staged files). pnpm is pinned to 11.25.0.
 - **Tooling:** Claude Code is the only AI assistant; all agent skills live in `.agents/skills` and are linked into `.claude/skills`.
 
 ## Decisions made so far
@@ -27,7 +28,7 @@ All recorded in `docs/adr/` and `GLOSSARY.md`. In short:
 
 ## Next steps
 
-1. `ci/quality-gates`: GitHub Actions and Husky + lint-staged.
+1. Merge in order: #3 (remove OpenCode), #4 (web clean slate), #5 (CI and pre-commit).
 2. Start M1 (API hardening).
 
 ## Open issues and risks

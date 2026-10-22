@@ -1,0 +1,9 @@
+.agents
+.claude
+graphify-out
+pnpm-lock.yaml
+skills-lock.json
+**/dist
+**/.next
+**/coverage
+**/storybook-static

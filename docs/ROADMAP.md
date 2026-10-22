@@ -11,8 +11,8 @@ Each milestone is delivered as one or more pull requests into `main`. Tick items
 - [x] `CLAUDE.md`, `README.md`, `docs/ARCHITECTURE.md`, `docs/ROADMAP.md`, `docs/HANDOFF.md`, `docs/RULES.md`
 - [x] Remove OpenCode (`opencode.json`, `.opencode/`, `AGENTS.md`); link all agent skills into `.claude/skills`
 - [x] Replace secrets in `.env.example` files with placeholders
-- [ ] CI on GitHub Actions: lint, typecheck, test, build
-- [ ] Husky + lint-staged pre-commit (Prettier, ESLint)
+- [x] CI on GitHub Actions: format, lint, typecheck, test, build
+- [x] Husky + lint-staged pre-commit (Prettier, ESLint)
 
 ## M1 · API hardening: 1405/08/01 (Oct 23)
 
@@ -20,12 +20,13 @@ Each milestone is delivered as one or more pull requests into `main`. Tick items
 - [ ] Scope the refresh cookie to `/api/auth/refresh` (ADR 0002)
 - [ ] Project Status `ACTIVE` → `PLANNED`; Finding Status `ACCEPTED` labelled Risk Accepted
 - [ ] Remove the unused `member:manage` Permission and the Role-name guard if nothing needs it
-- [ ] Enable full `strict` in `apps/api`; fix resulting errors
+- [ ] Enable full `strict` in `apps/api`; make `no-explicit-any` and the `no-unsafe-*` lint rules errors; fix resulting errors
 - [ ] Access-token lifetime configurable through env
 - [ ] Deterministic seed (fixed random seed) so screenshots and tests are reproducible
 - [ ] Docker Compose runs the whole stack (postgres, redis, api + seed, web) with one command; web on :3000, api on :3001
 - [ ] Review AI-generated services for tenant scoping, `404` on foreign records, and Activity writes
-- [ ] e2e tests: tenant isolation, Permission enforcement, refresh rotation
+- [ ] e2e tests: tenant isolation, Permission enforcement, refresh rotation; run them in CI against Postgres and Redis service containers
+- [ ] `apps/api/README.md` claims Redis-backed rate limiting, which is not implemented: add throttling on the auth routes or correct the claim
 
 ## M2 · Web foundation: 1405/08/01–02 (Oct 23–24)
 
