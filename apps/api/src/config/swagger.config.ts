@@ -1,22 +1,25 @@
 import type { INestApplication } from '@nestjs/common';
-import type { SwaggerCustomOptions } from '@nestjs/swagger';
-import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
+import {
+  DocumentBuilder,
+  type OpenAPIObject,
+  SwaggerModule,
+} from '@nestjs/swagger';
 
-export function initSwagger(app: INestApplication): void {
+export function createOpenApiDocument(app: INestApplication): OpenAPIObject {
   const config = new DocumentBuilder()
     .setTitle('Secure Multi-Tenant Assessment Dashboard API')
+    .setDescription(
+      'Sign in with POST /api/auth/request-otp then /api/auth/verify-otp; the session lives in httpOnly cookies.',
+    )
     .setVersion('1.0.0')
-    .addBearerAuth()
+    .addCookieAuth('X-ACCESS')
     .build();
-  const customOptions: SwaggerCustomOptions = {
-    customSiteTitle: 'Assessment API',
-    customCss: '.swagger-ui .topbar { background-color: #2c3e50; }',
-    swaggerOptions: {
-      persistAuthorization: true,
-      filter: true,
-    },
-  };
-  const document = SwaggerModule.createDocument(app, config);
+  return SwaggerModule.createDocument(app, config);
+}
 
-  SwaggerModule.setup('/docs', app, document, customOptions);
+export function initSwagger(app: INestApplication): void {
+  SwaggerModule.setup('/docs', app, createOpenApiDocument(app), {
+    customSiteTitle: 'Assessment API',
+    swaggerOptions: { persistAuthorization: true, filter: true },
+  });
 }

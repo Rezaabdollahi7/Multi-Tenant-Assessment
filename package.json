@@ -11,7 +11,8 @@
     "format": "prettier --write .",
     "format:check": "prettier --check .",
     "clean": "turbo run clean",
-    "prepare": "husky"
+    "prepare": "husky",
+    "api:contract": "pnpm --filter api openapi && pnpm --filter frontend api:types"
   },
   "devDependencies": {
     "husky": "^9.1.7",
