@@ -1,6 +1,6 @@
 # The browser reaches the API through Next.js rewrites
 
-The browser never calls the NestJS API directly. Next.js rewrites `/api/*` to the API, so the session cookies are httpOnly, first-party to the web app, and need no CORS. `proxy.ts` redirects requests without a session away from protected routes, and Server Components load the current User and Permissions from `/auth/me` before rendering.
+The browser never calls the NestJS API directly. Next.js rewrites `/api/*` to the same path on the API, which serves every route under `/api`, so the session cookies are httpOnly, first-party to the web app, and need no CORS. `proxy.ts` redirects requests without a session away from protected routes, and Server Components load the current User and Permissions from `/auth/me` before rendering.
 
 ## Considered Options
 
@@ -8,4 +8,4 @@ The browser never calls the NestJS API directly. Next.js rewrites `/api/*` to th
 
 ## Consequences
 
-Cookie paths set by the API must match the path the browser sees (for example the refresh cookie must be scoped to `/api/auth/refresh`, not `/auth/refresh`).
+Because the API itself lives under `/api`, cookie paths are the same whether a request comes through the web app or straight to the API. The refresh cookie is scoped to `/api/auth`, so it reaches the refresh and logout routes and nothing else.

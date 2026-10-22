@@ -3,11 +3,11 @@
 The current state of the work, written for whoever picks it up next: a teammate, a reviewer, or a new AI session. Update it at the end of every work session; replace stale content rather than appending.
 
 **Last updated:** 1405/07/30 (2026-10-22)
-**Current milestone:** M0 · Decisions and repository hygiene (see `docs/ROADMAP.md`)
+**Current milestone:** M1 · API hardening, one item left: the Docker full stack (see `docs/ROADMAP.md`)
 
 ## Where things stand
 
-- **API (`apps/api`):** functionally complete for the brief: OTP sign-in, JWT access and refresh cookies with rotation, three Roles mapped to Permissions, tenant scoping by `orgId`, dashboard, projects, members, findings CRUD, activities, seed for three Organizations. Not yet reviewed against `docs/RULES.md`; M1 lists the known fixes.
+- **API (`apps/api`):** reviewed and hardened (PR `refactor/api-hardening`). All routes under `/api`, typed response DTOs on every route, strict TypeScript, env validated at startup, OTP state in Redis, deterministic seed, 10 unit and 15 e2e tests (e2e run in CI against Postgres and Redis). `apps/api/README.md` documents the security model and routes.
 - **Web (`apps/web`):** clean slate. Leftover boilerplate from an earlier project was removed; what remains is shadcn primitives in `components/ui`, `cn` in `lib/utils`, `useIsMobile`, the neutral shadcn theme (light and dark tokens), an English LTR root layout and a placeholder home page. Lint, typecheck, tests and build pass. TanStack Query is not installed yet.
 - **Infrastructure:** `docker/compose.yml` runs only Postgres and Redis. Web runs on :3000, the API on :3001.
 - **Docs:** glossary, ADRs 0001–0004, rules, architecture and roadmap are written.
@@ -28,14 +28,14 @@ All recorded in `docs/adr/` and `GLOSSARY.md`. In short:
 
 ## Next steps
 
-1. Merge in order: #3 (remove OpenCode), #4 (web clean slate), #5 (CI and pre-commit).
-2. Start M1 (API hardening).
+1. Merge the API hardening PR.
+2. `feat/docker-full-stack`: Dockerfiles for api and web, compose runs everything with one command, API seeds on first start.
+3. Start M2 (web foundation): generate API types from `/docs-json`, API client, rewrites, `proxy.ts`, TanStack Query.
 
 ## Open issues and risks
 
 - An OpenCode API key was committed in `opencode.json` in the initial commit. The repository is private; the file has been removed, but the key remains in git history and must be revoked by its owner.
 - `typeorm.config.ts` uses `synchronize: true` instead of migrations. Acceptable for the assessment; listed as a limitation.
-- The seed uses `Math.random()`, so data differs on every run until M1 makes it deterministic.
 
 ## How to resume
 

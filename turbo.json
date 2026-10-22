@@ -16,12 +16,10 @@
         "POSTGRES_DB",
         "REDIS_HOST",
         "REDIS_PORT",
-        "REDIS_URL",
-        "REDIS_KEY",
-        "ROLES_KEY",
-        "DEV_OTP",
         "ACCESS_TOKEN_SECRET",
         "REFRESH_TOKEN_SECRET",
+        "ACCESS_TOKEN_TTL_SECONDS",
+        "DEV_OTP",
         "CORS_ORIGIN"
       ]
     },
@@ -30,46 +28,10 @@
       "persistent": true
     },
     "lint": {
-      "dependsOn": ["^lint"],
-      "env": [
-        "NODE_ENV",
-        "PORT",
-        "POSTGRES_HOST",
-        "POSTGRES_PORT",
-        "POSTGRES_USER",
-        "POSTGRES_PASSWORD",
-        "POSTGRES_DB",
-        "REDIS_HOST",
-        "REDIS_PORT",
-        "REDIS_URL",
-        "REDIS_KEY",
-        "ROLES_KEY",
-        "DEV_OTP",
-        "ACCESS_TOKEN_SECRET",
-        "REFRESH_TOKEN_SECRET",
-        "CORS_ORIGIN"
-      ]
+      "dependsOn": ["^lint"]
     },
     "check-types": {
-      "dependsOn": ["^check-types"],
-      "env": [
-        "NODE_ENV",
-        "PORT",
-        "POSTGRES_HOST",
-        "POSTGRES_PORT",
-        "POSTGRES_USER",
-        "POSTGRES_PASSWORD",
-        "POSTGRES_DB",
-        "REDIS_HOST",
-        "REDIS_PORT",
-        "REDIS_URL",
-        "REDIS_KEY",
-        "ROLES_KEY",
-        "DEV_OTP",
-        "ACCESS_TOKEN_SECRET",
-        "REFRESH_TOKEN_SECRET",
-        "CORS_ORIGIN"
-      ]
+      "dependsOn": ["^check-types"]
     },
     "test": {}
   }

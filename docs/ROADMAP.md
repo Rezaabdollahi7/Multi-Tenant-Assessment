@@ -16,17 +16,18 @@ Each milestone is delivered as one or more pull requests into `main`. Tick items
 
 ## M1 · API hardening: 1405/08/01 (Oct 23)
 
-- [ ] Rename `vrify-otp` → `verify-otp`; fix misspelt files (`rolse.guard`, `role.contants`)
-- [ ] Scope the refresh cookie to `/api/auth/refresh` (ADR 0002)
-- [ ] Project Status `ACTIVE` → `PLANNED`; Finding Status `ACCEPTED` labelled Risk Accepted
-- [ ] Remove the unused `member:manage` Permission and the Role-name guard if nothing needs it
-- [ ] Enable full `strict` in `apps/api`; make `no-explicit-any` and the `no-unsafe-*` lint rules errors; fix resulting errors
-- [ ] Access-token lifetime configurable through env
-- [ ] Deterministic seed (fixed random seed) so screenshots and tests are reproducible
+- [x] Rename `vrify-otp` → `verify-otp`; fix misspelt files (`rolse.guard`, `role.contants`)
+- [x] Serve the API under `/api`; scope the refresh cookie to `/api/auth` so logout can revoke it (ADR 0002)
+- [x] Project Status `ACTIVE` → `PLANNED`; Finding Status `ACCEPTED` labelled Risk Accepted
+- [x] Remove the unused `member:manage` Permission and the Role-name guard if nothing needs it
+- [x] Enable full `strict` in `apps/api`; make `no-explicit-any` and the `no-unsafe-*` lint rules errors; fix resulting errors
+- [x] Access-token lifetime configurable through env; environment validated at startup
+- [x] Deterministic seed (fixed random seed) so screenshots and tests are reproducible
 - [ ] Docker Compose runs the whole stack (postgres, redis, api + seed, web) with one command; web on :3000, api on :3001
-- [ ] Review AI-generated services for tenant scoping, `404` on foreign records, and Activity writes
-- [ ] e2e tests: tenant isolation, Permission enforcement, refresh rotation; run them in CI against Postgres and Redis service containers
-- [ ] `apps/api/README.md` claims Redis-backed rate limiting, which is not implemented: add throttling on the auth routes or correct the claim
+- [x] Typed response contracts for every route (for generated web types)
+- [x] Review AI-generated services for tenant scoping, `404` on foreign records, and Activity writes
+- [x] e2e tests: tenant isolation, Permission enforcement, refresh rotation; run them in CI against Postgres and Redis service containers
+- [x] OTP state actually stored in Redis (it was silently in memory); `apps/api/README.md` corrected
 
 ## M2 · Web foundation: 1405/08/01–02 (Oct 23–24)
 

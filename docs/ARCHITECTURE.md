@@ -82,11 +82,11 @@ sequenceDiagram
     participant R as Redis
     B->>W: POST /api/auth/request-otp {phone}
     W->>A: (rewrite)
-    A->>R: store hash(code), TTL 2 min
+    A->>R: store bcrypt(code), TTL 2 min
     B->>W: POST /api/auth/verify-otp {phone, code}
     W->>A: (rewrite)
     A->>R: compare and delete code
-    A-->>B: Set-Cookie access (15 min, path /) + refresh (14 d, path /api/auth/refresh)
+    A-->>B: Set-Cookie access (15 min, path /) + refresh (14 d, path /api/auth)
     Note over B,A: later, the access token expires
     B->>W: GET /api/findings → 401
     B->>W: POST /api/auth/refresh (refresh cookie)
@@ -95,7 +95,8 @@ sequenceDiagram
 ```
 
 - Both tokens are JWTs in **httpOnly, SameSite=Lax** cookies (`Secure` in production). JavaScript never sees them.
-- Refresh tokens are stored hashed and **rotated** on every refresh; logout revokes the stored token and clears both cookies.
+- Refresh tokens are stored as SHA-256 hashes and **rotated** on every refresh; presenting an already-rotated token revokes its whole family. Logout revokes the stored token and clears both cookies.
+- OTP codes and attempt counters live in Redis. Each phone may request 3 codes per 2 minutes and make 5 wrong attempts before a 5-minute lock (`429`).
 - **Session expiry in the UI:** the API client retries a `401` once after a refresh. If the refresh fails, it redirects to `/login?reason=session_expired&next=<current path>`, and the login page explains why and returns the User to where they were.
 - Access-token lifetime is configurable through env so expiry can be demonstrated in a minute.
 
@@ -126,23 +127,23 @@ Roles map to fixed Permission sets in one place (`common/constants/permissions.c
 
 ## 5. API surface
 
-All routes are under `/api` when called from the browser.
+The API serves every route under `/api`, so paths are identical through the web app's rewrite and when calling the API directly.
 
-| Method | Path                                                     | Permission       |
-| ------ | -------------------------------------------------------- | ---------------- |
-| POST   | `/auth/request-otp`, `/auth/verify-otp`, `/auth/refresh` | public           |
-| POST   | `/auth/logout`                                           | signed in        |
-| GET    | `/auth/me`                                               | signed in        |
-| GET    | `/dashboard/summary`, `/dashboard/trend`                 | `dashboard:read` |
-| GET    | `/dashboard/activities`                                  | `activity:read`  |
-| GET    | `/projects`, `/projects/:id`                             | `project:read`   |
-| GET    | `/projects/:id/members`                                  | `member:read`    |
-| GET    | `/findings`, `/findings/:id`                             | `finding:read`   |
-| POST   | `/findings`                                              | `finding:create` |
-| PATCH  | `/findings/:id`                                          | `finding:update` |
-| DELETE | `/findings/:id`                                          | `finding:delete` |
+| Method | Path                                                     | Permission                    |
+| ------ | -------------------------------------------------------- | ----------------------------- |
+| POST   | `/auth/request-otp`, `/auth/verify-otp`, `/auth/refresh` | public                        |
+| POST   | `/auth/logout`                                           | signed in                     |
+| GET    | `/auth/me`                                               | signed in                     |
+| GET    | `/dashboard/summary`, `/dashboard/trend`                 | `dashboard:read`              |
+| GET    | `/dashboard/activities`                                  | `activity:read`               |
+| GET    | `/projects`, `/projects/:id`                             | `project:read`                |
+| GET    | `/projects/:id/members`                                  | `project:read`, `member:read` |
+| GET    | `/findings`, `/findings/:id`                             | `finding:read`                |
+| POST   | `/findings`                                              | `finding:create`              |
+| PATCH  | `/findings/:id`                                          | `finding:update`              |
+| DELETE | `/findings/:id`                                          | `finding:delete`              |
 
-List endpoints accept `page`, `limit`, `search` and entity-specific filters, and return `{ data, meta, links }`. The OpenAPI document at `/docs` is the contract; the web app's types are generated from it.
+List endpoints accept `page`, `limit`, `search` and entity-specific filters, and return `{ data, meta: { page, limit, totalItems, totalPages } }`. Findings embed their Project and author, Activities their actor and target, so the UI needs no follow-up requests. `DELETE` answers `204`. The OpenAPI document at `/docs` is the contract; every route declares its response type, and the web app's types are generated from it.
 
 ## 6. Frontend
 
