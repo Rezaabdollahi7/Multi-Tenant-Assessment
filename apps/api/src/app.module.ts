@@ -1,5 +1,4 @@
 import { AuthorizationModule } from '@common/modules/authorization.module';
-import { AppCacheModule } from '@common/modules/cache.module';
 import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
@@ -17,7 +16,6 @@ import { DashboardModule } from './modules/dashboard/dashboard.module';
     ConfigModule.forRoot({ isGlobal: true, validate: validateEnvironment }),
     TypeOrmModule.forRootAsync({ useClass: TypeOrmConfig }),
     AuthorizationModule,
-    AppCacheModule,
     AuthModule,
     OrganizationModule,
     ActivityModule,
