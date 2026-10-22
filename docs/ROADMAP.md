@@ -9,8 +9,8 @@ Each milestone is delivered as one or more pull requests into `main`. Tick items
 - [x] Read the brief; settle open decisions (grilling session)
 - [x] `GLOSSARY.md`, ADRs 0001–0004
 - [x] `CLAUDE.md`, `README.md`, `docs/ARCHITECTURE.md`, `docs/ROADMAP.md`, `docs/HANDOFF.md`, `docs/RULES.md`
-- [ ] Remove OpenCode (`opencode.json`, `.opencode/`, `AGENTS.md`); link all agent skills into `.claude/skills`
-- [ ] Replace secrets in `.env.example` files with placeholders
+- [x] Remove OpenCode (`opencode.json`, `.opencode/`, `AGENTS.md`); link all agent skills into `.claude/skills`
+- [x] Replace secrets in `.env.example` files with placeholders
 - [ ] CI on GitHub Actions: lint, typecheck, test, build
 - [ ] Husky + lint-staged pre-commit (Prettier, ESLint)
 

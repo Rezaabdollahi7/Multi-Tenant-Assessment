@@ -11,6 +11,7 @@ The current state of the work, written for whoever picks it up next: a teammate,
 - **Web (`apps/web`):** not started beyond scaffolding. The home page is still the Next.js template. shadcn primitives, Zustand, Vitest and Storybook are installed; TanStack Query is not.
 - **Infrastructure:** `docker/compose.yml` runs only Postgres and Redis. Both `next dev` and the API default to port 3001.
 - **Docs:** glossary, ADRs 0001–0004, rules, architecture and roadmap are written.
+- **Tooling:** Claude Code is the only AI assistant; all agent skills live in `.agents/skills` and are linked into `.claude/skills`.
 
 ## Decisions made so far
 
@@ -26,14 +27,12 @@ All recorded in `docs/adr/` and `GLOSSARY.md`. In short:
 
 ## Next steps
 
-1. Merge the documentation PR.
-2. `chore/remove-opencode`: remove OpenCode files, link all skills into `.claude/skills`, put placeholders in `.env.example` files.
-3. `ci/quality-gates`: GitHub Actions and Husky + lint-staged.
-4. Start M1 (API hardening).
+1. `ci/quality-gates`: GitHub Actions and Husky + lint-staged.
+2. Start M1 (API hardening).
 
 ## Open issues and risks
 
-- An OpenCode API key was committed in `opencode.json` in the initial commit. The repository is private; the key must be revoked by its owner, and the file is removed in step 2. It remains in git history.
+- An OpenCode API key was committed in `opencode.json` in the initial commit. The repository is private; the file has been removed, but the key remains in git history and must be revoked by its owner.
 - `typeorm.config.ts` uses `synchronize: true` instead of migrations. Acceptable for the assessment; listed as a limitation.
 - The seed uses `Math.random()`, so data differs on every run until M1 makes it deterministic.
 
