@@ -16,8 +16,8 @@ import { Finding } from './../src/modules/finding/entities/finding.entity';
 import { Roles } from '@common/enums/role-app.enum';
 import { FindingSeverity } from './../src/modules/finding/enums/finding-severity.enum';
 import {
-  accessTokenName,
-  refreshTokenName,
+  ACCESS_TOKEN_COOKIE,
+  REFRESH_TOKEN_COOKIE,
 } from '@common/constants/jwt.constants';
 
 const DEV_OTP = process.env.DEV_OTP ?? '00000';
@@ -44,8 +44,8 @@ function extractCookies(res: Response): CookieSet {
   let access = '';
   let refresh = '';
   for (const c of cookies) {
-    if (c.startsWith(`${accessTokenName}=`)) access = c.split(';')[0];
-    if (c.startsWith(`${refreshTokenName}=`)) refresh = c.split(';')[0];
+    if (c.startsWith(`${ACCESS_TOKEN_COOKIE}=`)) access = c.split(';')[0];
+    if (c.startsWith(`${REFRESH_TOKEN_COOKIE}=`)) refresh = c.split(';')[0];
   }
   return { access, refresh };
 }
@@ -191,8 +191,8 @@ describe('Security & Multi-Tenancy (e2e)', () => {
   it('1. full auth flow: request-otp, vrify-otp, me, refresh, logout', async () => {
     // A fresh login for the analyst (separate phone) to avoid rate-limit noise
     const loginRes = await login(PHONES.analystA);
-    expect(loginRes.access).toContain(`${accessTokenName}=`);
-    expect(loginRes.refresh).toContain(`${refreshTokenName}=`);
+    expect(loginRes.access).toContain(`${ACCESS_TOKEN_COOKIE}=`);
+    expect(loginRes.refresh).toContain(`${REFRESH_TOKEN_COOKIE}=`);
 
     const me = await request(app.getHttpServer())
       .get('/auth/me')

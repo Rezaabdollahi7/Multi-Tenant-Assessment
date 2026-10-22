@@ -1,17 +1,10 @@
-export const accessTokenExpireTime = '15m';
-export const refreshTokenExpireTime = '14d';
+export const ACCESS_TOKEN_COOKIE = 'X-ACCESS';
+export const REFRESH_TOKEN_COOKIE = 'X-REFRESH';
 
-export const accessTokenName = 'X-ACCESS';
-export const refreshTokenName = 'X-REFRESH';
+export const REFRESH_TOKEN_TTL_SECONDS = 14 * 24 * 60 * 60;
 
-export const refreshTokenExpireTimeByMilliSecond = 14 * 24 * 60 * 60 * 1000; // 14-day
-export const accessTokenExpireTimeByMilliSecond = 15 * 60 * 1000; //15-min
+/** Every API route lives under this prefix, for direct and proxied calls alike. */
+export const API_PREFIX = 'api';
 
-export const secureCookie = process.env.NODE_ENV === 'production';
-
-export const cookieOptions = {
-  httpOnly: true,
-  secure: secureCookie,
-  sameSite: 'lax' as const,
-  path: '/',
-};
+/** The refresh cookie is only sent to the auth routes that need it: refresh and logout. */
+export const REFRESH_TOKEN_COOKIE_PATH = `/${API_PREFIX}/auth`;

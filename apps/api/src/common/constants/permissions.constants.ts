@@ -1,16 +1,19 @@
 import { Roles } from '@common/enums/role-app.enum';
 
-export type Permission =
-  | 'dashboard:read'
-  | 'project:read'
-  | 'member:read'
-  | 'finding:read'
-  | 'finding:create'
-  | 'finding:update'
-  | 'finding:delete'
-  | 'activity:read';
+export const PERMISSIONS = [
+  'dashboard:read',
+  'project:read',
+  'member:read',
+  'finding:read',
+  'finding:create',
+  'finding:update',
+  'finding:delete',
+  'activity:read',
+] as const;
 
-const VIEWER_PERMS: Permission[] = [
+export type Permission = (typeof PERMISSIONS)[number];
+
+const VIEWER_PERMISSIONS: Permission[] = [
   'dashboard:read',
   'project:read',
   'member:read',
@@ -18,18 +21,21 @@ const VIEWER_PERMS: Permission[] = [
   'activity:read',
 ];
 
-const ANALYST_PERMS: Permission[] = [
-  ...VIEWER_PERMS,
+const ANALYST_PERMISSIONS: Permission[] = [
+  ...VIEWER_PERMISSIONS,
   'finding:create',
   'finding:update',
 ];
 
-const ADMIN_PERMS: Permission[] = [...ANALYST_PERMS, 'finding:delete'];
+const ADMIN_PERMISSIONS: Permission[] = [
+  ...ANALYST_PERMISSIONS,
+  'finding:delete',
+];
 
-export const ROLE_PERMISSIONS: Record<Roles, Permission[]> = {
-  [Roles.ADMIN]: ADMIN_PERMS,
-  [Roles.ANALYST]: ANALYST_PERMS,
-  [Roles.VIEWER]: VIEWER_PERMS,
+export const ROLE_PERMISSIONS: Record<Roles, readonly Permission[]> = {
+  [Roles.ADMIN]: ADMIN_PERMISSIONS,
+  [Roles.ANALYST]: ANALYST_PERMISSIONS,
+  [Roles.VIEWER]: VIEWER_PERMISSIONS,
 };
 
 export const PERMISSIONS_KEY = Symbol('PERMISSIONS');

@@ -1,4 +1,4 @@
-import { ROLE_PERMISSIONS, type Permission } from './permissions.constants';
+import { PERMISSIONS, ROLE_PERMISSIONS } from './permissions.constants';
 import { Roles } from '@common/enums/role-app.enum';
 
 describe('ROLE_PERMISSIONS', () => {
@@ -34,21 +34,9 @@ describe('ROLE_PERMISSIONS', () => {
     expect(perms).toContain('finding:delete');
   });
 
-  it('covers exactly the expected permission set', () => {
-    const all: Permission[] = [
-      'dashboard:read',
-      'project:read',
-      'member:read',
-      'finding:read',
-      'finding:create',
-      'finding:update',
-      'finding:delete',
-      'activity:read',
-    ];
-    const adminPerms = ROLE_PERMISSIONS[Roles.ADMIN];
-    expect(adminPerms.length).toBe(all.length);
-    for (const p of all) {
-      expect(adminPerms).toContain(p);
-    }
+  it('gives ADMIN every Permission', () => {
+    expect([...ROLE_PERMISSIONS[Roles.ADMIN]].sort()).toEqual(
+      [...PERMISSIONS].sort(),
+    );
   });
 });

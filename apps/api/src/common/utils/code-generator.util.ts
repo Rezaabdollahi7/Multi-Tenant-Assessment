@@ -1,5 +1,8 @@
-export function generateOtp(length: number = 5): string {
-  const min = Math.pow(10, length - 1);
-  const max = Math.pow(10, length) - 1;
-  return Math.floor(min + Math.random() * (max - min + 1)).toString();
+import { randomInt } from 'node:crypto';
+
+/** A numeric one-time code from a cryptographically secure source. */
+export function generateOtp(length = 5): string {
+  return randomInt(0, 10 ** length)
+    .toString()
+    .padStart(length, '0');
 }
