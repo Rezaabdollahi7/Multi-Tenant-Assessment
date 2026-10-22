@@ -1,165 +1,205 @@
+/**
+ * Fabricated data for the Mock API.
+ *
+ *   pnpm --filter api seed             reset the database and seed it
+ *   pnpm --filter api seed --if-empty  seed only when there is no data yet
+ *
+ * A fixed random seed makes every run produce the same data, so screenshots and
+ * manual checks are reproducible. Dates are relative to today so the 30-day
+ * trend always has data.
+ */
 import { config } from 'dotenv';
-import { DataSource } from 'typeorm';
-import { randomUUID } from 'node:crypto';
-
-import { Organization } from '../modules/organization/entities/organization.entity';
-import { User } from '../modules/auth/entities/user.entity';
-import { Project } from '../modules/project/entities/project.entity';
-import { ProjectMember } from '../modules/project/entities/project-member.entity';
-import { Finding } from '../modules/finding/entities/finding.entity';
-import { Activity } from '../modules/activity/entities/activity.entity';
+import { DataSource, type EntityManager } from 'typeorm';
 import { Roles } from '../common/enums/role-app.enum';
-import { ProjectStatus } from '../modules/project/enums/project-status.enum';
-import { FindingSeverity } from '../modules/finding/enums/finding-severity.enum';
-import { FindingStatus } from '../modules/finding/enums/finding-status.enum';
 import {
   ActivityActions,
   ActivityTargetTypes,
 } from '../modules/activity/constants/activity.constants';
+import { Activity } from '../modules/activity/entities/activity.entity';
+import { RefreshToken } from '../modules/auth/entities/refresh-token.entity';
+import { User } from '../modules/auth/entities/user.entity';
+import { Finding } from '../modules/finding/entities/finding.entity';
+import { FindingSeverity } from '../modules/finding/enums/finding-severity.enum';
+import { FindingStatus } from '../modules/finding/enums/finding-status.enum';
+import { Organization } from '../modules/organization/entities/organization.entity';
+import { ProjectMember } from '../modules/project/entities/project-member.entity';
+import { Project } from '../modules/project/entities/project.entity';
+import {
+  FINDING_TEMPLATES,
+  ORGANIZATIONS,
+  ROLES_IN_PROJECT,
+  type OrganizationSeed,
+} from './seed-data';
 
 config();
 
-const SEVERITIES = Object.values(FindingSeverity);
-const STATUSES = Object.values(FindingStatus);
+const ENTITIES = [
+  Organization,
+  User,
+  RefreshToken,
+  Project,
+  ProjectMember,
+  Finding,
+  Activity,
+];
+const DAY_MS = 24 * 60 * 60 * 1000;
+const FINDINGS_PER_ORGANIZATION = 36;
+const RANDOM_SEED = 20261017;
 
-type OrgSeed = {
-  name: string;
-  users: { name: string; role: Roles; phone: string }[];
-  projects: { name: string; description: string; status: ProjectStatus }[];
-};
-
-const ORGS: OrgSeed[] = [
-  {
-    name: 'Org A',
-    users: [
-      { name: 'Ali Ahmadi', role: Roles.ADMIN, phone: '09911110001' },
-      { name: 'Sara Mohammadi', role: Roles.ANALYST, phone: '09911110002' },
-      { name: 'Reza Karimi', role: Roles.VIEWER, phone: '09911110003' },
-    ],
-    projects: [
-      {
-        name: 'Web Platform',
-        description: 'Primary web application',
-        status: ProjectStatus.ACTIVE,
-      },
-      {
-        name: 'Mobile App',
-        description: 'iOS and Android clients',
-        status: ProjectStatus.IN_PROGRESS,
-      },
-      {
-        name: 'API Gateway',
-        description: 'Backend services gateway',
-        status: ProjectStatus.COMPLETED,
-      },
-      {
-        name: 'Legacy Portal',
-        description: 'Legacy portal being decommissioned',
-        status: ProjectStatus.ARCHIVED,
-      },
-    ],
-  },
-  {
-    name: 'Org B',
-    users: [
-      { name: 'Maryam Hosseini', role: Roles.ADMIN, phone: '09922220001' },
-      { name: 'Hossein Rezaei', role: Roles.ANALYST, phone: '09922220002' },
-      { name: 'Zahra Naderi', role: Roles.VIEWER, phone: '09922220003' },
-    ],
-    projects: [
-      {
-        name: 'Payload Processor',
-        description: 'Data processing pipeline',
-        status: ProjectStatus.ACTIVE,
-      },
-      {
-        name: 'Admin Console',
-        description: 'Internal admin tooling',
-        status: ProjectStatus.IN_PROGRESS,
-      },
-      {
-        name: 'Reporting Service',
-        description: 'Reporting and analytics',
-        status: ProjectStatus.ACTIVE,
-      },
-    ],
-  },
-  {
-    name: 'Org C',
-    users: [
-      { name: 'Amir Taheri', role: Roles.ADMIN, phone: '09933330001' },
-      { name: 'Neda Safari', role: Roles.ANALYST, phone: '09933330002' },
-      { name: 'Kaveh Moradi', role: Roles.VIEWER, phone: '09933330003' },
-    ],
-    projects: [
-      {
-        name: 'Payments',
-        description: 'Payment integration',
-        status: ProjectStatus.ACTIVE,
-      },
-      {
-        name: 'Identity Service',
-        description: 'Authentication and identity',
-        status: ProjectStatus.IN_PROGRESS,
-      },
-      {
-        name: 'Notifications',
-        description: 'Push and email notifications',
-        status: ProjectStatus.COMPLETED,
-      },
-      {
-        name: 'Search Index',
-        description: 'Full-text search indexing',
-        status: ProjectStatus.ACTIVE,
-      },
-      {
-        name: 'Audit Trail',
-        description: 'Audit logging service',
-        status: ProjectStatus.IN_PROGRESS,
-      },
-    ],
-  },
+// Weighted so the dashboard looks like a real backlog rather than uniform noise.
+const SEVERITY_WEIGHTS: [FindingSeverity, number][] = [
+  [FindingSeverity.CRITICAL, 1],
+  [FindingSeverity.HIGH, 3],
+  [FindingSeverity.MEDIUM, 4],
+  [FindingSeverity.LOW, 3],
+  [FindingSeverity.INFO, 2],
+];
+const STATUS_WEIGHTS: [FindingStatus, number][] = [
+  [FindingStatus.OPEN, 4],
+  [FindingStatus.IN_REVIEW, 2],
+  [FindingStatus.RESOLVED, 3],
+  [FindingStatus.ACCEPTED, 1],
 ];
 
-const FINDING_TITLES = [
-  'SQL injection in login form',
-  'Stored XSS in comment field',
-  'Missing rate limiting on endpoint',
-  'Weak password policy',
-  'Sensitive data in error messages',
-  'Insecure direct object reference',
-  'Hardcoded API key in source',
-  'Unvalidated redirect after login',
-  'CSRF token not enforced',
-  'Outdated dependency with known CVE',
-  'Debug mode enabled in production',
-  'Insufficient access controls',
-];
-
-const TITLES_IN_PROJECT = [
-  'Cross-tenant data leak',
-  'Broken authentication flow',
-  'Privilege escalation via role confusion',
-  'Unencrypted storage of secrets',
-  'Missing audit logging',
-  'Improper input validation',
-  'Session fixation vulnerability',
-  'Information disclosure in headers',
-  'Denial of service via large payload',
-  'Open redirect vulnerability',
-];
-
-function pick<T>(arr: readonly T[]): T {
-  return arr[Math.floor(Math.random() * arr.length)];
+/** mulberry32: a tiny deterministic PRNG returning floats in [0, 1). */
+function createRandom(seed: number): () => number {
+  let state = seed;
+  return () => {
+    state = (state + 0x6d2b79f5) | 0;
+    let t = Math.imul(state ^ (state >>> 15), 1 | state);
+    t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t;
+    return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+  };
 }
 
-function randomDateInLastDays(days: number): Date {
-  const now = Date.now();
-  const offset = Math.floor(Math.random() * days * 24 * 60 * 60 * 1000);
-  return new Date(now - offset);
+const random = createRandom(RANDOM_SEED);
+
+function pick<T>(items: readonly T[]): T {
+  return items[Math.floor(random() * items.length)];
 }
 
-async function seed() {
+function pickWeighted<T>(weights: [T, number][]): T {
+  const total = weights.reduce((sum, [, weight]) => sum + weight, 0);
+  let roll = random() * total;
+  for (const [value, weight] of weights) {
+    roll -= weight;
+    if (roll < 0) return value;
+  }
+  return weights[weights.length - 1][0];
+}
+
+/** A moment between `fromDaysAgo` and `toDaysAgo` days before now. */
+function daysAgo(fromDaysAgo: number, toDaysAgo = 0): Date {
+  const span = (fromDaysAgo - toDaysAgo) * DAY_MS;
+  return new Date(
+    Date.now() - toDaysAgo * DAY_MS - Math.floor(random() * span),
+  );
+}
+
+function between(start: Date, end: Date): Date {
+  return new Date(
+    start.getTime() + random() * (end.getTime() - start.getTime()),
+  );
+}
+
+async function seedOrganization(
+  manager: EntityManager,
+  seed: OrganizationSeed,
+): Promise<void> {
+  const organization = await manager.save(
+    manager.create(Organization, { name: seed.name }),
+  );
+
+  const users = await manager.save(
+    seed.users.map((user) =>
+      manager.create(User, { ...user, orgId: organization.id }),
+    ),
+  );
+  const authors = users.filter((user) => user.role !== Roles.VIEWER);
+
+  const projects = await manager.save(
+    seed.projects.map((project) =>
+      manager.create(Project, {
+        ...project,
+        orgId: organization.id,
+        createdAt: daysAgo(120, 40),
+      }),
+    ),
+  );
+
+  await manager.save(
+    projects.flatMap((project) =>
+      users
+        .filter(() => random() < 0.7)
+        .map((user) =>
+          manager.create(ProjectMember, {
+            projectId: project.id,
+            userId: user.id,
+            roleInProject: pick(ROLES_IN_PROJECT),
+            createdAt: between(project.createdAt, daysAgo(35, 30)),
+          }),
+        ),
+    ),
+  );
+
+  const findings = Array.from({ length: FINDINGS_PER_ORGANIZATION }, () => {
+    const template = pick(FINDING_TEMPLATES);
+    const status = pickWeighted(STATUS_WEIGHTS);
+    const createdAt = daysAgo(30);
+    const updatedAt =
+      status === FindingStatus.OPEN
+        ? createdAt
+        : between(createdAt, new Date());
+    return manager.create(Finding, {
+      orgId: organization.id,
+      projectId: pick(projects).id,
+      title: template.title,
+      description: template.description,
+      severity: pickWeighted(SEVERITY_WEIGHTS),
+      status,
+      createdById: pick(authors).id,
+      createdAt,
+      updatedAt,
+    });
+  });
+  await manager.save(findings);
+
+  await manager.save(
+    findings.flatMap((finding) => {
+      const created = manager.create(Activity, {
+        orgId: organization.id,
+        userId: finding.createdById,
+        action: ActivityActions.FINDING_CREATED,
+        targetType: ActivityTargetTypes.FINDING,
+        targetId: finding.id,
+        targetName: finding.title,
+        createdAt: finding.createdAt,
+      });
+      if (finding.status === FindingStatus.OPEN) return [created];
+
+      return [
+        created,
+        manager.create(Activity, {
+          orgId: organization.id,
+          userId: pick(authors).id,
+          action: ActivityActions.FINDING_UPDATED,
+          targetType: ActivityTargetTypes.FINDING,
+          targetId: finding.id,
+          targetName: finding.title,
+          createdAt: finding.updatedAt,
+        }),
+      ];
+    }),
+  );
+
+  console.log(
+    `[seed] ${seed.name}: ${users.length} users, ${projects.length} projects, ${findings.length} findings`,
+  );
+}
+
+async function run(): Promise<void> {
+  const ifEmpty = process.argv.includes('--if-empty');
+
   const dataSource = new DataSource({
     type: 'postgres',
     host: process.env.POSTGRES_HOST,
@@ -167,177 +207,34 @@ async function seed() {
     username: process.env.POSTGRES_USER,
     password: process.env.POSTGRES_PASSWORD,
     database: process.env.POSTGRES_DB,
-    entities: [Organization, User, Project, ProjectMember, Finding, Activity],
+    entities: ENTITIES,
     synchronize: true,
-    logging: false,
   });
-
   await dataSource.initialize();
-  const orgRepo = dataSource.getRepository(Organization);
-  const userRepo = dataSource.getRepository(User);
-  const projectRepo = dataSource.getRepository(Project);
-  const memberRepo = dataSource.getRepository(ProjectMember);
 
-  for (const orgSeed of ORGS) {
-    let org = await orgRepo.findOne({ where: { name: orgSeed.name } });
-    const isNewOrg = !org;
+  try {
+    if (ifEmpty && (await dataSource.getRepository(Organization).count()) > 0) {
+      console.log('[seed] Data already present; nothing to do.');
+      return;
+    }
 
-    if (org && !isNewOrg) {
-      const existingUsers = await userRepo.count({
-        where: { orgId: org.id },
-      });
-      if (existingUsers > 0) {
-        console.log(`[seed] ${orgSeed.name} already seeded, skipping.`);
-        continue;
+    await dataSource.transaction(async (manager) => {
+      const tables = ENTITIES.map(
+        (entity) => `"${dataSource.getMetadata(entity).tableName}"`,
+      ).join(', ');
+      await manager.query(`TRUNCATE ${tables} CASCADE`);
+
+      for (const organization of ORGANIZATIONS) {
+        await seedOrganization(manager, organization);
       }
-    }
-
-    if (!org) {
-      org = await orgRepo.save(orgRepo.create({ name: orgSeed.name }));
-    }
-
-    // Users
-    const users: User[] = [];
-    for (const userSeed of orgSeed.users) {
-      let user = await userRepo.findOne({
-        where: { phone: userSeed.phone },
-      });
-      if (!user) {
-        user = await userRepo.save(
-          userRepo.create({
-            name: userSeed.name,
-            role: userSeed.role,
-            phone: userSeed.phone,
-            orgId: org.id,
-          }),
-        );
-      } else {
-        // Ensure the user is attached to the org/role correctly.
-        user.orgId = org.id;
-        user.role = userSeed.role;
-        user.name = userSeed.name;
-        await userRepo.save(user);
-      }
-      users.push(user);
-    }
-
-    // Projects
-    const projects: Project[] = [];
-    for (const projectSeed of orgSeed.projects) {
-      const existing = await projectRepo.findOne({
-        where: { orgId: org.id, name: projectSeed.name },
-      });
-      if (existing) {
-        projects.push(existing);
-        continue;
-      }
-      const project = await projectRepo.save(
-        projectRepo.create({
-          orgId: org.id,
-          name: projectSeed.name,
-          description: projectSeed.description,
-          status: projectSeed.status,
-        }),
-      );
-      projects.push(project);
-    }
-
-    // Members: assign subset of users to each project (same org enforced by user list)
-    for (const project of projects) {
-      const memberCount = 1 + Math.floor(Math.random() * users.length);
-      const shuffled = [...users].sort(() => Math.random() - 0.5);
-      for (const user of shuffled.slice(0, memberCount)) {
-        const existing = await memberRepo.findOne({
-          where: { projectId: project.id, userId: user.id },
-        });
-        if (existing) continue;
-        await memberRepo.save(
-          memberRepo.create({
-            projectId: project.id,
-            userId: user.id,
-            roleInProject: pick([
-              'Developer',
-              'Security Engineer',
-              'Reviewer',
-              'Tech Lead',
-            ]),
-            joinedAt: randomDateInLastDays(30),
-          }),
-        );
-      }
-    }
-
-    // Findings: a few dozen spread over last 30 days
-    const admin = users.find((u) => u.role === Roles.ADMIN) ?? users[0];
-    const findingsCount = 30 + Math.floor(Math.random() * 12);
-    const findingRows: Record<string, unknown>[] = [];
-
-    for (let i = 0; i < findingsCount; i++) {
-      const project = pick(projects);
-      const createdAt = randomDateInLastDays(30);
-      const title =
-        i % 4 === 0 ? pick(FINDING_TITLES) : `${pick(TITLES_IN_PROJECT)}`;
-      findingRows.push({
-        id: randomUUID(),
-        projectId: project.id,
-        orgId: org.id,
-        title,
-        description: `Auto-generated finding for ${project.name}.`,
-        severity: pick(SEVERITIES),
-        status: pick(STATUSES),
-        createdById: admin.id,
-        createdAt,
-        updatedAt: createdAt,
-      });
-    }
-
-    // Bulk insert findings (explicit createdAt preserved)
-    await dataSource
-      .createQueryBuilder()
-      .insert()
-      .into(Finding)
-      .values(findingRows)
-      .execute();
-
-    // Activities
-    const activityRows: Record<string, unknown>[] = [];
-    const createdFindings = await dataSource.getRepository(Finding).find({
-      where: { orgId: org.id },
-      order: { createdAt: 'ASC' },
-      take: 15,
     });
-    for (const f of createdFindings) {
-      activityRows.push({
-        id: randomUUID(),
-        orgId: org.id,
-        userId: admin.id,
-        action: ActivityActions.FINDING_CREATED,
-        targetType: ActivityTargetTypes.FINDING,
-        targetId: f.id,
-        targetName: f.title,
-        createdAt: f.createdAt,
-        updatedAt: f.createdAt,
-      });
-    }
-    if (activityRows.length > 0) {
-      await dataSource
-        .createQueryBuilder()
-        .insert()
-        .into(Activity)
-        .values(activityRows)
-        .execute();
-    }
-
-    console.log(
-      `[seed] ${org.name}: ${users.length} users, ${projects.length} projects, ${findingsCount} findings`,
-    );
+    console.log('[seed] Done.');
+  } finally {
+    await dataSource.destroy();
   }
-
-  await dataSource.destroy();
-  console.log('[seed] Done.');
 }
 
-seed().catch((error) => {
+run().catch((error: unknown) => {
   console.error('[seed] Failed:', error);
   process.exitCode = 1;
 });

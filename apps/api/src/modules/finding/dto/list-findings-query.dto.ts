@@ -16,12 +16,12 @@ export class ListFindingsQueryDto extends PaginationQueryDto {
   @IsUUID()
   projectId?: string;
 
-  @ApiPropertyOptional({ enum: FindingSeverity })
+  @ApiPropertyOptional({ enum: FindingSeverity, enumName: 'FindingSeverity' })
   @IsOptional()
   @IsEnum(FindingSeverity)
   severity?: FindingSeverity;
 
-  @ApiPropertyOptional({ enum: FindingStatus })
+  @ApiPropertyOptional({ enum: FindingStatus, enumName: 'FindingStatus' })
   @IsOptional()
   @IsEnum(FindingStatus)
   status?: FindingStatus;
