@@ -8,4 +8,4 @@ The browser never calls the NestJS API directly. Next.js rewrites `/api/*` to th
 
 ## Consequences
 
-Because the API itself lives under `/api`, cookie paths are the same whether a request comes through the web app or straight to the API. The refresh cookie is scoped to `/api/auth`, so it reaches the refresh and logout routes and nothing else.
+Because the API itself lives under `/api`, cookie paths are the same whether a request comes through the web app or straight to the API.

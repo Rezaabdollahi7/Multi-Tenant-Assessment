@@ -68,7 +68,7 @@ describe('Authentication and Session (e2e)', () => {
     const access = setCookie.find((c) => c.startsWith(ACCESS_TOKEN_COOKIE));
     const refresh = setCookie.find((c) => c.startsWith(REFRESH_TOKEN_COOKIE));
     expect(access).toMatch(/Path=\/;.*HttpOnly; SameSite=Lax/);
-    expect(refresh).toMatch(/Path=\/api\/auth;.*HttpOnly; SameSite=Lax/);
+    expect(refresh).toMatch(/Path=\/;.*HttpOnly; SameSite=Lax/);
   });
 
   it('returns the signed-in User with the Permissions of their Role', async () => {
