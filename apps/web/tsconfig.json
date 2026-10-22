@@ -16,10 +16,7 @@
     "plugins": [{ "name": "next" }],
     "baseUrl": ".",
     "paths": {
-      "@/*": ["./src/*"],
-      "@/core/*": ["./src/core/*"],
-      "@/components/*": ["./src/core/components/*"],
-      "@/shadcn/*": ["./src/core/components/shadcn/ui/*"]
+      "@/*": ["./src/*"]
     }
   },
   "include": [

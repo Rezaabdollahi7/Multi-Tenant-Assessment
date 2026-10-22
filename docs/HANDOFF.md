@@ -8,8 +8,8 @@ The current state of the work, written for whoever picks it up next: a teammate,
 ## Where things stand
 
 - **API (`apps/api`):** functionally complete for the brief: OTP sign-in, JWT access and refresh cookies with rotation, three Roles mapped to Permissions, tenant scoping by `orgId`, dashboard, projects, members, findings CRUD, activities, seed for three Organizations. Not yet reviewed against `docs/RULES.md`; M1 lists the known fixes.
-- **Web (`apps/web`):** not started beyond scaffolding. The home page is still the Next.js template. shadcn primitives, Zustand, Vitest and Storybook are installed; TanStack Query is not.
-- **Infrastructure:** `docker/compose.yml` runs only Postgres and Redis. Both `next dev` and the API default to port 3001.
+- **Web (`apps/web`):** clean slate. Leftover boilerplate from an earlier project was removed; what remains is shadcn primitives in `components/ui`, `cn` in `lib/utils`, `useIsMobile`, the neutral shadcn theme (light and dark tokens), an English LTR root layout and a placeholder home page. Lint, typecheck, tests and build pass. TanStack Query is not installed yet.
+- **Infrastructure:** `docker/compose.yml` runs only Postgres and Redis. Web runs on :3000, the API on :3001.
 - **Docs:** glossary, ADRs 0001–0004, rules, architecture and roadmap are written.
 
 ## Decisions made so far

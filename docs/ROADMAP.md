@@ -29,7 +29,7 @@ Each milestone is delivered as one or more pull requests into `main`. Tick items
 
 ## M2 · Web foundation: 1405/08/01–02 (Oct 23–24)
 
-- [ ] Restructure `apps/web/src` to `app / features / components / lib`; delete placeholder files; fix shadcn aliases
+- [x] Restructure `apps/web/src` to `app / features / components / lib`; delete placeholder files; fix shadcn aliases
 - [ ] Generated API types (`openapi-typescript`) and a typed API client with refresh-and-retry
 - [ ] Next.js rewrites `/api/*`; `proxy.ts` route guard; protected layout loading `/auth/me`
 - [ ] TanStack Query provider, query-key factories; Zustand UI store
