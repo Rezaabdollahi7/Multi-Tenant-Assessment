@@ -1,141 +1,133 @@
-import { RequestOtpDto } from '@auth/dto/req-otp.dto';
-import { SummaryUserDataDto } from '@auth/dto/summary-user-otp.dto';
-import { VrifyOtpDto } from '@auth/dto/vrify-otp.dto';
+import { RequestOtpDto } from '@auth/dto/request-otp.dto';
+import { VerifyOtpDto } from '@auth/dto/verify-otp.dto';
 import {
-  accessTokenExpireTimeByMilliSecond,
-  accessTokenName,
-  refreshTokenExpireTimeByMilliSecond,
-  refreshTokenName,
-  secureCookie,
+  ACCESS_TOKEN_COOKIE,
+  REFRESH_TOKEN_COOKIE,
+  REFRESH_TOKEN_COOKIE_PATH,
+  REFRESH_TOKEN_TTL_SECONDS,
 } from '@common/constants/jwt.constants';
 import { Cookie } from '@common/decorators/cookie.decorator';
 import { Public } from '@common/decorators/public.decorator';
+import { UserInfo } from '@common/decorators/user.decorator';
 import {
   Body,
   Controller,
   Get,
   HttpCode,
   HttpStatus,
-  Patch,
   Post,
   Res,
 } from '@nestjs/common';
-import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
-import type { Request, Response } from 'express';
-import { AuthService } from '../services/auth.service';
-import { UserInfo } from './../../../common/decorators/user.decorator';
+import {
+  ApiOkResponse,
+  ApiOperation,
+  ApiTags,
+  ApiTooManyRequestsResponse,
+  ApiUnauthorizedResponse,
+} from '@nestjs/swagger';
+import type { CookieOptions, Response } from 'express';
+import {
+  CurrentUserDto,
+  RequestOtpResponseDto,
+  SuccessResponseDto,
+} from '../dto/auth-response.dto';
+import { AuthService, type SessionTokens } from '../services/auth.service';
+import { JwtAuthService } from '../services/jwt.service';
 
-function accessCookieOptions(): Record<string, unknown> {
-  return {
-    httpOnly: true,
-    secure: secureCookie,
-    sameSite: 'lax',
-    path: '/',
-    maxAge: accessTokenExpireTimeByMilliSecond,
-  };
-}
-
-function refreshCookieOptions(): Record<string, unknown> {
-  return {
-    httpOnly: true,
-    secure: secureCookie,
-    sameSite: 'lax',
-    path: '/auth/refresh',
-    maxAge: refreshTokenExpireTimeByMilliSecond,
-  };
-}
+const baseCookieOptions: CookieOptions = {
+  httpOnly: true,
+  secure: process.env.NODE_ENV === 'production',
+  sameSite: 'lax',
+};
 
 @ApiTags('auth')
 @Controller('auth')
 export class AuthController {
-  constructor(private readonly authService: AuthService) {}
+  constructor(
+    private readonly authService: AuthService,
+    private readonly jwtAuthService: JwtAuthService,
+  ) {}
 
   @Post('request-otp')
   @Public()
   @HttpCode(HttpStatus.OK)
-  @ApiOperation({ summary: 'Request a one-time login code' })
-  @ApiResponse({ status: 200, description: 'OTP generated' })
-  @ApiResponse({ status: 429, description: 'Too many requests' })
-  ReqOtp(@Body() reqOtpDto: RequestOtpDto) {
-    return this.authService.ReqOtp(reqOtpDto);
+  @ApiOperation({ summary: 'Send a one-time sign-in code' })
+  @ApiOkResponse({ type: RequestOtpResponseDto })
+  @ApiTooManyRequestsResponse({ description: 'Too many requests or attempts' })
+  requestOtp(@Body() dto: RequestOtpDto): Promise<RequestOtpResponseDto> {
+    return this.authService.requestOtp(dto.phone);
   }
 
-  @Post('vrify-otp')
+  @Post('verify-otp')
   @Public()
   @HttpCode(HttpStatus.OK)
-  @ApiOperation({ summary: 'Verify OTP and login' })
-  @ApiResponse({ status: 200, description: 'Login successful' })
-  @ApiResponse({ status: 401, description: 'Invalid or expired code' })
-  async VrifyOtp(
-    @Body() vrifyOtpDto: VrifyOtpDto,
+  @ApiOperation({ summary: 'Verify the code and start a session' })
+  @ApiOkResponse({ type: SuccessResponseDto })
+  @ApiUnauthorizedResponse({ description: 'Invalid or expired code' })
+  @ApiTooManyRequestsResponse({ description: 'Too many wrong attempts' })
+  async verifyOtp(
+    @Body() dto: VerifyOtpDto,
     @Res({ passthrough: true }) response: Response,
-  ) {
-    const tokens = await this.authService.VrifyOtp(vrifyOtpDto);
-
-    response.cookie(
-      refreshTokenName,
-      tokens.refreshToken,
-      refreshCookieOptions(),
-    );
-    response.cookie(accessTokenName, tokens.accessToken, accessCookieOptions());
-
+  ): Promise<SuccessResponseDto> {
+    const tokens = await this.authService.verifyOtp(dto.phone, dto.code);
+    this.setSessionCookies(response, tokens);
     return { success: true };
   }
 
   @Post('refresh')
   @Public()
   @HttpCode(HttpStatus.OK)
-  @ApiOperation({ summary: 'Refresh access and refresh tokens (rotation)' })
-  @ApiResponse({ status: 200, description: 'Tokens refreshed' })
-  @ApiResponse({ status: 401, description: 'Invalid or expired session' })
-  async Refresh(
-    @Cookie(refreshTokenName) token: string,
+  @ApiOperation({ summary: 'Rotate the session tokens' })
+  @ApiOkResponse({ type: SuccessResponseDto })
+  @ApiUnauthorizedResponse({ description: 'Invalid or expired session' })
+  async refresh(
+    @Cookie(REFRESH_TOKEN_COOKIE) refreshToken: string | undefined,
     @Res({ passthrough: true }) response: Response,
-  ) {
-    const tokens = await this.authService.Refresh(token);
-
-    response.cookie(
-      refreshTokenName,
-      tokens.refreshToken,
-      refreshCookieOptions(),
-    );
-    response.cookie(accessTokenName, tokens.accessToken, accessCookieOptions());
-
+  ): Promise<SuccessResponseDto> {
+    const tokens = await this.authService.refresh(refreshToken);
+    this.setSessionCookies(response, tokens);
     return { success: true };
   }
 
   @Post('logout')
+  @Public()
   @HttpCode(HttpStatus.OK)
-  @ApiOperation({ summary: 'Logout and revoke refresh token' })
-  @ApiResponse({ status: 200, description: 'Logged out' })
-  async Logout(
-    @Cookie(refreshTokenName) token: string,
+  @ApiOperation({ summary: 'End the session and revoke its refresh token' })
+  @ApiOkResponse({ type: SuccessResponseDto })
+  async logout(
+    @Cookie(REFRESH_TOKEN_COOKIE) refreshToken: string | undefined,
     @Res({ passthrough: true }) response: Response,
-  ) {
-    await this.authService.Logout(token);
-
-    response.clearCookie(refreshTokenName, { path: '/auth/refresh' });
-    response.clearCookie(accessTokenName, { path: '/' });
-
+  ): Promise<SuccessResponseDto> {
+    await this.authService.logout(refreshToken);
+    response.clearCookie(ACCESS_TOKEN_COOKIE, {
+      ...baseCookieOptions,
+      path: '/',
+    });
+    response.clearCookie(REFRESH_TOKEN_COOKIE, {
+      ...baseCookieOptions,
+      path: REFRESH_TOKEN_COOKIE_PATH,
+    });
     return { success: true };
   }
 
   @Get('me')
-  @HttpCode(HttpStatus.OK)
-  @ApiOperation({ summary: 'Get current user profile and permissions' })
-  @ApiResponse({ status: 200, description: 'Current user' })
-  Me(@UserInfo('sub') userId: string) {
-    return this.authService.Me(userId);
+  @ApiOperation({ summary: 'The signed-in User and their Permissions' })
+  @ApiOkResponse({ type: CurrentUserDto })
+  @ApiUnauthorizedResponse({ description: 'No valid session' })
+  me(@UserInfo('sub') userId: string): Promise<CurrentUserDto> {
+    return this.authService.currentUser(userId);
   }
 
-  @Patch('summary-user')
-  @HttpCode(HttpStatus.OK)
-  @ApiOperation({ summary: 'Update current user name' })
-  @ApiResponse({ status: 200, description: 'User updated' })
-  SummaryUser(
-    @Body() summaryUserDto: SummaryUserDataDto,
-    @UserInfo('sub') userId: string,
-  ) {
-    return this.authService.SummaryUser(summaryUserDto, userId);
+  private setSessionCookies(response: Response, tokens: SessionTokens): void {
+    response.cookie(ACCESS_TOKEN_COOKIE, tokens.accessToken, {
+      ...baseCookieOptions,
+      path: '/',
+      maxAge: this.jwtAuthService.accessTokenTtlSeconds * 1000,
+    });
+    response.cookie(REFRESH_TOKEN_COOKIE, tokens.refreshToken, {
+      ...baseCookieOptions,
+      path: REFRESH_TOKEN_COOKIE_PATH,
+      maxAge: REFRESH_TOKEN_TTL_SECONDS * 1000,
+    });
   }
 }

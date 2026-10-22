@@ -1,35 +1,52 @@
-import { RequestOtpDto } from '@auth/dto/req-otp.dto';
-import { SummaryUserDataDto } from '@auth/dto/summary-user-otp.dto';
-import { VrifyOtpDto } from '@auth/dto/vrify-otp.dto';
+import {
+  OTP_LOCK_SECONDS,
+  OTP_MAX_ATTEMPTS,
+  OTP_REQUEST_LIMIT,
+  OTP_REQUEST_WINDOW_SECONDS,
+  OTP_TTL_SECONDS,
+} from '@auth/constants/auth.constants';
 import { RefreshToken } from '@auth/entities/refresh-token.entity';
 import { User } from '@auth/entities/user.entity';
 import { JwtAuthService } from '@auth/services/jwt.service';
-import {
-  JwtPayload,
-  RefreshTokenPayload,
-} from '@common/@types/jwt-payload.type';
+import { JwtPayload } from '@common/@types/jwt-payload.type';
+import { REFRESH_TOKEN_TTL_SECONDS } from '@common/constants/jwt.constants';
 import { ROLE_PERMISSIONS } from '@common/constants/permissions.constants';
 import { CacheService } from '@common/services/cache.service';
-import { sha256 } from '@common/utils/crypto.util';
 import { generateOtp } from '@common/utils/code-generator.util';
-import { Compare, Hash } from '@common/utils/hash';
+import { sha256 } from '@common/utils/crypto.util';
+import { compareHash, hash } from '@common/utils/hash';
 import {
+  HttpException,
+  HttpStatus,
   Injectable,
-  NotFoundException,
-  UnauthorizedException,
   Logger,
+  UnauthorizedException,
 } from '@nestjs/common';
-import { Organization } from '../../organization/entities/organization.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { randomUUID } from 'node:crypto';
 import { IsNull, Repository } from 'typeorm';
+import { Organization } from '../../organization/entities/organization.entity';
 import {
-  OTP_TTL_SECONDS,
-  OTP_MAX_ATTEMPTS,
-  OTP_LOCK_SECONDS,
-  OTP_REQUEST_LIMIT,
-  OTP_REQUEST_WINDOW_SECONDS,
-} from '@auth/constants/auth.constants';
+  CurrentUserDto,
+  RequestOtpResponseDto,
+} from '../dto/auth-response.dto';
+
+export type SessionTokens = { accessToken: string; refreshToken: string };
+
+const DEFAULT_DEV_OTP = '00000';
+
+class TooManyRequestsException extends HttpException {
+  constructor(message: string) {
+    super(message, HttpStatus.TOO_MANY_REQUESTS);
+  }
+}
+
+const otpKeys = (phone: string) => ({
+  hash: `otp:hash:${phone}`,
+  failedAttempts: `otp:failed:${phone}`,
+  requestCount: `otp:requests:${phone}`,
+  requestLock: `otp:locked:${phone}`,
+});
 
 @Injectable()
 export class AuthService {
@@ -46,304 +63,217 @@ export class AuthService {
     private readonly jwtAuthService: JwtAuthService,
   ) {}
 
-  private getDevOtp(): string {
-    return process.env.DEV_OTP ?? '00000';
-  }
+  async requestOtp(phone: string): Promise<RequestOtpResponseDto> {
+    const keys = otpKeys(phone);
+    await this.enforceRequestLimit(phone);
 
-  private async checkRequestOtpRateLimit(phone: string): Promise<void> {
-    const blockedKey = `otp_blocked_${phone}`;
-    const isBlocked = await this.cacheService.get(blockedKey);
-    if (isBlocked) {
-      throw new UnauthorizedException(
-        'Too many requests. Please try again later.',
-      );
-    }
-
-    const countKey = `otp_request_count_${phone}`;
-    const current = await this.cacheService.get(countKey);
-    const newCount = (Number(current) || 0) + 1;
-
-    await this.cacheService.set(countKey, newCount, OTP_REQUEST_WINDOW_SECONDS);
-
-    if (newCount > OTP_REQUEST_LIMIT) {
-      await this.cacheService.set(blockedKey, '1', OTP_LOCK_SECONDS);
-      await this.cacheService.del(countKey);
-      throw new UnauthorizedException(
-        'Too many requests. Please try again later.',
-      );
-    }
-  }
-
-  async ReqOtp(reqOtp: RequestOtpDto) {
-    const { phone } = reqOtp;
-
-    await this.checkRequestOtpRateLimit(phone);
-
-    // Check wrong-attempt lock
-    const failedKey = `otp_failed_${phone}`;
-    const failedCount = Number(await this.cacheService.get(failedKey)) || 0;
-    if (failedCount >= OTP_MAX_ATTEMPTS) {
-      throw new UnauthorizedException(
+    const failedAttempts = await this.failedAttempts(phone);
+    if (failedAttempts >= OTP_MAX_ATTEMPTS) {
+      throw new TooManyRequestsException(
         'Too many failed attempts. Please try again later.',
       );
     }
 
-    const code =
-      process.env.NODE_ENV === 'development' || process.env.NODE_ENV === 'test'
-        ? this.getDevOtp()
-        : generateOtp();
-
-    const codeHash = await Hash(code);
-    await this.cacheService.set(`otp_hash_${phone}`, codeHash, OTP_TTL_SECONDS);
-
-    if (process.env.NODE_ENV === 'development') {
-      this.logger.debug(`[DEV OTP] phone=${phone} code=${code}`);
-    }
+    const exposeCode = process.env.NODE_ENV !== 'production';
+    const code = exposeCode
+      ? (process.env.DEV_OTP ?? DEFAULT_DEV_OTP)
+      : generateOtp();
+    await this.cacheService.set(keys.hash, await hash(code), OTP_TTL_SECONDS);
 
     return {
       message: 'Verification code sent',
-      remainingAttempts: OTP_MAX_ATTEMPTS - failedCount,
-      ...(process.env.NODE_ENV === 'development' ||
-      process.env.NODE_ENV === 'test'
-        ? { code }
-        : {}),
+      remainingAttempts: OTP_MAX_ATTEMPTS - failedAttempts,
+      ...(exposeCode ? { code } : {}),
     };
   }
 
-  async VrifyOtp(vrifyOtpDto: VrifyOtpDto) {
-    const { phone, otp } = vrifyOtpDto;
+  async verifyOtp(phone: string, code: string): Promise<SessionTokens> {
+    const keys = otpKeys(phone);
 
-    // Wrong-attempt lock check
-    const failedKey = `otp_failed_${phone}`;
-    const failedCount = Number(await this.cacheService.get(failedKey)) || 0;
-    if (failedCount >= OTP_MAX_ATTEMPTS) {
-      throw new UnauthorizedException(
+    const failedAttempts = await this.failedAttempts(phone);
+    if (failedAttempts >= OTP_MAX_ATTEMPTS) {
+      throw new TooManyRequestsException(
         'Too many failed attempts. Please try again later.',
       );
     }
 
-    const hashKey = `otp_hash_${phone}`;
-    const storedHash = await this.cacheService.get(hashKey);
-
-    if (!storedHash || typeof storedHash !== 'string') {
+    const storedHash = await this.cacheService.get<string>(keys.hash);
+    if (!storedHash) {
       throw new UnauthorizedException(
         'Code expired or not found. Please request a new code.',
       );
     }
 
-    const isValid = await Compare(otp, storedHash);
-    if (!isValid) {
-      const newFailedCount = failedCount + 1;
-      await this.cacheService.set(failedKey, newFailedCount, OTP_LOCK_SECONDS);
-
-      if (newFailedCount >= OTP_MAX_ATTEMPTS) {
-        await this.cacheService.del(hashKey);
-        throw new UnauthorizedException(
-          `Too many failed attempts. Account locked temporarily.`,
+    if (!(await compareHash(code, storedHash))) {
+      const attempts = failedAttempts + 1;
+      await this.cacheService.set(
+        keys.failedAttempts,
+        attempts,
+        OTP_LOCK_SECONDS,
+      );
+      if (attempts >= OTP_MAX_ATTEMPTS) {
+        await this.cacheService.del(keys.hash);
+        throw new TooManyRequestsException(
+          'Too many failed attempts. Please try again later.',
         );
       }
-
-      const remaining = OTP_MAX_ATTEMPTS - newFailedCount;
+      const remaining = OTP_MAX_ATTEMPTS - attempts;
       throw new UnauthorizedException(
-        `Invalid code. ${remaining} attempt${remaining !== 1 ? 's' : ''} remaining.`,
+        `Invalid code. ${remaining} attempt${remaining === 1 ? '' : 's'} remaining.`,
       );
     }
 
-    // Cleanup OTP data
     await Promise.all([
-      this.cacheService.del(hashKey),
-      this.cacheService.del(failedKey),
+      this.cacheService.del(keys.hash),
+      this.cacheService.del(keys.failedAttempts),
     ]);
 
-    const user = await this.userRepository.findOne({
-      where: { phone },
-    });
-
+    const user = await this.userRepository.findOne({ where: { phone } });
     if (!user) {
-      throw new NotFoundException(
-        'User not found. Please contact your administrator.',
-      );
+      // Same answer as a wrong code, so the endpoint does not reveal which phones exist.
+      throw new UnauthorizedException('Invalid code.');
     }
 
-    const familyId = randomUUID();
+    return this.startTokenFamily(user, randomUUID());
+  }
 
+  /**
+   * Rotates the refresh token. Presenting a token that was already rotated means it
+   * leaked, so the whole family is revoked and the session ends everywhere.
+   */
+  async refresh(refreshToken: string | undefined): Promise<SessionTokens> {
+    if (!refreshToken) {
+      throw new UnauthorizedException('Invalid or expired session');
+    }
+
+    const payload = await this.jwtAuthService.verifyRefreshToken(refreshToken);
+    const stored = await this.refreshTokenRepository.findOne({
+      where: { tokenHash: sha256(refreshToken) },
+    });
+    if (!stored) {
+      throw new UnauthorizedException('Invalid or expired session');
+    }
+
+    if (stored.revokedAt) {
+      await this.revokeFamily(stored.familyId);
+      this.logger.warn(
+        `Refresh token reuse detected; revoked family ${stored.familyId} of user ${stored.userId}`,
+      );
+      throw new UnauthorizedException('Invalid or expired session');
+    }
+
+    await this.refreshTokenRepository.update(stored.id, {
+      revokedAt: new Date(),
+    });
+
+    // Reload the User so a changed Role or Organization applies from the next token on.
+    const user = await this.userRepository.findOne({
+      where: { id: payload.sub },
+    });
+    if (!user) {
+      await this.revokeFamily(stored.familyId);
+      throw new UnauthorizedException('Invalid or expired session');
+    }
+
+    return this.startTokenFamily(user, stored.familyId);
+  }
+
+  async logout(refreshToken: string | undefined): Promise<void> {
+    if (!refreshToken) return;
+
+    await this.refreshTokenRepository.update(
+      { tokenHash: sha256(refreshToken), revokedAt: IsNull() },
+      { revokedAt: new Date() },
+    );
+  }
+
+  async currentUser(userId: string): Promise<CurrentUserDto> {
+    const user = await this.userRepository.findOne({ where: { id: userId } });
+    if (!user) {
+      throw new UnauthorizedException('Invalid or expired session');
+    }
+
+    const organization = await this.organizationRepository.findOneOrFail({
+      where: { id: user.orgId },
+    });
+
+    return {
+      id: user.id,
+      name: user.name,
+      phone: user.phone,
+      role: user.role,
+      organization: { id: organization.id, name: organization.name },
+      permissions: [...ROLE_PERMISSIONS[user.role]],
+    };
+  }
+
+  private async startTokenFamily(
+    user: User,
+    familyId: string,
+  ): Promise<SessionTokens> {
     const accessPayload: JwtPayload = {
       sub: user.id,
       role: user.role,
       orgId: user.orgId,
     };
 
-    const refreshPayload: RefreshTokenPayload = {
-      ...accessPayload,
-      familyId,
-      jti: randomUUID(),
-    };
-
     const [accessToken, refreshToken] = await Promise.all([
       this.jwtAuthService.generateAccessToken(accessPayload),
-      this.jwtAuthService.generateRefreshToken(refreshPayload),
+      this.jwtAuthService.generateRefreshToken({
+        ...accessPayload,
+        familyId,
+        jti: randomUUID(),
+      }),
     ]);
-
-    // Store hashed refresh token
-    const tokenHash = sha256(refreshToken);
-    const expiresAt = new Date(Date.now() + 14 * 24 * 60 * 60 * 1000); // 14d
 
     await this.refreshTokenRepository.save({
       userId: user.id,
       familyId,
-      tokenHash,
-      expiresAt,
+      tokenHash: sha256(refreshToken),
+      expiresAt: new Date(Date.now() + REFRESH_TOKEN_TTL_SECONDS * 1000),
       revokedAt: null,
     });
 
-    return {
-      success: true,
-      message: 'Login successful',
-      accessToken,
-      refreshToken,
-    };
+    return { accessToken, refreshToken };
   }
 
-  async Refresh(token?: string) {
-    if (!token) {
-      throw new UnauthorizedException('No refresh token provided');
-    }
+  private async revokeFamily(familyId: string): Promise<void> {
+    await this.refreshTokenRepository.update(
+      { familyId, revokedAt: IsNull() },
+      { revokedAt: new Date() },
+    );
+  }
 
-    let payload: RefreshTokenPayload;
-    try {
-      payload = await this.jwtAuthService.verifyRefreshToken(token);
-    } catch {
-      throw new UnauthorizedException('Invalid or expired session');
-    }
+  private async failedAttempts(phone: string): Promise<number> {
+    return (
+      (await this.cacheService.get<number>(otpKeys(phone).failedAttempts)) ?? 0
+    );
+  }
 
-    const tokenHash = sha256(token);
-
-    const storedToken = await this.refreshTokenRepository.findOne({
-      where: { tokenHash },
-    });
-
-    if (!storedToken) {
-      throw new UnauthorizedException('Invalid or expired session');
-    }
-
-    // Check if token is revoked (reuse attack)
-    if (storedToken.revokedAt) {
-      // Revoke entire family
-      await this.refreshTokenRepository.update(
-        { familyId: payload.familyId, revokedAt: IsNull() },
-        { revokedAt: new Date() },
+  private async enforceRequestLimit(phone: string): Promise<void> {
+    const keys = otpKeys(phone);
+    if (await this.cacheService.get(keys.requestLock)) {
+      throw new TooManyRequestsException(
+        'Too many requests. Please try again later.',
       );
-      this.logger.warn(
-        `Reused refresh token detected. Revoked family: ${payload.familyId}, user: ${payload.sub}`,
+    }
+
+    const requests =
+      ((await this.cacheService.get<number>(keys.requestCount)) ?? 0) + 1;
+    await this.cacheService.set(
+      keys.requestCount,
+      requests,
+      OTP_REQUEST_WINDOW_SECONDS,
+    );
+
+    if (requests > OTP_REQUEST_LIMIT) {
+      await Promise.all([
+        this.cacheService.set(keys.requestLock, true, OTP_LOCK_SECONDS),
+        this.cacheService.del(keys.requestCount),
+      ]);
+      throw new TooManyRequestsException(
+        'Too many requests. Please try again later.',
       );
-      throw new UnauthorizedException('Invalid or expired session');
     }
-
-    // Mark current token as revoked (rotation)
-    await this.refreshTokenRepository.update(storedToken.id, {
-      revokedAt: new Date(),
-    });
-
-    // Issue new tokens
-    const accessPayload: JwtPayload = {
-      sub: payload.sub,
-      role: payload.role,
-      orgId: payload.orgId,
-    };
-
-    const refreshPayload: RefreshTokenPayload = {
-      ...accessPayload,
-      familyId: payload.familyId,
-      jti: randomUUID(),
-    };
-
-    const [newAccessToken, newRefreshToken] = await Promise.all([
-      this.jwtAuthService.generateAccessToken(accessPayload),
-      this.jwtAuthService.generateRefreshToken(refreshPayload),
-    ]);
-
-    // Store new refresh token
-    const newTokenHash = sha256(newRefreshToken);
-    const expiresAt = new Date(Date.now() + 14 * 24 * 60 * 60 * 1000);
-
-    await this.refreshTokenRepository.save({
-      userId: payload.sub,
-      familyId: payload.familyId,
-      tokenHash: newTokenHash,
-      expiresAt,
-      revokedAt: null,
-    });
-
-    return {
-      accessToken: newAccessToken,
-      refreshToken: newRefreshToken,
-    };
-  }
-
-  async Logout(token?: string) {
-    if (!token) return { success: true };
-
-    try {
-      const payload = await this.jwtAuthService.verifyRefreshToken(token);
-      const tokenHash = sha256(token);
-
-      await this.refreshTokenRepository.update(
-        { tokenHash, revokedAt: IsNull() },
-        { revokedAt: new Date() },
-      );
-
-      this.logger.debug(`User ${payload.sub} logged out`);
-    } catch {
-      // Token already invalid or expired — still clear cookies
-    }
-
-    return { success: true };
-  }
-
-  async SummaryUser(summaryUserDto: SummaryUserDataDto, userId: string) {
-    const user = await this.userRepository.findOne({
-      where: { id: userId },
-    });
-
-    if (!user) {
-      throw new NotFoundException('User not found');
-    }
-
-    user.name = summaryUserDto.fullName;
-    await this.userRepository.save(user);
-
-    return {
-      message: 'User information updated successfully',
-    };
-  }
-
-  async Me(userId: string) {
-    const user = await this.userRepository.findOne({
-      where: { id: userId },
-    });
-
-    if (!user) {
-      throw new NotFoundException('User not found');
-    }
-
-    const permissions = ROLE_PERMISSIONS[user.role] ?? [];
-
-    let orgName: string | null = null;
-    if (user.orgId) {
-      const org = await this.organizationRepository.findOne({
-        where: { id: user.orgId },
-      });
-      orgName = org?.name ?? null;
-    }
-
-    return {
-      id: user.id,
-      phone: user.phone,
-      name: user.name,
-      role: user.role,
-      orgId: user.orgId,
-      orgName,
-      permissions,
-    };
   }
 }

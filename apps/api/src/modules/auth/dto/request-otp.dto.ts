@@ -2,8 +2,8 @@ import { ApiProperty } from '@nestjs/swagger';
 import { IsPhoneNumber, IsString } from 'class-validator';
 
 export class RequestOtpDto {
-  @ApiProperty({ example: '09924164032' })
+  @ApiProperty({ example: '09911110001' })
   @IsString()
   @IsPhoneNumber('IR', { message: 'phone must be a valid phone number' })
-  phone: string;
+  phone!: string;
 }

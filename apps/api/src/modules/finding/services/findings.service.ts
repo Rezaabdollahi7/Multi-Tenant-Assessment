@@ -1,15 +1,4 @@
-import { ListFindingsQueryDto } from '../dto/list-findings-query.dto';
-import { CreateFindingDto } from '../dto/create-finding.dto';
-import { UpdateFindingDto } from '../dto/update-finding.dto';
-import { FindingDto } from '../dto/finding-response.dto';
-import { Finding } from '../entities/finding.entity';
-import { FindingStatus } from '../enums/finding-status.enum';
-import { Project } from '../../project/entities/project.entity';
-import { ActivityService } from '../../activity/services/activity.service';
-import {
-  ActivityActions,
-  ActivityTargetTypes,
-} from '../../activity/constants/activity.constants';
+import { paginationMeta } from '@common/dto/pagination.dto';
 import { escapeLike } from '@common/utils/escape-like.util';
 import {
   BadRequestException,
@@ -17,7 +6,20 @@ import {
   NotFoundException,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { DataSource, Repository } from 'typeorm';
+import { DataSource, EntityManager, In, Repository } from 'typeorm';
+import {
+  ActivityActions,
+  ActivityTargetTypes,
+} from '../../activity/constants/activity.constants';
+import { ActivityService } from '../../activity/services/activity.service';
+import { User } from '../../auth/entities/user.entity';
+import { Project } from '../../project/entities/project.entity';
+import { CreateFindingDto } from '../dto/create-finding.dto';
+import { FindingDto, FindingListDto } from '../dto/finding-response.dto';
+import { ListFindingsQueryDto } from '../dto/list-findings-query.dto';
+import { UpdateFindingDto } from '../dto/update-finding.dto';
+import { Finding } from '../entities/finding.entity';
+import { FindingStatus } from '../enums/finding-status.enum';
 
 @Injectable()
 export class FindingsService {
@@ -26,6 +28,8 @@ export class FindingsService {
     private readonly findingRepository: Repository<Finding>,
     @InjectRepository(Project)
     private readonly projectRepository: Repository<Project>,
+    @InjectRepository(User)
+    private readonly userRepository: Repository<User>,
     private readonly activityService: ActivityService,
     private readonly dataSource: DataSource,
   ) {}
@@ -33,16 +37,7 @@ export class FindingsService {
   async list(
     orgId: string,
     query: ListFindingsQueryDto,
-  ): Promise<{
-    items: FindingDto[];
-    total: number;
-    page: number;
-    limit: number;
-    totalPages: number;
-  }> {
-    const page = query.page ?? 1;
-    const limit = query.limit ?? 10;
-
+  ): Promise<FindingListDto> {
     const qb = this.findingRepository
       .createQueryBuilder('f')
       .where('f.orgId = :orgId', { orgId });
@@ -62,33 +57,23 @@ export class FindingsService {
       });
     }
 
-    const [rows, total] = await Promise.all([
-      qb
-        .clone()
-        .orderBy('f.createdAt', 'DESC')
-        .skip((page - 1) * limit)
-        .take(limit)
-        .getMany(),
-      qb.getCount(),
-    ]);
+    const [findings, totalItems] = await qb
+      .orderBy('f.createdAt', 'DESC')
+      .addOrderBy('f.id')
+      .skip((query.page - 1) * query.limit)
+      .take(query.limit)
+      .getManyAndCount();
 
     return {
-      items: rows.map((f) => this.toDto(f)),
-      total,
-      page,
-      limit,
-      totalPages: Math.ceil(total / limit),
+      data: await this.toDtos(findings),
+      meta: paginationMeta(query.page, query.limit, totalItems),
     };
   }
 
   async detail(orgId: string, id: string): Promise<FindingDto> {
-    const finding = await this.findingRepository.findOne({
-      where: { id, orgId },
-    });
-    if (!finding) {
-      throw new NotFoundException('Finding not found');
-    }
-    return this.toDto(finding);
+    const finding = await this.findInOrg(this.dataSource.manager, orgId, id);
+    const [dto] = await this.toDtos([finding]);
+    return dto;
   }
 
   async create(
@@ -96,7 +81,6 @@ export class FindingsService {
     userId: string,
     dto: CreateFindingDto,
   ): Promise<FindingDto> {
-    // Verify the referenced project belongs to the caller's organization.
     const project = await this.projectRepository.findOne({
       where: { id: dto.projectId, orgId },
     });
@@ -104,32 +88,30 @@ export class FindingsService {
       throw new NotFoundException('Project not found');
     }
 
-    return this.dataSource.transaction(async (manager) => {
-      const finding = manager.create(Finding, {
-        projectId: dto.projectId,
-        orgId,
-        title: dto.title,
-        description: dto.description,
-        severity: dto.severity,
-        status: FindingStatus.OPEN,
-        createdById: userId,
-      });
-      const saved = await manager.save(finding);
-
-      await this.activityService.record(
-        {
+    const finding = await this.dataSource.transaction(async (manager) => {
+      const saved = await manager.save(
+        manager.create(Finding, {
           orgId,
-          userId,
-          action: ActivityActions.FINDING_CREATED,
-          targetType: ActivityTargetTypes.FINDING,
-          targetId: saved.id,
-          targetName: saved.title,
-        },
-        manager,
+          projectId: project.id,
+          title: dto.title,
+          description: dto.description || null,
+          severity: dto.severity,
+          status: FindingStatus.OPEN,
+          createdById: userId,
+        }),
       );
-
-      return this.toDto(saved);
+      await this.activityService.record(manager, {
+        orgId,
+        userId,
+        action: ActivityActions.FINDING_CREATED,
+        targetType: ActivityTargetTypes.FINDING,
+        targetId: saved.id,
+        targetName: saved.title,
+      });
+      return saved;
     });
+
+    return this.detail(orgId, finding.id);
   }
 
   async update(
@@ -139,88 +121,93 @@ export class FindingsService {
     dto: UpdateFindingDto,
   ): Promise<FindingDto> {
     const { title, description, severity, status } = dto;
-    if (
-      title === undefined &&
-      description === undefined &&
-      severity === undefined &&
-      status === undefined
-    ) {
+    if ([title, description, severity, status].every((v) => v === undefined)) {
       throw new BadRequestException('At least one field must be provided');
     }
 
-    return this.dataSource.transaction(async (manager) => {
-      const finding = await manager.findOne(Finding, {
-        where: { id, orgId },
-      });
-      if (!finding) {
-        throw new NotFoundException('Finding not found');
-      }
+    await this.dataSource.transaction(async (manager) => {
+      const finding = await this.findInOrg(manager, orgId, id);
 
       if (title !== undefined) finding.title = title;
-      if (description !== undefined) finding.description = description;
+      if (description !== undefined) finding.description = description || null;
       if (severity !== undefined) finding.severity = severity;
       if (status !== undefined) finding.status = status;
 
-      const saved = await manager.save(finding);
-
-      await this.activityService.record(
-        {
-          orgId,
-          userId,
-          action: ActivityActions.FINDING_UPDATED,
-          targetType: ActivityTargetTypes.FINDING,
-          targetId: saved.id,
-          targetName: saved.title,
-        },
-        manager,
-      );
-
-      return this.toDto(saved);
-    });
-  }
-
-  async remove(
-    orgId: string,
-    userId: string,
-    id: string,
-  ): Promise<{ success: boolean }> {
-    return this.dataSource.transaction(async (manager) => {
-      const finding = await manager.findOne(Finding, {
-        where: { id, orgId },
+      await manager.save(finding);
+      await this.activityService.record(manager, {
+        orgId,
+        userId,
+        action: ActivityActions.FINDING_UPDATED,
+        targetType: ActivityTargetTypes.FINDING,
+        targetId: finding.id,
+        targetName: finding.title,
       });
-      if (!finding) {
-        throw new NotFoundException('Finding not found');
-      }
+    });
 
-      await manager.delete(Finding, { id, orgId });
+    return this.detail(orgId, id);
+  }
 
-      await this.activityService.record(
-        {
-          orgId,
-          userId,
-          action: ActivityActions.FINDING_DELETED,
-          targetType: ActivityTargetTypes.FINDING,
-          targetId: id,
-          targetName: finding.title,
-        },
-        manager,
-      );
+  async remove(orgId: string, userId: string, id: string): Promise<void> {
+    await this.dataSource.transaction(async (manager) => {
+      const finding = await this.findInOrg(manager, orgId, id);
 
-      return { success: true };
+      await manager.delete(Finding, { id: finding.id, orgId });
+      await this.activityService.record(manager, {
+        orgId,
+        userId,
+        action: ActivityActions.FINDING_DELETED,
+        targetType: ActivityTargetTypes.FINDING,
+        targetId: finding.id,
+        targetName: finding.title,
+      });
     });
   }
 
-  private toDto(finding: Finding): FindingDto {
-    return {
+  private async findInOrg(
+    manager: EntityManager,
+    orgId: string,
+    id: string,
+  ): Promise<Finding> {
+    const finding = await manager.findOne(Finding, { where: { id, orgId } });
+    if (!finding) {
+      throw new NotFoundException('Finding not found');
+    }
+    return finding;
+  }
+
+  /** Resolves Project and author names in two queries for the whole page. */
+  private async toDtos(findings: Finding[]): Promise<FindingDto[]> {
+    if (findings.length === 0) return [];
+
+    const [projects, authors] = await Promise.all([
+      this.projectRepository.find({
+        where: { id: In(findings.map((f) => f.projectId)) },
+        select: { id: true, name: true },
+      }),
+      this.userRepository.find({
+        where: { id: In(findings.map((f) => f.createdById)) },
+        select: { id: true, name: true },
+      }),
+    ]);
+    const projectsById = new Map(projects.map((p) => [p.id, p]));
+    const authorsById = new Map(authors.map((u) => [u.id, u]));
+
+    return findings.map((finding) => ({
       id: finding.id,
-      projectId: finding.projectId,
       title: finding.title,
       description: finding.description,
       severity: finding.severity,
       status: finding.status,
-      createdById: finding.createdById,
+      project: {
+        id: finding.projectId,
+        name: projectsById.get(finding.projectId)?.name ?? '',
+      },
+      createdBy: {
+        id: finding.createdById,
+        name: authorsById.get(finding.createdById)?.name ?? null,
+      },
       createdAt: finding.createdAt,
       updatedAt: finding.updatedAt,
-    };
+    }));
   }
 }

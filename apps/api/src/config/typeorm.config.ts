@@ -4,25 +4,23 @@ import type {
   TypeOrmModuleOptions,
   TypeOrmOptionsFactory,
 } from '@nestjs/typeorm';
+import type { Environment } from './env.validation';
 
 @Injectable()
 export class TypeOrmConfig implements TypeOrmOptionsFactory {
-  constructor(private readonly configService: ConfigService) {}
+  constructor(private readonly config: ConfigService<Environment, true>) {}
 
   createTypeOrmOptions(): TypeOrmModuleOptions {
     return {
       type: 'postgres',
-      host: this.configService.get<string>('POSTGRES_HOST'),
-      port: Number(this.configService.get('POSTGRES_PORT')),
-      username: this.configService.get<string>('POSTGRES_USER'),
-      password: this.configService.get<string>('POSTGRES_PASSWORD'),
-      database: this.configService.get<string>('POSTGRES_DB'),
-      synchronize: true,
+      host: this.config.get('POSTGRES_HOST', { infer: true }),
+      port: this.config.get('POSTGRES_PORT', { infer: true }),
+      username: this.config.get('POSTGRES_USER', { infer: true }),
+      password: this.config.get('POSTGRES_PASSWORD', { infer: true }),
+      database: this.config.get('POSTGRES_DB', { infer: true }),
       autoLoadEntities: true,
-      entities: [
-        'dist/**/**/**/*.entity{.ts,.js}',
-        'dist/**/**/*.entity{.ts,.js}',
-      ],
+      // Schema is derived from the entities; see docs/limitations.md.
+      synchronize: true,
     };
   }
 }

@@ -1,4 +1,3 @@
-import { ApiProperty } from '@nestjs/swagger';
 import {
   Column,
   CreateDateColumn,
@@ -11,29 +10,25 @@ import {
 @Index('idx_refresh_tokens_family', ['familyId'])
 export class RefreshToken {
   @PrimaryGeneratedColumn('uuid')
-  id: string;
+  id!: string;
 
-  @ApiProperty()
   @Column({ type: 'uuid' })
   @Index()
-  userId: string;
+  userId!: string;
 
-  @ApiProperty()
   @Column({ type: 'uuid' })
-  familyId: string;
+  familyId!: string;
 
-  @ApiProperty()
+  /** SHA-256 of the token; the token itself is never stored. */
   @Column({ unique: true })
-  tokenHash: string;
+  tokenHash!: string;
 
-  @ApiProperty()
-  @Column({ type: 'timestamp', nullable: true })
-  revokedAt: Date | null;
+  @Column({ type: 'timestamptz', nullable: true })
+  revokedAt!: Date | null;
 
-  @ApiProperty()
-  @Column({ type: 'timestamp' })
-  expiresAt: Date;
+  @Column({ type: 'timestamptz' })
+  expiresAt!: Date;
 
-  @CreateDateColumn()
-  createdAt: Date;
+  @CreateDateColumn({ type: 'timestamptz' })
+  createdAt!: Date;
 }

@@ -11,6 +11,5 @@ import { TypeOrmModule } from '@nestjs/typeorm';
   imports: [TypeOrmModule.forFeature([Project, ProjectMember, Finding, User])],
   controllers: [ProjectsController],
   providers: [ProjectsService],
-  exports: [ProjectsService],
 })
 export class ProjectModule {}

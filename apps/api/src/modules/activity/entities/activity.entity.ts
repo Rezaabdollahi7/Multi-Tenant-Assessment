@@ -1,33 +1,31 @@
 import { BaseEntity } from '@common/abstracts/base.entity';
-import { ApiProperty } from '@nestjs/swagger';
 import { Column, Entity, Index } from 'typeorm';
+import type {
+  ActivityAction,
+  ActivityTargetType,
+} from '../constants/activity.constants';
 
 @Index('idx_activities_org_created', ['orgId', 'createdAt'])
 @Entity('activities')
 export class Activity extends BaseEntity {
-  @ApiProperty()
   @Column({ type: 'uuid' })
   @Index()
-  orgId: string;
+  orgId!: string;
 
-  @ApiProperty()
   @Column({ type: 'uuid' })
   @Index()
-  userId: string;
+  userId!: string;
 
-  @ApiProperty()
-  @Column()
-  action: string;
+  @Column({ type: 'varchar' })
+  action!: ActivityAction;
 
-  @ApiProperty()
-  @Column()
-  targetType: string;
+  @Column({ type: 'varchar' })
+  targetType!: ActivityTargetType;
 
-  @ApiProperty()
   @Column({ type: 'uuid' })
-  targetId: string;
+  targetId!: string;
 
-  @ApiProperty()
-  @Column({ nullable: true })
-  targetName: string;
+  /** The target's name at the time, so deleted targets still read well. */
+  @Column({ type: 'varchar' })
+  targetName!: string;
 }

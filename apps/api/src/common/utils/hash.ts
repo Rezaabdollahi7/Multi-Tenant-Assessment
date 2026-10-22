@@ -1,12 +1,11 @@
-import { compare, hash } from 'bcrypt';
+import { compare, hash as bcryptHash } from 'bcrypt';
 
-export async function Hash(data: string): Promise<string> {
-  return await hash(data, 10);
+const SALT_ROUNDS = 10;
+
+export function hash(value: string): Promise<string> {
+  return bcryptHash(value, SALT_ROUNDS);
 }
 
-export async function Compare(
-  data: string,
-  hashedData: string,
-): Promise<boolean> {
-  return await compare(data, hashedData);
+export function compareHash(value: string, hashed: string): Promise<boolean> {
+  return compare(value, hashed);
 }

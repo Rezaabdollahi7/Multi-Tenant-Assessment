@@ -1,92 +1,65 @@
-# Secure Multi-Tenant Assessment API
+# API
 
-A secure, tenant-isolated backend for a multi-tenant assessment dashboard, built with NestJS, TypeORM, PostgreSQL, and Redis.
+The NestJS API behind the dashboard, and the brief's Mock API: its data is fabricated by a seed script ([ADR 0001](../../docs/adr/0001-nestjs-backend-as-mock-api.md)). System-level design lives in [`docs/ARCHITECTURE.md`](../../docs/ARCHITECTURE.md).
 
-## Security features
+Every route is served under `/api`. The OpenAPI document and Swagger UI are at `http://localhost:3001/docs`.
 
-- **Authentication**: Phone + OTP login (bcrypt-hashed OTPs), JWT access tokens, encrypted refresh tokens.
-- **Refresh token rotation**: each refresh rotates the token within a "family"; reusing a rotated token revokes the entire family.
-- **RBAC**: three roles (`ADMIN`, `ANALYST`, `VIEWER`) mapped to granular permissions via `ROLE_PERMISSIONS` (with inheritance).
-- **Tenant isolation**: `orgId` is always taken from the verified JWT (never from the body/query/params). Cross-tenant access returns `404`.
-- **Hardening**: helmet, CORS allow-list (`CORS_ORIGIN`), rate limiting (Redis-backed), `httpOnly`/`sameSite=lax`/`secure`-from-env cookies, global exception filter (no stack traces leaked).
+## Security model
 
-## Requirements
-
-- Node.js + pnpm
-- PostgreSQL (default `localhost:15432`)
-- Redis (default `localhost:6379`)
+- **Sign-in:** phone number + 5-digit one-time code. Codes are stored bcrypt-hashed in Redis for 2 minutes. Each phone may request 3 codes per 2 minutes and make 5 wrong attempts before a 5-minute lock; both limits answer `429`. An unknown phone gets the same answer as a wrong code.
+- **Session:** a short-lived access JWT (`ACCESS_TOKEN_TTL_SECONDS`, default 15 minutes) and a 14-day refresh JWT, both in `httpOnly`, `SameSite=Lax` cookies (`Secure` in production). The refresh cookie is scoped to `/api/auth`.
+- **Refresh rotation:** refresh tokens are stored as SHA-256 hashes and rotated on every use. Presenting an already-rotated token revokes its whole family. Logout revokes the current token.
+- **Authorisation:** each route declares the Permission it needs with `@RequirePermissions`; Roles map to Permissions in [`permissions.constants.ts`](src/common/constants/permissions.constants.ts). Routes without a session answer `401`, missing Permissions `403`.
+- **Tenant isolation:** `orgId` comes only from the verified access token. Records of another Organization answer `404`, so their existence is not disclosed.
+- **Hardening:** environment validated at startup, `helmet` headers, whitelist validation that rejects unknown fields, a global exception filter that never leaks stack traces.
 
 ## Setup
 
+Requires Postgres and Redis; `docker compose -f ../../docker/compose.yml up -d postgres redis` starts both.
+
 ```bash
-cp .env.example .env   # then fill in secrets / connection URLs
+cp .env.example .env
 pnpm install
+pnpm seed          # reset the database and fabricate data
+pnpm dev           # watch mode on :3001
 ```
 
-## Run
+`pnpm seed --if-empty` seeds only an empty database. The seed is deterministic: the same data on every run, with dates relative to today.
 
-```bash
-pnpm run dev        # watch mode
-pnpm run start      # production start
-pnpm run build      # compile to dist/
-```
+## Demo accounts
 
-## Seed
+Outside production every code is `DEV_OTP` (default `00000`), and `request-otp` also returns it.
 
-```bash
-pnpm run seed
-```
+| Organization | Admin       | Analyst     | Viewer      |
+| ------------ | ----------- | ----------- | ----------- |
+| Org A        | 09911110001 | 09911110002 | 09911110003 |
+| Org B        | 09922220001 | 09922220002 | 09922220003 |
+| Org C        | 09933330001 | 09933330002 | 09933330003 |
 
-The seed is idempotent and creates three organizations with sample users, projects, findings, and activities.
+## Routes
 
-### Seeded users
+| Method | Path                                                                                     | Permission                    |
+| ------ | ---------------------------------------------------------------------------------------- | ----------------------------- |
+| POST   | `/api/auth/request-otp`, `/api/auth/verify-otp`, `/api/auth/refresh`, `/api/auth/logout` | public                        |
+| GET    | `/api/auth/me`                                                                           | signed in                     |
+| GET    | `/api/dashboard/summary`, `/api/dashboard/trend`                                         | `dashboard:read`              |
+| GET    | `/api/dashboard/activities`                                                              | `activity:read`               |
+| GET    | `/api/projects`, `/api/projects/:id`                                                     | `project:read`                |
+| GET    | `/api/projects/:id/members`                                                              | `project:read`, `member:read` |
+| GET    | `/api/findings`, `/api/findings/:id`                                                     | `finding:read`                |
+| POST   | `/api/findings`                                                                          | `finding:create`              |
+| PATCH  | `/api/findings/:id`                                                                      | `finding:update`              |
+| DELETE | `/api/findings/:id`                                                                      | `finding:delete`              |
 
-| Organization | Role    | Name            | Phone       |
-| ------------ | ------- | --------------- | ----------- |
-| Org A        | ADMIN   | Ali Ahmadi      | 09911110001 |
-| Org A        | ANALYST | Sara Mohammadi  | 09911110002 |
-| Org A        | VIEWER  | Reza Karimi     | 09911110003 |
-| Org B        | ADMIN   | Maryam Hosseini | 09922220001 |
-| Org B        | ANALYST | Hossein Rezaei  | 09922220002 |
-| Org B        | VIEWER  | Zahra Naderi    | 09922220003 |
-| Org C        | ADMIN   | Amir Taheri     | 09933330001 |
-| Org C        | ANALYST | Neda Safari     | 09933330002 |
-| Org C        | VIEWER  | Kaveh Moradi    | 09933330003 |
-
-Roles: `ADMIN`, `ANALYST`, `VIEWER`.
-
-### Login flow
-
-1. `POST /auth/request-otp` with `{ "phone": "09911110001" }`.
-2. `POST /auth/vrify-otp` with `{ "phone": "09911110001", "otp": "<code>" }`.
-
-In development/test (`NODE_ENV` is `development` or `test`), the OTP is fixed to the value of `DEV_OTP` (default `00000`), and the code is also returned in the response body for convenience. In production a random code is generated and (in a real deployment) would be delivered out-of-band.
-
-## Roles & permissions
-
-| Permission       | VIEWER | ANALYST | ADMIN |
-| ---------------- | :----: | :-----: | :---: |
-| `dashboard:read` |   ✅   |   ✅    |  ✅   |
-| `project:read`   |   ✅   |   ✅    |  ✅   |
-| `member:read`    |   ✅   |   ✅    |  ✅   |
-| `activity:read`  |   ✅   |   ✅    |  ✅   |
-| `finding:read`   |   ✅   |   ✅    |  ✅   |
-| `finding:create` |   ❌   |   ✅    |  ✅   |
-| `finding:update` |   ❌   |   ✅    |  ✅   |
-| `finding:delete` |   ❌   |   ❌    |  ✅   |
-| `member:manage`  |   ❌   |   ❌    |  ✅   |
-
-## Endpoints
-
-- `POST /auth/request-otp`, `POST /auth/vrify-otp`, `POST /auth/refresh`, `POST /auth/logout`, `GET /auth/me`, `PATCH /auth/summary-user`
-- `GET /projects`, `GET /projects/:id`, `GET /projects/:id/members`
-- `GET /findings`, `GET /findings/:id`, `POST /findings`, `PATCH /findings/:id`, `DELETE /findings/:id`
-- `GET /dashboard/summary`, `GET /dashboard/trend`, `GET /dashboard/activities`
+Lists accept `page`, `limit`, `search` and their filters, and return `{ data, meta: { page, limit, totalItems, totalPages } }`.
 
 ## Tests
 
 ```bash
-pnpm run test        # unit tests
-pnpm run test:e2e    # end-to-end (security & multi-tenancy)
-pnpm run lint        # eslint
+pnpm test          # unit tests
+pnpm test:e2e      # e2e against the Postgres and Redis in .env
+pnpm lint
+pnpm check-types
 ```
+
+The e2e suites create their own Organizations and remove them afterwards, so they can run against a seeded database.

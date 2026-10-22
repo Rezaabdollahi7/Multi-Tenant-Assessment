@@ -1,22 +1,23 @@
+import { createKeyv } from '@keyv/redis';
 import { CacheModule } from '@nestjs/cache-manager';
 import { Module } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import { redisStore } from 'cache-manager-redis-yet';
+import type { Environment } from 'src/config/env.validation';
+import { CacheService } from '../services/cache.service';
+
+/** Redis-backed cache for short-lived auth state (OTP codes, attempt counters). */
 @Module({
   imports: [
     CacheModule.registerAsync({
       inject: [ConfigService],
-      useFactory: async (configService: ConfigService) => ({
-        store: await redisStore({
-          socket: {
-            host: configService.get<string>('REDIS_HOST'),
-            port: Number(configService.get('REDIS_PORT')),
-          },
-        }),
-        ttl: 300 * 1000,
-      }),
-      isGlobal: true,
+      useFactory: (config: ConfigService<Environment, true>) => {
+        const host = config.get('REDIS_HOST', { infer: true });
+        const port = config.get('REDIS_PORT', { infer: true });
+        return { stores: [createKeyv(`redis://${host}:${port}`)] };
+      },
     }),
   ],
+  providers: [CacheService],
+  exports: [CacheService],
 })
 export class AppCacheModule {}

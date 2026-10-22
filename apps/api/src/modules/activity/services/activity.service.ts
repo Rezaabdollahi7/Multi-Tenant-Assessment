@@ -1,30 +1,24 @@
-import { Activity } from '../entities/activity.entity';
 import { Injectable } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
-import { DeepPartial, EntityManager, Repository } from 'typeorm';
+import type { EntityManager } from 'typeorm';
+import type {
+  ActivityAction,
+  ActivityTargetType,
+} from '../constants/activity.constants';
+import { Activity } from '../entities/activity.entity';
 
-export type ActivityRecordDto = {
+export type ActivityRecord = {
   orgId: string;
   userId: string;
-  action: string;
-  targetType: string;
+  action: ActivityAction;
+  targetType: ActivityTargetType;
   targetId: string;
-  targetName?: string | null;
+  targetName: string;
 };
 
 @Injectable()
 export class ActivityService {
-  constructor(
-    @InjectRepository(Activity)
-    private readonly repository: Repository<Activity>,
-  ) {}
-
-  async record(
-    data: ActivityRecordDto,
-    manager?: EntityManager,
-  ): Promise<Activity> {
-    const repo = manager ? manager.getRepository(Activity) : this.repository;
-    const entity = repo.create(data as DeepPartial<Activity>);
-    return repo.save(entity);
+  /** Records an Activity inside the caller's transaction, so both commit or neither. */
+  async record(manager: EntityManager, record: ActivityRecord): Promise<void> {
+    await manager.save(manager.create(Activity, record));
   }
 }

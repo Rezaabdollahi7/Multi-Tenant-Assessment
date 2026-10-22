@@ -1,23 +1,18 @@
-import type { ExecutionContext } from '@nestjs/common';
-import { BadRequestException, createParamDecorator } from '@nestjs/common';
+import type { JwtPayload } from '@common/@types/jwt-payload.type';
+import {
+  createParamDecorator,
+  type ExecutionContext,
+  UnauthorizedException,
+} from '@nestjs/common';
+import type { Request } from 'express';
 
+/** The verified access-token payload, or one of its fields. */
 export const UserInfo = createParamDecorator(
-  (
-    data: keyof NonNullable<Express.Request['user']> | undefined,
-    ctx: ExecutionContext,
-  ) => {
-    const request = ctx.switchToHttp().getRequest<Express.Request>();
-    const user = request.user;
-
+  (field: keyof JwtPayload | undefined, ctx: ExecutionContext) => {
+    const user = ctx.switchToHttp().getRequest<Request>().user;
     if (!user) {
-      throw new BadRequestException('کاربر لاگین نکرده است');
+      throw new UnauthorizedException('Invalid or expired session');
     }
-    if (data === 'sub') {
-      return user.sub;
-    }
-    if (data) {
-      return user[data];
-    }
-    return user;
+    return field ? user[field] : user;
   },
 );

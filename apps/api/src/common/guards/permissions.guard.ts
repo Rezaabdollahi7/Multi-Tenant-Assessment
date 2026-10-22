@@ -18,10 +18,10 @@ export class PermissionsGuard implements CanActivate {
   constructor(private readonly reflector: Reflector) {}
 
   canActivate(context: ExecutionContext): boolean {
-    const skipAuth = this.reflector.getAllAndOverride(IS_PUBLIC_KEY, [
-      context.getHandler(),
-      context.getClass(),
-    ]);
+    const skipAuth = this.reflector.getAllAndOverride<boolean | undefined>(
+      IS_PUBLIC_KEY,
+      [context.getHandler(), context.getClass()],
+    );
     if (skipAuth) return true;
 
     const requiredPermissions = this.reflector.getAllAndOverride<Permission[]>(

@@ -1,24 +1,18 @@
 import { BaseEntity } from '@common/abstracts/base.entity';
-import { ApiProperty } from '@nestjs/swagger';
-import { Column, CreateDateColumn, Entity, Index } from 'typeorm';
+import { Column, Entity, Index, Unique } from 'typeorm';
 
 @Index('idx_members_project', ['projectId'])
 @Index('idx_members_user', ['userId'])
+@Unique('uq_members_project_user', ['projectId', 'userId'])
 @Entity('project_members')
 export class ProjectMember extends BaseEntity {
-  @ApiProperty()
   @Column({ type: 'uuid' })
-  projectId: string;
+  projectId!: string;
 
-  @ApiProperty()
   @Column({ type: 'uuid' })
-  userId: string;
+  userId!: string;
 
-  @ApiProperty()
-  @Column({ nullable: true })
-  roleInProject: string;
-
-  @ApiProperty()
-  @CreateDateColumn()
-  joinedAt: Date;
+  /** What the Member does on this Project, e.g. "Lead tester". */
+  @Column({ type: 'varchar', nullable: true })
+  roleInProject!: string | null;
 }

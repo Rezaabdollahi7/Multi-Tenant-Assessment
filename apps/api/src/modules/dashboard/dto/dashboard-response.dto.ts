@@ -1,50 +1,65 @@
+import {
+  ProjectStatusBreakdownDto,
+  SeverityBreakdownDto,
+} from '@common/dto/breakdown.dto';
+import { UserSummaryDto } from '@common/dto/user-summary.dto';
 import { ApiProperty } from '@nestjs/swagger';
-
-export type SeverityKey = 'CRITICAL' | 'HIGH' | 'MEDIUM' | 'LOW' | 'INFO';
-export type ProjectStatusKey =
-  'ACTIVE' | 'IN_PROGRESS' | 'COMPLETED' | 'ARCHIVED';
+import {
+  ACTIVITY_ACTIONS,
+  ACTIVITY_TARGET_TYPES,
+  type ActivityAction,
+  type ActivityTargetType,
+} from '../../activity/constants/activity.constants';
 
 export class DashboardSummaryDto {
-  @ApiProperty()
-  projectsCount: number;
+  @ApiProperty({ minimum: 0 })
+  projectsCount!: number;
 
-  @ApiProperty()
-  findingsCount: number;
+  @ApiProperty({ minimum: 0 })
+  findingsCount!: number;
 
-  @ApiProperty({ description: 'Findings grouped by severity' })
-  severityBreakdown: Record<SeverityKey, number>;
+  @ApiProperty({ type: SeverityBreakdownDto })
+  severityBreakdown!: SeverityBreakdownDto;
 
-  @ApiProperty({ description: 'Projects grouped by status' })
-  projectStatusBreakdown: Record<ProjectStatusKey, number>;
+  @ApiProperty({ type: ProjectStatusBreakdownDto })
+  projectStatusBreakdown!: ProjectStatusBreakdownDto;
 }
 
 export class TrendPointDto {
-  @ApiProperty({ example: '2026-10-18' })
-  date: string;
+  @ApiProperty({ example: '2026-10-18', description: 'UTC calendar day' })
+  date!: string;
+
+  @ApiProperty({ minimum: 0 })
+  total!: number;
+
+  @ApiProperty({ type: SeverityBreakdownDto })
+  bySeverity!: SeverityBreakdownDto;
+}
+
+export class ActivityTargetDto {
+  @ApiProperty({ enum: ACTIVITY_TARGET_TYPES, enumName: 'ActivityTargetType' })
+  type!: ActivityTargetType;
+
+  @ApiProperty({ format: 'uuid' })
+  id!: string;
 
   @ApiProperty()
-  count: number;
+  name!: string;
 }
 
 export class ActivityDto {
-  @ApiProperty()
-  id: string;
+  @ApiProperty({ format: 'uuid' })
+  id!: string;
+
+  @ApiProperty({ enum: ACTIVITY_ACTIONS, enumName: 'ActivityAction' })
+  action!: ActivityAction;
+
+  @ApiProperty({ type: UserSummaryDto })
+  actor!: UserSummaryDto;
+
+  @ApiProperty({ type: ActivityTargetDto })
+  target!: ActivityTargetDto;
 
   @ApiProperty()
-  userId: string;
-
-  @ApiProperty()
-  action: string;
-
-  @ApiProperty()
-  targetType: string;
-
-  @ApiProperty()
-  targetId: string;
-
-  @ApiProperty()
-  targetName: string | null;
-
-  @ApiProperty()
-  createdAt: Date;
+  createdAt!: Date;
 }
