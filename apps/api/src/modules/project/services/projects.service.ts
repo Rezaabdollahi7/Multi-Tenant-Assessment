@@ -1,4 +1,4 @@
-import { countBy, SeverityBreakdownDto } from '@common/dto/breakdown.dto';
+import { countBy } from '@common/dto/breakdown.dto';
 import { paginationMeta } from '@common/dto/pagination.dto';
 import { escapeLike } from '@common/utils/escape-like.util';
 import { Injectable, NotFoundException } from '@nestjs/common';
@@ -56,8 +56,8 @@ export class ProjectsService {
 
     const ids = projects.map((project) => project.id);
     const [findingCounts, memberCounts] = await Promise.all([
-      this.countPerProject(this.findingRepository, ids),
-      this.countPerProject(this.memberRepository, ids),
+      this.countPerProject(Finding, ids),
+      this.countPerProject(ProjectMember, ids),
     ]);
 
     return {
@@ -79,10 +79,10 @@ export class ProjectsService {
         .where('f.orgId = :orgId AND f.projectId = :id', { orgId, id })
         .groupBy('f.severity')
         .getRawMany<{ key: string; count: string }>(),
-      this.countPerProject(this.memberRepository, [id]),
+      this.countPerProject(ProjectMember, [id]),
     ]);
 
-    const severityBreakdown: SeverityBreakdownDto = countBy(
+    const severityBreakdown = countBy(
       Object.values(FindingSeverity),
       severityRows,
     );
@@ -135,13 +135,13 @@ export class ProjectsService {
   }
 
   private async countPerProject(
-    repository: Repository<Finding> | Repository<ProjectMember>,
+    entity: typeof Finding | typeof ProjectMember,
     projectIds: string[],
   ): Promise<Map<string, number>> {
     if (projectIds.length === 0) return new Map();
 
-    const rows = await repository
-      .createQueryBuilder('row')
+    const rows = await this.projectRepository.manager
+      .createQueryBuilder(entity, 'row')
       .select('row.projectId', 'projectId')
       .addSelect('COUNT(*)', 'count')
       .where('row.projectId IN (:...projectIds)', { projectIds })
