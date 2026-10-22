@@ -39,6 +39,7 @@ src/
 ├── app/                 # routes only: layout, page, loading, error
 ├── features/<feature>/  # api/ components/ hooks/ schemas/ (create a folder only when it has a file)
 ├── components/ui/       # shadcn primitives, kept close to upstream
+├── components/app-shell/ # sidebar, header, user menu, theme toggle
 ├── components/shared/   # our reusable components, each with a story
 ├── hooks/               # app-wide React hooks
 └── lib/                 # api client, session, generic utilities

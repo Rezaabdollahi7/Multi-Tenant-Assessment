@@ -10,6 +10,21 @@ if (typeof document !== "undefined") {
   document.elementFromPoint ??= () => null;
 }
 
+// jsdom has no media queries; tests run at desktop width with no preferences.
+if (typeof window !== "undefined") {
+  window.matchMedia ??= (query: string) =>
+    ({
+      matches: false,
+      media: query,
+      onchange: null,
+      addEventListener: () => {},
+      removeEventListener: () => {},
+      addListener: () => {},
+      removeListener: () => {},
+      dispatchEvent: () => false,
+    }) satisfies MediaQueryList;
+}
+
 beforeAll(() => server.listen({ onUnhandledFrame: "error" }));
 afterEach(() => {
   server.resetHandlers();

@@ -1,9 +1,13 @@
+import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 import type { ReactNode } from "react";
+import { AppShell } from "@/components/app-shell/app-shell";
 import { getCurrentUser } from "@/features/auth/api/get-current-user";
 import { SessionProvider } from "@/features/auth/components/session-provider";
-import { SignOutButton } from "@/features/auth/components/sign-out-button";
 import { routes } from "@/lib/routes";
+
+/** Written by the sidebar primitive whenever it is opened or collapsed. */
+const SIDEBAR_COOKIE = "sidebar_state";
 
 /**
  * Every page in this group requires a session. proxy.ts has already renewed or
@@ -13,21 +17,11 @@ export default async function AppLayout({ children }: { children: ReactNode }) {
   const user = await getCurrentUser();
   if (!user) redirect(routes.login({ reason: "session_expired" }));
 
+  const sidebarOpen = (await cookies()).get(SIDEBAR_COOKIE)?.value !== "false";
+
   return (
     <SessionProvider user={user}>
-      <div className="flex min-h-svh flex-col">
-        <header className="border-border bg-card flex items-center justify-between border-b px-4 py-2">
-          <p className="text-sm">
-            <span className="font-medium">{user.name}</span>
-            <span className="text-muted-foreground">
-              {" "}
-              · {user.organization.name}
-            </span>
-          </p>
-          <SignOutButton />
-        </header>
-        <main className="flex-1 p-4 md:p-6">{children}</main>
-      </div>
+      <AppShell sidebarOpen={sidebarOpen}>{children}</AppShell>
     </SessionProvider>
   );
 }
