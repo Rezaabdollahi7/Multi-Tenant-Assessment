@@ -38,3 +38,6 @@ yarn-error.log*
 
 # Python bytecode (skill scripts)
 __pycache__/
+
+# Vitest report output
+.vitest/
