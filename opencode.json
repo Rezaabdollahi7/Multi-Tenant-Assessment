@@ -1,0 +1,18 @@
+{
+  "$schema": "https://opencode.ai/config.json",
+  "model": "anthropic/deepseek-v4-pro-0813",
+  "provider": {
+    "anthropic": {
+      "name": "Intern AI",
+      "options": {
+        "baseURL": "https://discovery-api.intern-ai.org.cn/v1",
+        "apiKey": "sk-2c1f5a6e93b444dbae9d99b975a4a06fde60ff6f8d69d8a0b5cde0681b504661"
+      },
+      "models": {
+        "deepseek-v4-pro-0813": {
+          "name": "DeepSeek V4 Pro 0813"
+        }
+      }
+    }
+  }
+}
