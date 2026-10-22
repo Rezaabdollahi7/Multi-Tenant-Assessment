@@ -55,7 +55,8 @@ A feature may import from `components/`, `hooks/`, `lib/` and its own folder. Fe
 
 ### Data and types
 
-- API types are **generated from the API's OpenAPI document** (`openapi-typescript`). Never hand-write a type the API already describes.
+- API types are **generated from the API's OpenAPI document** (`openapi-typescript`). Never hand-write a type the API already describes. After any API change run `pnpm api:contract` and commit `apps/api/openapi.json` and `apps/web/src/lib/api/schema.d.ts`; CI fails when they drift.
+- Import API types from `lib/api/types.ts`, which names the schemas the app uses.
 - All HTTP goes through the single API client in `lib/`; components never call `fetch` directly.
 - The browser calls `/api/*` on its own origin; Next.js rewrites it to the API (ADR 0002).
 

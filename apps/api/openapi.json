@@ -1,0 +1,1207 @@
+{
+  "openapi": "3.0.0",
+  "paths": {
+    "/api/auth/request-otp": {
+      "post": {
+        "operationId": "AuthController_requestOtp",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RequestOtpDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RequestOtpResponseDto"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Too many requests or attempts"
+          }
+        },
+        "summary": "Send a one-time sign-in code",
+        "tags": ["auth"]
+      }
+    },
+    "/api/auth/verify-otp": {
+      "post": {
+        "operationId": "AuthController_verifyOtp",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/VerifyOtpDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SuccessResponseDto"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Invalid or expired code"
+          },
+          "429": {
+            "description": "Too many wrong attempts"
+          }
+        },
+        "summary": "Verify the code and start a session",
+        "tags": ["auth"]
+      }
+    },
+    "/api/auth/refresh": {
+      "post": {
+        "operationId": "AuthController_refresh",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SuccessResponseDto"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Invalid or expired session"
+          }
+        },
+        "summary": "Rotate the session tokens",
+        "tags": ["auth"]
+      }
+    },
+    "/api/auth/logout": {
+      "post": {
+        "operationId": "AuthController_logout",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SuccessResponseDto"
+                }
+              }
+            }
+          }
+        },
+        "summary": "End the session and revoke its refresh token",
+        "tags": ["auth"]
+      }
+    },
+    "/api/auth/me": {
+      "get": {
+        "operationId": "AuthController_me",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CurrentUserDto"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "No valid session"
+          }
+        },
+        "summary": "The signed-in User and their Permissions",
+        "tags": ["auth"]
+      }
+    },
+    "/api/projects": {
+      "get": {
+        "operationId": "ProjectsController_list",
+        "parameters": [
+          {
+            "name": "page",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "minimum": 1,
+              "default": 1,
+              "type": "number"
+            }
+          },
+          {
+            "name": "limit",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "minimum": 1,
+              "maximum": 100,
+              "default": 10,
+              "type": "number"
+            }
+          },
+          {
+            "name": "search",
+            "required": false,
+            "in": "query",
+            "description": "Case-insensitive match on the name",
+            "schema": {
+              "maxLength": 100,
+              "type": "string"
+            }
+          },
+          {
+            "name": "status",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "$ref": "#/components/schemas/ProjectStatus"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProjectListDto"
+                }
+              }
+            }
+          }
+        },
+        "summary": "List the Organization's Projects",
+        "tags": ["projects"]
+      }
+    },
+    "/api/projects/{id}": {
+      "get": {
+        "operationId": "ProjectsController_detail",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProjectDetailDto"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not found in this Organization"
+          }
+        },
+        "summary": "A Project with its Finding counts by Severity",
+        "tags": ["projects"]
+      }
+    },
+    "/api/projects/{id}/members": {
+      "get": {
+        "operationId": "ProjectsController_members",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/MemberDto"
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not found in this Organization"
+          }
+        },
+        "summary": "A Project's Members",
+        "tags": ["projects"]
+      }
+    },
+    "/api/findings": {
+      "get": {
+        "operationId": "FindingsController_list",
+        "parameters": [
+          {
+            "name": "page",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "minimum": 1,
+              "default": 1,
+              "type": "number"
+            }
+          },
+          {
+            "name": "limit",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "minimum": 1,
+              "maximum": 100,
+              "default": 10,
+              "type": "number"
+            }
+          },
+          {
+            "name": "projectId",
+            "required": false,
+            "in": "query",
+            "description": "Filter by project id",
+            "schema": {
+              "format": "uuid",
+              "type": "string"
+            }
+          },
+          {
+            "name": "severity",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "$ref": "#/components/schemas/FindingSeverity"
+            }
+          },
+          {
+            "name": "status",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "$ref": "#/components/schemas/FindingStatus"
+            }
+          },
+          {
+            "name": "search",
+            "required": false,
+            "in": "query",
+            "description": "Search by title",
+            "schema": {
+              "maxLength": 200,
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/FindingListDto"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Missing the required Permission"
+          }
+        },
+        "summary": "List the Organization's Findings",
+        "tags": ["findings"]
+      },
+      "post": {
+        "operationId": "FindingsController_create",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateFindingDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/FindingDto"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Validation failed"
+          },
+          "403": {
+            "description": "Missing the required Permission"
+          },
+          "404": {
+            "description": "Project not found in this Organization"
+          }
+        },
+        "summary": "Record a Finding",
+        "tags": ["findings"]
+      }
+    },
+    "/api/findings/{id}": {
+      "get": {
+        "operationId": "FindingsController_detail",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/FindingDto"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Missing the required Permission"
+          },
+          "404": {
+            "description": "Not found in this Organization"
+          }
+        },
+        "summary": "A single Finding",
+        "tags": ["findings"]
+      },
+      "patch": {
+        "operationId": "FindingsController_update",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateFindingDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/FindingDto"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Validation failed"
+          },
+          "403": {
+            "description": "Missing the required Permission"
+          },
+          "404": {
+            "description": "Not found in this Organization"
+          }
+        },
+        "summary": "Edit a Finding",
+        "tags": ["findings"]
+      },
+      "delete": {
+        "operationId": "FindingsController_remove",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Deleted"
+          },
+          "403": {
+            "description": "Missing the required Permission"
+          },
+          "404": {
+            "description": "Not found in this Organization"
+          }
+        },
+        "summary": "Delete a Finding",
+        "tags": ["findings"]
+      }
+    },
+    "/api/dashboard/summary": {
+      "get": {
+        "operationId": "DashboardController_summary",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DashboardSummaryDto"
+                }
+              }
+            }
+          }
+        },
+        "summary": "Counts and breakdowns for the Organization",
+        "tags": ["dashboard"]
+      }
+    },
+    "/api/dashboard/trend": {
+      "get": {
+        "operationId": "DashboardController_trend",
+        "parameters": [
+          {
+            "name": "days",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "minimum": 1,
+              "maximum": 90,
+              "default": 30,
+              "type": "number"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/TrendPointDto"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "summary": "Findings created per day, by Severity",
+        "tags": ["dashboard"]
+      }
+    },
+    "/api/dashboard/activities": {
+      "get": {
+        "operationId": "DashboardController_activities",
+        "parameters": [
+          {
+            "name": "limit",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "minimum": 1,
+              "maximum": 50,
+              "default": 10,
+              "type": "number"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ActivityDto"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "summary": "Latest Activities in the Organization",
+        "tags": ["dashboard"]
+      }
+    },
+    "/api/health": {
+      "get": {
+        "operationId": "HealthController_check",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "example": {
+                    "status": "ok"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "summary": "Liveness probe for containers",
+        "tags": ["health"]
+      }
+    }
+  },
+  "info": {
+    "title": "Secure Multi-Tenant Assessment Dashboard API",
+    "description": "Sign in with POST /api/auth/request-otp then /api/auth/verify-otp; the session lives in httpOnly cookies.",
+    "version": "1.0.0",
+    "contact": {}
+  },
+  "tags": [],
+  "servers": [],
+  "components": {
+    "securitySchemes": {
+      "cookie": {
+        "type": "apiKey",
+        "in": "cookie",
+        "name": "X-ACCESS"
+      }
+    },
+    "schemas": {
+      "RequestOtpDto": {
+        "type": "object",
+        "properties": {
+          "phone": {
+            "type": "string",
+            "example": "09911110001"
+          }
+        },
+        "required": ["phone"]
+      },
+      "RequestOtpResponseDto": {
+        "type": "object",
+        "properties": {
+          "message": {
+            "type": "string",
+            "example": "Verification code sent"
+          },
+          "remainingAttempts": {
+            "type": "number",
+            "description": "Wrong attempts left before a temporary lock"
+          },
+          "code": {
+            "type": "string",
+            "description": "Returned only outside production, so demos need no SMS",
+            "example": "00000"
+          }
+        },
+        "required": ["message", "remainingAttempts"]
+      },
+      "VerifyOtpDto": {
+        "type": "object",
+        "properties": {
+          "phone": {
+            "type": "string",
+            "example": "09911110001"
+          },
+          "code": {
+            "type": "string",
+            "pattern": "^\\d{5}$",
+            "example": "00000",
+            "minLength": 5,
+            "maxLength": 5
+          }
+        },
+        "required": ["phone", "code"]
+      },
+      "SuccessResponseDto": {
+        "type": "object",
+        "properties": {
+          "success": {
+            "type": "boolean",
+            "example": true
+          }
+        },
+        "required": ["success"]
+      },
+      "Role": {
+        "type": "string",
+        "enum": ["ADMIN", "ANALYST", "VIEWER"]
+      },
+      "OrganizationSummaryDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "name": {
+            "type": "string"
+          }
+        },
+        "required": ["id", "name"]
+      },
+      "Permission": {
+        "type": "string",
+        "enum": [
+          "dashboard:read",
+          "project:read",
+          "member:read",
+          "finding:read",
+          "finding:create",
+          "finding:update",
+          "finding:delete",
+          "activity:read"
+        ]
+      },
+      "CurrentUserDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "name": {
+            "type": "string",
+            "nullable": true
+          },
+          "phone": {
+            "type": "string"
+          },
+          "role": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/Role"
+              }
+            ]
+          },
+          "organization": {
+            "$ref": "#/components/schemas/OrganizationSummaryDto"
+          },
+          "permissions": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Permission"
+            }
+          }
+        },
+        "required": [
+          "id",
+          "name",
+          "phone",
+          "role",
+          "organization",
+          "permissions"
+        ]
+      },
+      "ProjectStatus": {
+        "type": "string",
+        "enum": ["PLANNED", "IN_PROGRESS", "COMPLETED", "ARCHIVED"]
+      },
+      "ProjectDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "name": {
+            "type": "string"
+          },
+          "description": {
+            "type": "string",
+            "nullable": true
+          },
+          "status": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/ProjectStatus"
+              }
+            ]
+          },
+          "findingsCount": {
+            "type": "number",
+            "minimum": 0
+          },
+          "membersCount": {
+            "type": "number",
+            "minimum": 0
+          },
+          "createdAt": {
+            "format": "date-time",
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "name",
+          "description",
+          "status",
+          "findingsCount",
+          "membersCount",
+          "createdAt"
+        ]
+      },
+      "PaginationMetaDto": {
+        "type": "object",
+        "properties": {
+          "page": {
+            "type": "number",
+            "minimum": 1
+          },
+          "limit": {
+            "type": "number",
+            "minimum": 1
+          },
+          "totalItems": {
+            "type": "number",
+            "minimum": 0
+          },
+          "totalPages": {
+            "type": "number",
+            "minimum": 0
+          }
+        },
+        "required": ["page", "limit", "totalItems", "totalPages"]
+      },
+      "ProjectListDto": {
+        "type": "object",
+        "properties": {
+          "data": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ProjectDto"
+            }
+          },
+          "meta": {
+            "$ref": "#/components/schemas/PaginationMetaDto"
+          }
+        },
+        "required": ["data", "meta"]
+      },
+      "SeverityBreakdownDto": {
+        "type": "object",
+        "properties": {
+          "CRITICAL": {
+            "type": "number"
+          },
+          "HIGH": {
+            "type": "number"
+          },
+          "MEDIUM": {
+            "type": "number"
+          },
+          "LOW": {
+            "type": "number"
+          },
+          "INFO": {
+            "type": "number"
+          }
+        },
+        "required": ["CRITICAL", "HIGH", "MEDIUM", "LOW", "INFO"]
+      },
+      "ProjectDetailDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "name": {
+            "type": "string"
+          },
+          "description": {
+            "type": "string",
+            "nullable": true
+          },
+          "status": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/ProjectStatus"
+              }
+            ]
+          },
+          "findingsCount": {
+            "type": "number",
+            "minimum": 0
+          },
+          "membersCount": {
+            "type": "number",
+            "minimum": 0
+          },
+          "createdAt": {
+            "format": "date-time",
+            "type": "string"
+          },
+          "severityBreakdown": {
+            "$ref": "#/components/schemas/SeverityBreakdownDto"
+          }
+        },
+        "required": [
+          "id",
+          "name",
+          "description",
+          "status",
+          "findingsCount",
+          "membersCount",
+          "createdAt",
+          "severityBreakdown"
+        ]
+      },
+      "MemberDto": {
+        "type": "object",
+        "properties": {
+          "userId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "name": {
+            "type": "string",
+            "nullable": true
+          },
+          "role": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/Role"
+              }
+            ]
+          },
+          "roleInProject": {
+            "type": "string",
+            "nullable": true
+          },
+          "joinedAt": {
+            "format": "date-time",
+            "type": "string"
+          }
+        },
+        "required": ["userId", "name", "role", "roleInProject", "joinedAt"]
+      },
+      "FindingSeverity": {
+        "type": "string",
+        "enum": ["CRITICAL", "HIGH", "MEDIUM", "LOW", "INFO"]
+      },
+      "FindingStatus": {
+        "type": "string",
+        "enum": ["OPEN", "IN_REVIEW", "RESOLVED", "ACCEPTED"]
+      },
+      "ProjectSummaryDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "name": {
+            "type": "string"
+          }
+        },
+        "required": ["id", "name"]
+      },
+      "UserSummaryDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "name": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "required": ["id", "name"]
+      },
+      "FindingDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "title": {
+            "type": "string"
+          },
+          "description": {
+            "type": "string",
+            "nullable": true
+          },
+          "severity": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/FindingSeverity"
+              }
+            ]
+          },
+          "status": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/FindingStatus"
+              }
+            ]
+          },
+          "project": {
+            "$ref": "#/components/schemas/ProjectSummaryDto"
+          },
+          "createdBy": {
+            "$ref": "#/components/schemas/UserSummaryDto"
+          },
+          "createdAt": {
+            "format": "date-time",
+            "type": "string"
+          },
+          "updatedAt": {
+            "format": "date-time",
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "title",
+          "description",
+          "severity",
+          "status",
+          "project",
+          "createdBy",
+          "createdAt",
+          "updatedAt"
+        ]
+      },
+      "FindingListDto": {
+        "type": "object",
+        "properties": {
+          "data": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/FindingDto"
+            }
+          },
+          "meta": {
+            "$ref": "#/components/schemas/PaginationMetaDto"
+          }
+        },
+        "required": ["data", "meta"]
+      },
+      "CreateFindingDto": {
+        "type": "object",
+        "properties": {
+          "title": {
+            "type": "string",
+            "minLength": 3,
+            "maxLength": 200
+          },
+          "description": {
+            "type": "string",
+            "maxLength": 5000
+          },
+          "severity": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/FindingSeverity"
+              }
+            ]
+          },
+          "projectId": {
+            "type": "string",
+            "format": "uuid"
+          }
+        },
+        "required": ["title", "severity", "projectId"]
+      },
+      "UpdateFindingDto": {
+        "type": "object",
+        "properties": {
+          "title": {
+            "type": "string",
+            "minLength": 3,
+            "maxLength": 200
+          },
+          "description": {
+            "type": "string",
+            "maxLength": 5000
+          },
+          "severity": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/FindingSeverity"
+              }
+            ]
+          },
+          "status": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/FindingStatus"
+              }
+            ]
+          }
+        }
+      },
+      "ProjectStatusBreakdownDto": {
+        "type": "object",
+        "properties": {
+          "PLANNED": {
+            "type": "number"
+          },
+          "IN_PROGRESS": {
+            "type": "number"
+          },
+          "COMPLETED": {
+            "type": "number"
+          },
+          "ARCHIVED": {
+            "type": "number"
+          }
+        },
+        "required": ["PLANNED", "IN_PROGRESS", "COMPLETED", "ARCHIVED"]
+      },
+      "DashboardSummaryDto": {
+        "type": "object",
+        "properties": {
+          "projectsCount": {
+            "type": "number",
+            "minimum": 0
+          },
+          "findingsCount": {
+            "type": "number",
+            "minimum": 0
+          },
+          "severityBreakdown": {
+            "$ref": "#/components/schemas/SeverityBreakdownDto"
+          },
+          "projectStatusBreakdown": {
+            "$ref": "#/components/schemas/ProjectStatusBreakdownDto"
+          }
+        },
+        "required": [
+          "projectsCount",
+          "findingsCount",
+          "severityBreakdown",
+          "projectStatusBreakdown"
+        ]
+      },
+      "TrendPointDto": {
+        "type": "object",
+        "properties": {
+          "date": {
+            "type": "string",
+            "example": "2026-10-18",
+            "description": "UTC calendar day"
+          },
+          "total": {
+            "type": "number",
+            "minimum": 0
+          },
+          "bySeverity": {
+            "$ref": "#/components/schemas/SeverityBreakdownDto"
+          }
+        },
+        "required": ["date", "total", "bySeverity"]
+      },
+      "ActivityAction": {
+        "type": "string",
+        "enum": ["finding.created", "finding.updated", "finding.deleted"]
+      },
+      "ActivityTargetType": {
+        "type": "string",
+        "enum": ["finding"]
+      },
+      "ActivityTargetDto": {
+        "type": "object",
+        "properties": {
+          "type": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/ActivityTargetType"
+              }
+            ]
+          },
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "name": {
+            "type": "string"
+          }
+        },
+        "required": ["type", "id", "name"]
+      },
+      "ActivityDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "action": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/ActivityAction"
+              }
+            ]
+          },
+          "actor": {
+            "$ref": "#/components/schemas/UserSummaryDto"
+          },
+          "target": {
+            "$ref": "#/components/schemas/ActivityTargetDto"
+          },
+          "createdAt": {
+            "format": "date-time",
+            "type": "string"
+          }
+        },
+        "required": ["id", "action", "actor", "target", "createdAt"]
+      }
+    }
+  }
+}

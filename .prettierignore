@@ -7,3 +7,6 @@ skills-lock.json
 **/.next
 **/coverage
 **/storybook-static
+
+# Generated contract (pnpm api:contract)
+apps/api/openapi.json

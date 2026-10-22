@@ -29,6 +29,7 @@ pnpm lint && pnpm check-types       # must pass before every commit
 pnpm --filter frontend test         # web unit/component tests (Vitest)
 pnpm --filter api test              # api unit tests (Jest)
 pnpm --filter api seed              # reseed fabricated data
+pnpm api:contract                   # after any API change: regenerate openapi.json and web types
 pnpm --filter frontend storybook    # component catalogue on :6006
 ```
 
