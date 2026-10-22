@@ -23,7 +23,7 @@ Each milestone is delivered as one or more pull requests into `main`. Tick items
 - [x] Enable full `strict` in `apps/api`; make `no-explicit-any` and the `no-unsafe-*` lint rules errors; fix resulting errors
 - [x] Access-token lifetime configurable through env; environment validated at startup
 - [x] Deterministic seed (fixed random seed) so screenshots and tests are reproducible
-- [ ] Docker Compose runs the whole stack (postgres, redis, api + seed, web) with one command; web on :3000, api on :3001
+- [x] Docker Compose runs the whole stack (postgres, redis, api + seed, web) with one command; web on :3000, api on :3001
 - [x] Typed response contracts for every route (for generated web types)
 - [x] Review AI-generated services for tenant scoping, `404` on foreign records, and Activity writes
 - [x] e2e tests: tenant isolation, Permission enforcement, refresh rotation; run them in CI against Postgres and Redis service containers
@@ -33,7 +33,8 @@ Each milestone is delivered as one or more pull requests into `main`. Tick items
 
 - [x] Restructure `apps/web/src` to `app / features / components / lib`; delete placeholder files; fix shadcn aliases
 - [ ] Generated API types (`openapi-typescript`) and a typed API client with refresh-and-retry
-- [ ] Next.js rewrites `/api/*`; `proxy.ts` route guard; protected layout loading `/auth/me`
+- [x] Next.js rewrites `/api/*` (with the Docker setup)
+- [ ] `proxy.ts` route guard; protected layout loading `/auth/me`
 - [ ] TanStack Query provider, query-key factories; Zustand UI store
 - [ ] `Can` / `useCan` from `/auth/me` Permissions
 - [ ] App shell: responsive sidebar, header with User menu, theme toggle (light / dark / system)

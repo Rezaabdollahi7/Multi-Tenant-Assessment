@@ -23,23 +23,22 @@ Built for technical assessment `MB-BE-01`.
 **API (the Mock API):** NestJS 11, TypeORM, PostgreSQL, Redis, JWT in httpOnly cookies, Swagger.
 **Tooling:** pnpm workspaces, Turborepo, ESLint, Prettier, Docker Compose, GitHub Actions.
 
-## Quick start _(planned for M1)_
+## Quick start
 
-Requires Docker.
+Requires Docker. No configuration needed.
 
 ```bash
-cp docker/.env.example docker/.env
 docker compose -f docker/compose.yml up --build
 ```
 
 - Web: http://localhost:3000
 - API docs (Swagger): http://localhost:3001/docs
 
-The API seeds fabricated data on first start.
+The API seeds fabricated data on first start. To see session expiry within a minute, start with `ACCESS_TOKEN_TTL_SECONDS=60 docker compose -f docker/compose.yml up --build`. `docker compose -f docker/compose.yml down -v` removes everything, data included.
 
 ## Local development
 
-Requires Node.js ≥ 18, pnpm and Docker.
+Requires Node.js 22, pnpm 11.25.0 and Docker (for Postgres and Redis).
 
 ```bash
 pnpm install

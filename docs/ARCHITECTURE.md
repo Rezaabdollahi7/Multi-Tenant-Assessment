@@ -209,7 +209,20 @@ sequenceDiagram
 - **CI:** GitHub Actions runs lint, typecheck, tests and build on every pull request.
 - **Accessibility:** semantic HTML, full keyboard support, visible focus, labelled controls, never colour alone.
 
-## 8. Decisions
+## 8. Runtime
+
+`docker/compose.yml` runs four containers with working defaults, so `docker compose up --build` needs no configuration:
+
+| Container  | Image                 | Notes                                                                                   |
+| ---------- | --------------------- | --------------------------------------------------------------------------------------- |
+| `postgres` | postgres:17           | host port 15432 for local development                                                   |
+| `redis`    | redis:8               | OTP codes and attempt counters                                                          |
+| `api`      | `apps/api/Dockerfile` | seeds on first start (`--if-empty`), health check on `/api/health`, runs as `node`      |
+| `web`      | `apps/web/Dockerfile` | Next.js standalone server; the `/api` rewrite target (`API_URL`) is fixed at build time |
+
+Both Dockerfiles are multi-stage: dependencies are installed and built with the pinned pnpm, and only production output reaches the runtime image. `.dockerignore` keeps `.env` files out of every image.
+
+## 9. Decisions
 
 | ADR                                                         | Decision                                                    |
 | ----------------------------------------------------------- | ----------------------------------------------------------- |
