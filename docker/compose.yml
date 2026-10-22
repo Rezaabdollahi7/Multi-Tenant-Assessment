@@ -80,6 +80,10 @@ services:
       args:
         API_URL: http://api:3001
     restart: unless-stopped
+    environment:
+      API_URL: http://api:3001
+      # Lists the seeded demo accounts on the sign-in page.
+      DEMO_MODE: "true"
     ports:
       - "3000:3000"
     depends_on:

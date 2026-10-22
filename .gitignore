@@ -36,5 +36,8 @@ yarn-error.log*
 .DS_Store
 *.pem
 
+# Python bytecode (skill scripts)
+__pycache__/
+
 # Vitest report output
 .vitest/

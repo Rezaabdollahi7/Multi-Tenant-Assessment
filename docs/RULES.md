@@ -70,7 +70,8 @@ A feature may import from `components/`, `hooks/`, `lib/` and its own folder. Fe
 - Server Components by default; add `"use client"` only for interactivity or browser APIs.
 - Every route segment that fetches has `loading.tsx` and `error.tsx`, and every list has an empty state.
 - Forms use **react-hook-form + zod**. Schema limits mirror the API DTOs. Server validation errors are mapped back onto their fields.
-- Styling uses Tailwind and the shadcn design tokens. No hard-coded colours; both light and dark themes must work.
+- Styling uses Tailwind and the design tokens in `docs/design-system.md`. No hard-coded colours; both light and dark themes must work.
+- `components/ui` holds unmodified shadcn primitives; change their look through tokens, and build variations in `components/shared`.
 
 ### Accessibility and responsiveness
 

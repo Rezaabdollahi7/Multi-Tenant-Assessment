@@ -7,7 +7,7 @@ Every route is served under `/api`. The OpenAPI document and Swagger UI are at `
 ## Security model
 
 - **Sign-in:** phone number + 5-digit one-time code. Codes are stored bcrypt-hashed in Redis for 2 minutes. Each phone may request 3 codes per 2 minutes and make 5 wrong attempts before a 5-minute lock; both limits answer `429`. An unknown phone gets the same answer as a wrong code.
-- **Session:** a short-lived access JWT (`ACCESS_TOKEN_TTL_SECONDS`, default 15 minutes) and a 14-day refresh JWT, both in `httpOnly`, `SameSite=Lax` cookies (`Secure` in production). The refresh cookie is scoped to `/api/auth`.
+- **Session:** a short-lived access JWT (`ACCESS_TOKEN_TTL_SECONDS`, default 15 minutes) and a 14-day refresh JWT, both in `httpOnly`, `SameSite=Lax` cookies (`Secure` in production). Both cookies are site-wide so the web app can renew a session while navigating ([ADR 0005](../../docs/adr/0005-session-renewal-in-the-web-proxy.md)).
 - **Refresh rotation:** refresh tokens are stored as SHA-256 hashes and rotated on every use. Presenting an already-rotated token revokes its whole family. Logout revokes the current token.
 - **Authorisation:** each route declares the Permission it needs with `@RequirePermissions`; Roles map to Permissions in [`permissions.constants.ts`](src/common/constants/permissions.constants.ts). Routes without a session answer `401`, missing Permissions `403`.
 - **Tenant isolation:** `orgId` comes only from the verified access token. Records of another Organization answer `404`, so their existence is not disclosed.

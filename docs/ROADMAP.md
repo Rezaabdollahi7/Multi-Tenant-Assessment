@@ -34,16 +34,17 @@ Each milestone is delivered as one or more pull requests into `main`. Tick items
 - [x] Restructure `apps/web/src` to `app / features / components / lib`; delete placeholder files; fix shadcn aliases
 - [x] Generated API types (`openapi-typescript`) and a typed API client with refresh-and-retry
 - [x] Next.js rewrites `/api/*` (with the Docker setup)
-- [ ] `proxy.ts` route guard; protected layout loading `/auth/me`
+- [x] `proxy.ts` route guard with silent renewal; protected layout loading `/auth/me` (ADR 0005)
 - [x] TanStack Query provider
 - [ ] Query-key factories (per feature, with the feature); Zustand UI store
-- [ ] `Can` / `useCan` from `/auth/me` Permissions
+- [x] `Can` / `useCan` from `/auth/me` Permissions
+- [x] Design system: tokens, Severity palette, Fira fonts, clean shadcn new-york primitives, light/dark/system themes (`docs/design-system.md`)
 - [ ] App shell: responsive sidebar, header with User menu, theme toggle (light / dark / system)
-- [ ] MSW handlers shared by tests and Storybook
+- [x] MSW test server and render helpers (Storybook wiring in M5)
 
 ## M3 · Authentication UI and Dashboard: 1405/08/02 (Oct 24)
 
-- [ ] **A.** Login (phone → code), logout, signed-in state in the header, auth error messages, redirect to protected routes and back via `next`, session-expired message
+- [x] **A.** Login (phone → code), logout, signed-in state in the header, auth error messages, redirect to protected routes and back via `next`, session-expired message
 - [ ] **B.** Dashboard: Project count, Finding count, Severity breakdown, Project Status breakdown, 30-day Finding trend chart, latest Activities
 
 ## M4 · Projects and Findings: 1405/08/03 (Oct 25)
