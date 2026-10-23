@@ -20,7 +20,8 @@
     "reportFinding": "ثبت یافته",
     "editFinding": "ویرایش {title}",
     "projectNotFound": "پروژه پیدا نشد",
-    "findingNotFound": "یافته پیدا نشد"
+    "findingNotFound": "یافته پیدا نشد",
+    "pageNotFound": "صفحه پیدا نشد"
   },
   "nav": {
     "label": "اصلی",
@@ -79,6 +80,11 @@
   },
   "permissionDenied": {
     "description": "نقش شما این مجوز را ندارد. اگر به آن نیاز دارید، از یک مدیر بخواهید."
+  },
+  "pageNotFound": {
+    "title": "صفحه پیدا نشد",
+    "description": "این نشانی وجود ندارد یا جابه‌جا شده است.",
+    "home": "رفتن به داشبورد"
   },
   "pagination": {
     "label": "صفحه‌بندی",
