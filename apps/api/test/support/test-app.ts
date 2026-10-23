@@ -41,7 +41,6 @@ export async function createTestApp(): Promise<TestApp> {
   };
 }
 
-/** A fresh mobile number, so runs never collide with each other or the seed. */
 function uniquePhone(): string {
   return `0912${randomInt(0, 10_000_000).toString().padStart(7, '0')}`;
 }
@@ -53,7 +52,6 @@ export type OrganizationFixture = {
   finding: Finding;
 };
 
-/** One Organization with a User per Role, one Project and one Finding. */
 export async function createOrganization(
   dataSource: DataSource,
   label: string,
@@ -131,7 +129,6 @@ export async function removeOrganizations(
   });
 }
 
-/** The `name=value` pairs a response sets, ready to send back as a Cookie header. */
 export function cookiesFrom(response: request.Response): string[] {
   const header = response.headers['set-cookie'] as
     string[] | string | undefined;
@@ -141,7 +138,6 @@ export function cookiesFrom(response: request.Response): string[] {
     .filter((pair) => !pair.endsWith('='));
 }
 
-/** Signs a User in through the real OTP flow and returns their session cookies. */
 export async function signIn(testApp: TestApp, user: User): Promise<string[]> {
   await testApp
     .http()

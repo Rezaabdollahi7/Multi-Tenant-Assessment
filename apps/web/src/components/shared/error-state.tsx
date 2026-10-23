@@ -1,21 +1,19 @@
-import { CircleAlert } from "lucide-react";
-import { useTranslations } from "next-intl";
+"use client";
+
+import { CircleAlert, Loader2Icon } from "lucide-react";
+import { useRouter } from "next/navigation";
+import { useTransition } from "react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 
 type ErrorStateProps = {
-  /** Short statement of what failed, e.g. "Could not load Findings". */
   title: string;
-  /** Detail shown under the title, usually the API's message. */
   description?: string;
-  /** Offers a "Try again" button when given. */
   onRetry?: () => void;
-  /** The title's element: `h1` when the state stands in for the whole page. */
   titleAs?: "p" | "h1";
   className?: string;
 };
 
-/** Replaces content that failed to load; announced to screen readers. */
 export function ErrorState({
   title,
   description,
@@ -23,7 +21,14 @@ export function ErrorState({
   titleAs: Title = "p",
   className,
 }: ErrorStateProps) {
-  const t = useTranslations("common");
+  const router = useRouter();
+  const [retrying, startRetry] = useTransition();
+
+  function retry() {
+    if (onRetry) onRetry();
+    else startRetry(() => router.refresh());
+  }
+
   return (
     <div
       role="alert"
@@ -41,11 +46,10 @@ export function ErrorState({
           <p className="text-sm text-muted-foreground">{description}</p>
         )}
       </div>
-      {onRetry && (
-        <Button variant="outline" size="sm" onClick={onRetry}>
-          {t("tryAgain")}
-        </Button>
-      )}
+      <Button variant="outline" size="sm" onClick={retry} disabled={retrying}>
+        {retrying && <Loader2Icon className="animate-spin" aria-hidden />}
+        تلاش دوباره
+      </Button>
     </div>
   );
 }

@@ -26,5 +26,4 @@ const meta = {
 export default meta;
 type Story = StoryObj<typeof meta>;
 
-/** Findings by Severity: count, share and a bar on a hatched track. */
 export const Severity: Story = {};

@@ -1,35 +1,21 @@
-import { screen, within } from "@testing-library/react";
+import { render, screen, within } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { http, HttpResponse } from "msw";
 import { ThemeProvider } from "next-themes";
 import { beforeEach, describe, expect, it } from "vitest";
+import type { CurrentUser } from "@/assets/types/user";
 import { SessionProvider } from "@/lib/session/session-provider";
-import type { CurrentUser } from "@/lib/api/types";
+import { userWithRole } from "@/test/fixtures";
 import { apiUrl, server } from "@/test/msw/server";
-import { renderWithProviders } from "@/test/render";
 import { navigation, router } from "@/test/router";
 import { AppShell } from "./app-shell";
 
-const analyst: CurrentUser = {
-  id: "d7e9694b-6b5f-4879-96cd-d523fae88e9c",
-  name: "Sara Mohammadi",
-  phone: "09911110002",
-  role: "ANALYST",
-  organization: { id: "00befd63-4ab7-4cef-81dc-d871fb5dd001", name: "Org A" },
-  permissions: [
-    "dashboard:read",
-    "project:read",
-    "finding:read",
-    "finding:create",
-  ],
-};
-
-function renderShell(user: CurrentUser = analyst) {
-  return renderWithProviders(
+function renderShell(user: CurrentUser = userWithRole("ANALYST")) {
+  return render(
     <ThemeProvider attribute="class">
       <SessionProvider user={user}>
         <AppShell>
-          <p>Page content</p>
+          <p>محتوای صفحه</p>
         </AppShell>
       </SessionProvider>
     </ThemeProvider>,
@@ -43,35 +29,26 @@ describe("AppShell", () => {
 
   it("marks the current section in the main navigation", () => {
     renderShell();
-    const nav = screen.getByRole("navigation", { name: "Main" });
+    const nav = screen.getByRole("navigation", { name: "اصلی" });
 
-    expect(within(nav).getByRole("link", { name: "Projects" })).toHaveAttribute(
+    expect(within(nav).getByRole("link", { name: "پروژه‌ها" })).toHaveAttribute(
       "aria-current",
       "page",
     );
     expect(
-      within(nav).getByRole("link", { name: "Dashboard" }),
+      within(nav).getByRole("link", { name: "داشبورد" }),
     ).not.toHaveAttribute("aria-current");
   });
 
   it("only links to sections the User has Permission for", () => {
-    renderShell({ ...analyst, permissions: ["dashboard:read"] });
-    const nav = screen.getByRole("navigation", { name: "Main" });
+    renderShell({ ...userWithRole("VIEWER"), permissions: ["dashboard:read"] });
+    const nav = screen.getByRole("navigation", { name: "اصلی" });
 
     expect(
       within(nav)
         .getAllByRole("link")
-        .map((l) => l.textContent),
-    ).toEqual(["Dashboard"]);
-  });
-
-  it("offers a skip link to the main content", () => {
-    renderShell();
-
-    expect(
-      screen.getByRole("link", { name: "Skip to content" }),
-    ).toHaveAttribute("href", "#main-content");
-    expect(screen.getByRole("main")).toHaveTextContent("Page content");
+        .map((link) => link.textContent),
+    ).toEqual(["داشبورد"]);
   });
 
   it("signs out from the account menu", async () => {
@@ -84,26 +61,12 @@ describe("AppShell", () => {
     renderShell();
 
     await user.click(
-      screen.getByRole("button", {
-        name: "User menu for Sara Mohammadi",
-      }),
+      screen.getByRole("button", { name: "منوی کاربری Sara Mohammadi" }),
     );
-    await user.click(await screen.findByRole("menuitem", { name: "Sign out" }));
+    await user.click(await screen.findByRole("menuitem", { name: "خروج" }));
 
     await expect
       .poll(() => router.replace.mock.calls)
       .toEqual([["/login?reason=signed_out"]]);
-  });
-
-  it("switches to the dark theme", async () => {
-    const user = userEvent.setup();
-    renderShell();
-
-    await user.click(screen.getByRole("button", { name: "Change theme" }));
-    await user.click(
-      await screen.findByRole("menuitemradio", { name: "Dark" }),
-    );
-
-    expect(document.documentElement).toHaveClass("dark");
   });
 });

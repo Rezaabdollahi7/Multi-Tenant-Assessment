@@ -2,16 +2,11 @@ import type { Middleware } from "openapi-fetch";
 
 const AUTH_PATH = "/api/auth/";
 
-export type SessionRenewalOptions = {
-  /** Called once a refresh has failed; the session cannot be recovered. */
+type SessionRenewalOptions = {
   onSessionExpired: () => void;
   fetch?: typeof fetch;
 };
 
-/**
- * On a 401, refreshes the session once and replays the request. Concurrent 401s
- * share one refresh, because the refresh token rotates and may only be used once.
- */
 export function createSessionRenewal({
   onSessionExpired,
   fetch: fetchFn = (...args) => fetch(...args),
@@ -34,7 +29,6 @@ export function createSessionRenewal({
 
   return {
     onRequest({ request, id }) {
-      // Keep an unread copy: the original body is consumed by the first attempt.
       pendingRequests.set(id, request.clone());
     },
 

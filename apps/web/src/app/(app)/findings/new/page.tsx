@@ -1,19 +1,16 @@
 import type { Metadata } from "next";
-import { getTranslations } from "next-intl/server";
 import Link from "next/link";
 import { PermissionDenied } from "@/components/shared/permission-denied";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
-import { getCurrentUser } from "@/features/auth/api/get-current-user";
-import { CreateFindingForm } from "@/features/findings/components/finding-form";
-import { routes } from "@/lib/routes";
-import { hasPermissions } from "@/lib/session/permissions";
+import { getCurrentUser } from "@/features/auth/lib/get-current-user";
+import { CreateFindingForm } from "@/features/findings/components/block/finding-form";
+import { listProjectOptions } from "@/features/findings/lib/findings-api";
 import { revealOrder } from "@/lib/motion";
+import { routes } from "@/lib/routes";
+import { can } from "@/lib/session/permissions";
 
-export async function generateMetadata(): Promise<Metadata> {
-  const t = await getTranslations("metadata");
-  return { title: t("reportFinding") };
-}
+export const metadata: Metadata = { title: "ثبت یافته" };
 
 type NewFindingPageProps = {
   searchParams: Promise<{ projectId?: string | string[] }>;
@@ -22,36 +19,40 @@ type NewFindingPageProps = {
 export default async function NewFindingPage({
   searchParams,
 }: NewFindingPageProps) {
-  const [user, { projectId }, t] = await Promise.all([
+  const [user, { projectId }] = await Promise.all([
     getCurrentUser(),
     searchParams,
-    getTranslations("findings"),
   ]);
 
-  if (!hasPermissions(user, "finding:create")) {
+  if (!can(user, "finding", "create")) {
     return (
       <PermissionDenied
-        title={t("form.cannotReport")}
+        title="شما نمی‌توانید یافته ثبت کنید"
         action={
           <Button variant="outline" size="sm" asChild>
-            <Link href={routes.findings()}>{t("details.back")}</Link>
+            <Link href={routes.findings()}>بازگشت به یافته‌ها</Link>
           </Button>
         }
       />
     );
   }
 
+  const projectOptions = await listProjectOptions();
+
   return (
     <div className="space-y-8">
       <header className="reveal space-y-1" style={revealOrder(0)}>
-        <h1 className="text-display font-light">{t("form.newTitle")}</h1>
-        <p className="text-muted-foreground">{t("form.newIntro")}</p>
+        <h1 className="text-display font-light">ثبت یافته</h1>
+        <p className="text-muted-foreground">
+          یافته‌های جدید با وضعیت «باز» ثبت می‌شوند.
+        </p>
       </header>
       <Card
         className="reveal max-w-3xl rounded-3xl p-6 sm:p-8"
         style={revealOrder(1)}
       >
         <CreateFindingForm
+          projectOptions={projectOptions}
           defaultProjectId={
             typeof projectId === "string" ? projectId : undefined
           }

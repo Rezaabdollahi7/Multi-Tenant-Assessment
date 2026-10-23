@@ -28,5 +28,4 @@ const meta = {
 export default meta;
 type Story = StoryObj<typeof meta>;
 
-/** Labels and values joined by dotted leaders, as on a details page. */
 export const ProjectInfo: Story = {};

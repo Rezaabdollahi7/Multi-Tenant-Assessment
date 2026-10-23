@@ -74,7 +74,6 @@ describe('PermissionsGuard', () => {
     const guard = new PermissionsGuard(
       makeReflector({ permissions: ['finding:read', 'finding:delete'] }),
     );
-    // Analyst has finding:read but not finding:delete
     const analyst: JwtPayload = {
       sub: 'user-3',
       role: Roles.ANALYST,

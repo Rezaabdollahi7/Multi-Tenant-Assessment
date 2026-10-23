@@ -1,15 +1,14 @@
 "use client";
 
 import { motion } from "motion/react";
-import { useFormatter } from "next-intl";
+import { formatNumber, formatPercent } from "@/lib/format";
 import { DURATION, EASE_OUT, STAGGER } from "@/lib/motion";
 import { cn } from "@/lib/utils";
 
-export type BreakdownItem = {
+type BreakdownItem = {
   id: string;
   label: string;
   value: number;
-  /** CSS colour of the bar; the label always carries the meaning too. */
   color: string;
 };
 
@@ -18,9 +17,7 @@ type BreakdownListProps = {
   className?: string;
 };
 
-/** Each part of a whole as a labelled row with its count, share and a bar on a hatched track. */
 export function BreakdownList({ items, className }: BreakdownListProps) {
-  const format = useFormatter();
   const total = items.reduce((sum, item) => sum + item.value, 0);
   return (
     <ul className={cn("space-y-4", className)}>
@@ -31,14 +28,13 @@ export function BreakdownList({ items, className }: BreakdownListProps) {
             <div className="flex items-baseline justify-between gap-3 text-sm">
               <span>{item.label}</span>
               <span className="tabular-nums">
-                <span className="font-medium">{format.number(item.value)}</span>
+                <span className="font-medium">{formatNumber(item.value)}</span>
                 <span className="ms-2 inline-block w-10 text-end text-muted-foreground">
-                  {format.number(share, "percent")}
+                  {formatPercent(share)}
                 </span>
               </span>
             </div>
             <div aria-hidden className="bg-hatch h-2.5 rounded-full">
-              {/* Grows to its share, and moves when the data changes. */}
               <motion.div
                 className="h-full rounded-full"
                 style={{ backgroundColor: item.color }}

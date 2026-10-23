@@ -4,13 +4,7 @@ A dashboard where three Organizations track their security assessment Projects a
 
 Built for technical assessment `MB-BE-01`.
 
-The interface is in Persian by default (right to left) and in English, with light and dark themes.
-
-| Dashboard                                                                      | Findings on a phone                                                         |
-| ------------------------------------------------------------------------------ | --------------------------------------------------------------------------- |
-| ![Dashboard, Persian, light](docs/screenshots/dashboard-fa-light-desktop.webp) | ![Findings, Persian, 390px](docs/screenshots/findings-fa-light-mobile.webp) |
-
-More in [`docs/screenshots/`](docs/screenshots/README.md): every main page in both languages and themes, on desktop and mobile.
+The interface is Persian (right to left), with light and dark themes.
 
 ## Features
 
@@ -21,39 +15,32 @@ More in [`docs/screenshots/`](docs/screenshots/README.md): every main page in bo
 | Projects       | Search, filter, paginate; Project details with Members and Findings                                                                |
 | Findings       | Search and filter; details; create and edit with validation; delete (Admin only)                                                   |
 | Role-aware UI  | Actions appear according to the Permissions the API returns; the API rejects anything else                                         |
-| Languages      | Persian (default, right to left, Solar Hijri dates) and English, switched in the header                                            |
+| Language       | Persian, right to left, with Persian digits and Solar Hijri dates                                                                  |
 | Quality        | Strict TypeScript, Storybook for shared components, unit, component and e2e tests, keyboard and screen-reader friendly, responsive |
 
 ## Tech stack
 
-**Web:** Next.js 16 (App Router), React 19, TypeScript (strict), Tailwind CSS 4, shadcn/ui, TanStack Query, next-intl (Persian by default, and English), react-hook-form + zod, Motion, Vitest + React Testing Library + MSW, Storybook.
+**Web:** Next.js 16 (App Router, Server Components), React 19, TypeScript (strict), Tailwind CSS 4, shadcn/ui, openapi-fetch, react-hook-form + zod, Motion, Vitest + React Testing Library + MSW, Storybook.
 **API (the Mock API):** NestJS 11, TypeORM, PostgreSQL, Redis, JWT in httpOnly cookies, Swagger.
 **Tooling:** pnpm workspaces, Turborepo, ESLint, Prettier, Docker Compose, GitHub Actions.
 
-## Quick start
-
-Requires Docker. No configuration needed.
-
-```bash
-docker compose -f docker/compose.yml up --build
-```
-
-- Web: http://localhost:3000
-- API docs (Swagger): http://localhost:3001/docs
-
-The API seeds fabricated data on first start. To see session expiry within a minute, start with `ACCESS_TOKEN_TTL_SECONDS=60 docker compose -f docker/compose.yml up --build`. `docker compose -f docker/compose.yml down -v` removes everything, data included.
-
-## Local development
+## Getting started
 
 Requires Node.js 22, pnpm 11.25.0 and Docker (for Postgres and Redis).
 
 ```bash
 pnpm install
+cp docker/.env.example docker/.env
 cp apps/api/.env.example apps/api/.env
-docker compose -f docker/compose.yml up -d postgres redis
+docker compose -f docker/compose.yml up -d
 pnpm --filter api seed
 pnpm dev
 ```
+
+- Web: http://localhost:3000
+- API docs (Swagger): http://localhost:3001/docs
+
+To see session expiry within a minute, set `ACCESS_TOKEN_TTL_SECONDS=60` in `apps/api/.env`. `docker compose -f docker/compose.yml down -v` removes Postgres and Redis, data included.
 
 ## Demo accounts
 
@@ -85,22 +72,13 @@ Signing in as different Roles of the same Organization shows the Role-aware UI; 
 apps/api      NestJS API: auth, projects, findings, dashboard, activity, seed
 apps/web      Next.js frontend
 packages/     Shared ESLint and TypeScript configs
-docker/       Docker Compose and its env template
-docs/         Architecture, rules, roadmap, ADRs, deliverables
+docker/       Docker Compose for Postgres and Redis, and its env template
 ```
 
 ## Documentation
 
-| Document                                          | Contents                                                       |
-| ------------------------------------------------- | -------------------------------------------------------------- |
-| [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md)    | System design, security model, frontend structure              |
-| [`GLOSSARY.md`](GLOSSARY.md)                      | Domain language                                                |
-| [`docs/adr/`](docs/adr)                           | Architecture decision records                                  |
-| [`docs/RULES.md`](docs/RULES.md)                  | Engineering rules for this repository                          |
-| [`docs/ROADMAP.md`](docs/ROADMAP.md)              | Milestones and the brief's checklist                           |
-| [`docs/HANDOFF.md`](docs/HANDOFF.md)              | Current state and next steps                                   |
-| [`AI_USAGE.md`](AI_USAGE.md)                      | How AI assistants were used                                    |
-| [`docs/components.md`](docs/components.md)        | Shared components and their props                              |
-| [`docs/design-system.md`](docs/design-system.md)  | Visual language, tokens and motion                             |
-| [`docs/screenshots/`](docs/screenshots/README.md) | Every main page, both languages and themes, desktop and mobile |
-| [`docs/limitations.md`](docs/limitations.md)      | Known limitations and trade-offs                               |
+| Document                                   | Contents                     |
+| ------------------------------------------ | ---------------------------- |
+| [`GLOSSARY.md`](GLOSSARY.md)               | Domain language              |
+| [`AI_USAGE.md`](AI_USAGE.md)               | How AI assistants were used  |
+| [`apps/api/README.md`](apps/api/README.md) | API security model and setup |

@@ -3,15 +3,6 @@
 
 @custom-variant dark (&:is(.dark *));
 
-/*
- * Design tokens (docs/design-system.md). Warm and quiet, after the project
- * owner's reference boards: a cool grey page warming to cream, translucent
- * white cards, ink for primary actions and the one dark feature card, and a
- * single yellow highlight. Severity keeps its own validated scale.
- *
- * Components use these semantic tokens through Tailwind, never raw colours.
- */
-
 @theme inline {
   --font-sans: var(--font-dana), system-ui, sans-serif;
   --font-mono: ui-monospace, monospace;
@@ -65,7 +56,6 @@
   --color-severity-info-foreground: var(--severity-info-foreground);
   --color-severity-info-surface: var(--severity-info-surface);
 
-  /* Controls are pills; inputs and tiles are soft; cards are generous. */
   --radius-sm: 10px;
   --radius-md: 14px;
   --radius-lg: 18px;
@@ -78,7 +68,6 @@
   --shadow-float:
     0 2px 6px rgb(0 0 0 / 0.05), 0 24px 56px -20px rgb(0 0 0 / 0.28);
 
-  /* One headline figure per view, then page titles: light, large, calm. */
   --text-hero: 3.5rem;
   --text-hero--line-height: 1;
   --text-display: 2.5rem;
@@ -88,7 +77,6 @@
 :root {
   --background: #e9eaec;
   --foreground: #1c1c1b;
-  /* Translucent over the ambient background, so cards read as frosted. */
   --card: rgb(255 255 255 / 0.66);
   --card-foreground: #1c1c1b;
   --card-solid: #fbfbfa;
@@ -110,12 +98,10 @@
   --input: rgb(28 28 27 / 0.12);
   --ring: #1c1c1b;
 
-  /* The warm highlight: active marks and the busiest bar, always beside text. */
   --highlight: #ffd861;
   --highlight-foreground: #1c1c1b;
   --highlight-subtle: rgb(255 216 97 / 0.35);
 
-  /* The dark feature card. */
   --ink: #2b2b2a;
   --ink-foreground: #f5f5f4;
   --ink-muted: rgb(245 245 244 / 0.62);
@@ -204,11 +190,6 @@
   --severity-info-surface: #1e293b;
 }
 
-/*
- * Hatched fill for "the rest" of a bar, as in the reference boards: a
- * texture rather than a colour, so it never competes with a value and still
- * reads in print and forced colours.
- */
 @utility bg-hatch {
   background-image: repeating-linear-gradient(
     -45deg,
@@ -217,12 +198,6 @@
   );
 }
 
-/*
- * Page entrance: sections rise into place one after another. CSS only, so it
- * runs on the first paint of server-rendered HTML with nothing to hydrate,
- * and a client re-render (a filter, a refetch) never replays it. Order comes
- * from `--reveal-index` (lib/motion.ts); reduced motion makes it instant.
- */
 @keyframes reveal-rise {
   from {
     opacity: 0;
@@ -235,7 +210,6 @@
   animation-delay: calc(var(--reveal-index, 0) * 70ms);
 }
 
-/* A frosted surface: translucent fill, a light top edge and a soft shadow. */
 @utility glass {
   background-color: var(--card);
   backdrop-filter: blur(18px) saturate(1.2);
@@ -252,7 +226,6 @@
   body {
     @apply text-foreground font-sans;
     font-feature-settings: "tnum" 1;
-    /* Light from the top start, warmth gathering at the bottom end. */
     background:
       radial-gradient(
         55vw 55vh at 0% 0%,
@@ -274,8 +247,6 @@
     min-height: 100svh;
   }
 
-  /* The theme toggle grows the new theme as a circle (theme-toggle.tsx), so
-     both snapshots must hold still instead of cross-fading. */
   ::view-transition-old(root),
   ::view-transition-new(root) {
     animation: none;
@@ -287,7 +258,6 @@
     outline-offset: 2px;
   }
 
-  /* Without transparency, glass must still be a solid, readable surface. */
   @media (prefers-reduced-transparency: reduce) {
     :root,
     .dark {

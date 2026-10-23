@@ -31,7 +31,6 @@ type Story = StoryObj<typeof meta>;
 
 export const Glass: Story = {};
 
-/** The dark feature card; one per page at most. */
 export const Ink: Story = {
   args: { variant: "ink", title: "فعالیت اخیر" },
 };

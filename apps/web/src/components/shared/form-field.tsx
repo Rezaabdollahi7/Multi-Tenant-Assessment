@@ -1,7 +1,6 @@
 import type { ReactNode } from "react";
 import { Label } from "@/components/ui/label";
 
-/** The props a field's control needs to be labelled and to announce its error. */
 export type FieldControlProps = {
   id: string;
   "aria-invalid": boolean;
@@ -11,14 +10,11 @@ export type FieldControlProps = {
 type FormFieldProps = {
   id: string;
   label: string;
-  /** Shown under the control and announced with it. */
   error?: string;
-  /** Guidance shown under the label, e.g. a length limit. */
   hint?: string;
   children: (control: FieldControlProps) => ReactNode;
 };
 
-/** A labelled form control with its hint and validation error. */
 export function FormField({
   id,
   label,

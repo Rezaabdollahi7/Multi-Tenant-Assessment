@@ -5,7 +5,6 @@ import { ConfigService } from '@nestjs/config';
 import type { Environment } from 'src/config/env.validation';
 import { CacheService } from '../services/cache.service';
 
-/** Redis-backed cache for short-lived auth state (OTP codes, attempt counters). */
 @Module({
   imports: [
     CacheModule.registerAsync({

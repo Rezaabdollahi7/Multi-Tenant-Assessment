@@ -11,12 +11,9 @@
     "format": "prettier --write .",
     "format:check": "prettier --check .",
     "clean": "turbo run clean",
-    "prepare": "husky",
     "api:contract": "pnpm --filter api openapi && pnpm --filter frontend api:types"
   },
   "devDependencies": {
-    "husky": "^9.1.7",
-    "lint-staged": "^17.6.0",
     "prettier": "^3.7.4",
     "turbo": "^2.10.3",
     "typescript": "5.9.2"

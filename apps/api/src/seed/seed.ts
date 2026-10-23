@@ -1,13 +1,3 @@
-/**
- * Fabricated data for the Mock API.
- *
- *   pnpm --filter api seed             reset the database and seed it
- *   pnpm --filter api seed --if-empty  seed only when there is no data yet
- *
- * A fixed random seed makes every run produce the same data, so screenshots and
- * manual checks are reproducible. Dates are relative to today so the 30-day
- * trend always has data.
- */
 import { config } from 'dotenv';
 import { DataSource, type EntityManager } from 'typeorm';
 import { Roles } from '../common/enums/role-app.enum';
@@ -46,7 +36,6 @@ const DAY_MS = 24 * 60 * 60 * 1000;
 const FINDINGS_PER_ORGANIZATION = 36;
 const RANDOM_SEED = 20261017;
 
-// Weighted so the dashboard looks like a real backlog rather than uniform noise.
 const SEVERITY_WEIGHTS: [FindingSeverity, number][] = [
   [FindingSeverity.CRITICAL, 1],
   [FindingSeverity.HIGH, 3],
@@ -61,7 +50,6 @@ const STATUS_WEIGHTS: [FindingStatus, number][] = [
   [FindingStatus.ACCEPTED, 1],
 ];
 
-/** mulberry32: a tiny deterministic PRNG returning floats in [0, 1). */
 function createRandom(seed: number): () => number {
   let state = seed;
   return () => {
@@ -88,7 +76,6 @@ function pickWeighted<T>(weights: [T, number][]): T {
   return weights[weights.length - 1][0];
 }
 
-/** A moment between `fromDaysAgo` and `toDaysAgo` days before now. */
 function daysAgo(fromDaysAgo: number, toDaysAgo = 0): Date {
   const span = (fromDaysAgo - toDaysAgo) * DAY_MS;
   return new Date(

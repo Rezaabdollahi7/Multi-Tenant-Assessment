@@ -16,7 +16,6 @@ type Story = StoryObj<typeof meta>;
 
 export const Default: Story = {};
 
-/** With `onRetry`, a "Try again" button asks for the content once more. */
 export const WithRetry: Story = {
   args: { onRetry: fn() },
   play: async ({ args, canvasElement }) => {

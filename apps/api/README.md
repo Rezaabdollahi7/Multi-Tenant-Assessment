@@ -1,13 +1,13 @@
 # API
 
-The NestJS API behind the dashboard, and the brief's Mock API: its data is fabricated by a seed script ([ADR 0001](../../docs/adr/0001-nestjs-backend-as-mock-api.md)). System-level design lives in [`docs/ARCHITECTURE.md`](../../docs/ARCHITECTURE.md).
+The NestJS API behind the dashboard, and the brief's Mock API: its data is fabricated by a seed script.
 
 Every route is served under `/api`. The OpenAPI document and Swagger UI are at `http://localhost:3001/docs`.
 
 ## Security model
 
 - **Sign-in:** phone number + 5-digit one-time code. Codes are stored bcrypt-hashed in Redis for 2 minutes. Each phone may request 3 codes per 2 minutes and make 5 wrong attempts before a 5-minute lock; both limits answer `429`. An unknown phone gets the same answer as a wrong code.
-- **Session:** a short-lived access JWT (`ACCESS_TOKEN_TTL_SECONDS`, default 15 minutes) and a 14-day refresh JWT, both in `httpOnly`, `SameSite=Lax` cookies (`Secure` in production). Both cookies are site-wide so the web app can renew a session while navigating ([ADR 0005](../../docs/adr/0005-session-renewal-in-the-web-proxy.md)).
+- **Session:** a short-lived access JWT (`ACCESS_TOKEN_TTL_SECONDS`, default 15 minutes) and a 14-day refresh JWT, both in `httpOnly`, `SameSite=Lax` cookies (`Secure` in production). Both cookies are site-wide so the web app can renew a session while navigating.
 - **Refresh rotation:** refresh tokens are stored as SHA-256 hashes and rotated on every use. Presenting an already-rotated token revokes its whole family. Logout revokes the current token.
 - **Authorisation:** each route declares the Permission it needs with `@RequirePermissions`; Roles map to Permissions in [`permissions.constants.ts`](src/common/constants/permissions.constants.ts). Routes without a session answer `401`, missing Permissions `403`.
 - **Tenant isolation:** `orgId` comes only from the verified access token. Records of another Organization answer `404`, so their existence is not disclosed.
@@ -15,7 +15,7 @@ Every route is served under `/api`. The OpenAPI document and Swagger UI are at `
 
 ## Setup
 
-Requires Postgres and Redis; `docker compose -f ../../docker/compose.yml up -d postgres redis` starts both.
+Requires Postgres and Redis; `docker compose -f ../../docker/compose.yml up -d` starts both (copy `docker/.env.example` to `docker/.env` first).
 
 ```bash
 cp .env.example .env

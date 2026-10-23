@@ -15,15 +15,12 @@ const meta = {
 export default meta;
 type Story = StoryObj<typeof meta>;
 
-/** The first and last pages, the current one and its neighbours, gaps between. */
 export const Middle: Story = {};
 
-/** On the first page "previous" is shown but disabled. */
 export const FirstPage: Story = {
   args: { meta: { page: 1, limit: 10, totalItems: 90, totalPages: 9 } },
 };
 
-/** A single page needs no page links, only the total. */
 export const SinglePage: Story = {
   args: {
     meta: { page: 1, limit: 10, totalItems: 4, totalPages: 1 },

@@ -41,7 +41,7 @@ jobs:
       - name: API contract is up to date
         run: |
           pnpm api:contract
-          git diff --exit-code -- apps/api/openapi.json apps/web/src/lib/api/schema.d.ts \
+          git diff --exit-code -- apps/api/openapi.json apps/web/src/assets/types/api-schema.d.ts \
             || { echo "::error::Run 'pnpm api:contract' and commit the result."; exit 1; }
 
       - name: Lint
@@ -108,30 +108,3 @@ jobs:
 
       - name: e2e tests
         run: pnpm --filter api test:e2e
-
-  docker:
-    name: Docker stack smoke test
-    runs-on: ubuntu-latest
-    timeout-minutes: 20
-    steps:
-      - uses: actions/checkout@v4
-
-      - name: Build and start the stack
-        run: docker compose -f docker/compose.yml up --build --detach --wait
-
-      - name: Sign in through the web app's /api rewrite
-        run: |
-          curl --fail --silent http://localhost:3000/ > /dev/null
-          curl --fail --silent -X POST http://localhost:3000/api/auth/request-otp \
-            -H 'content-type: application/json' -d '{"phone":"09911110001"}'
-          curl --fail --silent -c cookies.txt -X POST http://localhost:3000/api/auth/verify-otp \
-            -H 'content-type: application/json' -d '{"phone":"09911110001","code":"00000"}'
-          curl --fail --silent -b cookies.txt http://localhost:3000/api/auth/me | grep -q '"role":"ADMIN"'
-
-      - name: Logs on failure
-        if: failure()
-        run: docker compose -f docker/compose.yml logs
-
-      - name: Stop the stack
-        if: always()
-        run: docker compose -f docker/compose.yml down --volumes

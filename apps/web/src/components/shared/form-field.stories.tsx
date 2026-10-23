@@ -10,7 +10,6 @@ const meta = {
     id: "title",
     label: "عنوان",
     hint: "حداکثر ۲۰۰ نویسه.",
-    // The field hands its control the id and ARIA attributes to spread.
     children: (control) => <Input {...control} defaultValue="SQL injection" />,
   },
   argTypes: { children: { control: false } },
@@ -28,7 +27,6 @@ type Story = StoryObj<typeof meta>;
 
 export const WithHint: Story = {};
 
-/** The error is tied to the control, so a screen reader reads it with the field. */
 export const WithError: Story = {
   args: {
     error: "عنوان باید دست‌کم ۳ نویسه باشد.",

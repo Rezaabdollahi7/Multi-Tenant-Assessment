@@ -8,16 +8,12 @@ import { cn } from "@/lib/utils";
 const DEBOUNCE_MS = 300;
 
 type SearchInputProps = {
-  /** Accessible name, also the placeholder. */
   label: string;
-  /** The applied search, e.g. from the URL. */
   value: string;
-  /** Called once typing pauses, with the trimmed text. */
   onSearch: (value: string) => void;
   className?: string;
 };
 
-/** A search box that waits for a pause in typing before searching. */
 export function SearchInput({
   label,
   value,
@@ -27,7 +23,6 @@ export function SearchInput({
   const [draft, setDraft] = useState(value);
   const [applied, setApplied] = useState(value);
 
-  // The value can change from outside (back button, "Clear filters").
   if (value !== applied) {
     setApplied(value);
     setDraft(value);

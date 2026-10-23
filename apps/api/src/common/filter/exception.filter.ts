@@ -58,7 +58,6 @@ export class AllExceptionsFilter implements ExceptionFilter {
       message = 'Database error occurred';
     }
 
-    // Never leak internal details for unexpected errors
     if (status >= HttpStatus.INTERNAL_SERVER_ERROR) {
       this.logger.error(
         `Unhandled exception on ${request.method} ${request.url}`,

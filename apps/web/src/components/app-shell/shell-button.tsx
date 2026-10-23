@@ -2,7 +2,6 @@ import type { ComponentProps } from "react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 
-/** The round glass buttons at the end of the top bar. */
 export function ShellButton({
   className,
   ...props

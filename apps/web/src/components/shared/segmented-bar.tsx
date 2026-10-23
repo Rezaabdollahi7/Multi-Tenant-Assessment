@@ -1,21 +1,19 @@
 "use client";
 
 import { motion } from "motion/react";
-import { useFormatter } from "next-intl";
+import { formatPercent } from "@/lib/format";
 import { DURATION, EASE_OUT } from "@/lib/motion";
 import { cn } from "@/lib/utils";
 
-/** The four looks of a segment; together they tell parts apart without hue. */
 export type SegmentTone = "ink" | "highlight" | "hatch" | "outline";
 
-export type Segment = {
+type Segment = {
   id: string;
   label: string;
   value: number;
   tone: SegmentTone;
 };
 
-/** The smallest share a segment is drawn at, so an empty part stays visible. */
 const MIN_GROW = 0.08;
 
 const TONE_CLASSES: Record<SegmentTone, string> = {
@@ -27,21 +25,15 @@ const TONE_CLASSES: Record<SegmentTone, string> = {
 
 type SegmentedBarProps = {
   segments: Segment[];
-  /** Spoken after each segment's label, e.g. "2 Projects". */
   describeValue: (value: number) => string;
   className?: string;
 };
 
-/**
- * Parts of a whole side by side, each a pill as wide as its share with the
- * share written inside and its label above. Empty parts keep a small pill.
- */
 export function SegmentedBar({
   segments,
   describeValue,
   className,
 }: SegmentedBarProps) {
-  const format = useFormatter();
   const total = segments.reduce((sum, segment) => sum + segment.value, 0);
 
   return (
@@ -53,7 +45,6 @@ export function SegmentedBar({
             key={segment.id}
             className="flex min-w-16 flex-col gap-2"
             style={{ flexBasis: 0 }}
-            // Grow to the share; every part stays wide enough to read.
             initial={{ flexGrow: MIN_GROW }}
             animate={{ flexGrow: Math.max(share, MIN_GROW) }}
             transition={{ duration: DURATION.base, ease: EASE_OUT }}
@@ -68,7 +59,7 @@ export function SegmentedBar({
                 TONE_CLASSES[segment.tone],
               )}
             >
-              {format.number(share, "percent")}
+              {formatPercent(share)}
             </span>
           </motion.li>
         );

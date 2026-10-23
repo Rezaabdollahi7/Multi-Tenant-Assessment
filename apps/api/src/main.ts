@@ -12,8 +12,6 @@ async function bootstrap() {
 
   configureApp(app);
 
-  // The web app proxies /api to us, so browsers never call cross-origin.
-  // CORS_ORIGIN only opens the API to other origins when explicitly set.
   const corsOrigin = config.get('CORS_ORIGIN', { infer: true });
   app.enableCors({
     origin: corsOrigin ? corsOrigin.split(',') : false,

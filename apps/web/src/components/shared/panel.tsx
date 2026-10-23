@@ -5,16 +5,12 @@ import { cn } from "@/lib/utils";
 type PanelProps = {
   title: string;
   description?: string;
-  /** A link or button beside the title, e.g. "View all". */
   action?: ReactNode;
-  /** `ink` is the dark feature card; one per page at most. */
   variant?: "glass" | "ink";
   children: ReactNode;
-  /** Placement in the page grid, e.g. a column span. */
   className?: string;
 };
 
-/** A titled section of a page, in a card. */
 export function Panel({
   title,
   description,

@@ -4,7 +4,7 @@ A dashboard where each Organization tracks the security assessment Projects it r
 
 ## Language
 
-Each term lists the word the Persian UI uses (`_Persian_`); Persian is the default UI language (ADR 0007). Code and docs use the English term.
+Each term lists the word the Persian UI uses (`_Persian_`). Code and docs use the English term.
 
 ### Tenancy and access
 

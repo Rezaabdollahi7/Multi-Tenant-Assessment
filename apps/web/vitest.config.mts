@@ -19,8 +19,6 @@ export default defineConfig({
         },
       },
       {
-        // Every story is a test: it must render, pass its play function and
-        // have no accessibility violations, in a real browser.
         extends: true,
         plugins: [
           storybookTest({

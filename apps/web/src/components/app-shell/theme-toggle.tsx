@@ -2,7 +2,6 @@
 
 import { MonitorIcon, MoonIcon, SunIcon } from "lucide-react";
 import { useReducedMotion } from "motion/react";
-import { useTranslations } from "next-intl";
 import { useTheme } from "next-themes";
 import { useRef } from "react";
 import { flushSync } from "react-dom";
@@ -17,25 +16,18 @@ import {
 import { ShellButton } from "./shell-button";
 
 const THEMES = [
-  { value: "light", icon: SunIcon },
-  { value: "dark", icon: MoonIcon },
-  { value: "system", icon: MonitorIcon },
+  { value: "light", label: "روشن", icon: SunIcon },
+  { value: "dark", label: "تیره", icon: MoonIcon },
+  { value: "system", label: "هماهنگ با سیستم", icon: MonitorIcon },
 ] as const;
 
-/** Milliseconds for the new theme to spread over the page. */
 const SPREAD_DURATION = 550;
 
 export function ThemeToggle() {
   const { theme, setTheme } = useTheme();
-  const t = useTranslations("theme");
   const triggerRef = useRef<HTMLButtonElement>(null);
   const reduceMotion = useReducedMotion();
 
-  /**
-   * The new theme grows out of the button as a circle, where the browser can
-   * snapshot the page (View Transitions); elsewhere, or with reduced motion,
-   * it simply switches.
-   */
   function changeTheme(value: string) {
     const button = triggerRef.current;
     if (!document.startViewTransition || reduceMotion || !button) {
@@ -49,8 +41,6 @@ export function ThemeToggle() {
       Math.max(x, window.innerWidth - x),
       Math.max(y, window.innerHeight - y),
     );
-    // next-themes sets the class in an effect; a synchronous update runs its
-    // effects before returning, so the browser snapshots the new theme.
     const transition = document.startViewTransition(() => {
       flushSync(() => setTheme(value));
     });
@@ -74,18 +64,18 @@ export function ThemeToggle() {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <ShellButton ref={triggerRef} aria-label={t("change")}>
+        <ShellButton ref={triggerRef} aria-label="تغییر پوسته">
           <SunIcon className="dark:hidden" aria-hidden />
           <MoonIcon className="hidden dark:block" aria-hidden />
         </ShellButton>
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end">
-        <DropdownMenuLabel>{t("title")}</DropdownMenuLabel>
+        <DropdownMenuLabel>پوسته</DropdownMenuLabel>
         <DropdownMenuRadioGroup value={theme} onValueChange={changeTheme}>
-          {THEMES.map(({ value, icon: Icon }) => (
+          {THEMES.map(({ value, label, icon: Icon }) => (
             <DropdownMenuRadioItem key={value} value={value}>
               <Icon aria-hidden />
-              {t(value)}
+              {label}
             </DropdownMenuRadioItem>
           ))}
         </DropdownMenuRadioGroup>

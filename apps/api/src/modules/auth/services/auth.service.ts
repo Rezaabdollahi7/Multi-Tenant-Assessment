@@ -130,17 +130,12 @@ export class AuthService {
 
     const user = await this.userRepository.findOne({ where: { phone } });
     if (!user) {
-      // Same answer as a wrong code, so the endpoint does not reveal which phones exist.
       throw new UnauthorizedException('Invalid code.');
     }
 
     return this.startTokenFamily(user, randomUUID());
   }
 
-  /**
-   * Rotates the refresh token. Presenting a token that was already rotated means it
-   * leaked, so the whole family is revoked and the session ends everywhere.
-   */
   async refresh(refreshToken: string | undefined): Promise<SessionTokens> {
     if (!refreshToken) {
       throw new UnauthorizedException('Invalid or expired session');
@@ -166,7 +161,6 @@ export class AuthService {
       revokedAt: new Date(),
     });
 
-    // Reload the User so a changed Role or Organization applies from the next token on.
     const user = await this.userRepository.findOne({
       where: { id: payload.sub },
     });

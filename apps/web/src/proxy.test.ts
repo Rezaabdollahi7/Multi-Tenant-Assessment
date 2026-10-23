@@ -1,4 +1,3 @@
-// @vitest-environment node
 import { http, HttpResponse } from "msw";
 import { NextRequest } from "next/server";
 import { describe, expect, it } from "vitest";

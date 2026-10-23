@@ -13,7 +13,6 @@ const meta = {
 export default meta;
 type Story = StoryObj<typeof meta>;
 
-/** It stands in for a whole page, so its title is the page's only heading. */
 export const Default: Story = {
   play: async ({ canvasElement }) => {
     await expect(

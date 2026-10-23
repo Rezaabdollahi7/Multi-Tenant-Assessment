@@ -12,5 +12,4 @@ type Story = StoryObj<typeof meta>;
 
 export const WithName: Story = {};
 
-/** A User without a name gets initials from the fallback. */
 export const WithoutName: Story = { args: { name: null } };

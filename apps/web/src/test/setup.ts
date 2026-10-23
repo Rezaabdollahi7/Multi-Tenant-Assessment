@@ -4,13 +4,10 @@ import { afterAll, afterEach, beforeAll, vi } from "vitest";
 import { server } from "./msw/server";
 import "./router";
 
-// jsdom does no layout, so it lacks elementFromPoint; input-otp calls it from a
-// timer to detect password-manager badges. Nothing is ever "at" a point here.
 if (typeof document !== "undefined") {
   document.elementFromPoint ??= () => null;
 }
 
-// jsdom has no media queries; tests run at desktop width with no preferences.
 if (typeof window !== "undefined") {
   window.matchMedia ??= (query: string) =>
     ({
@@ -25,8 +22,6 @@ if (typeof window !== "undefined") {
     }) satisfies MediaQueryList;
 }
 
-// Radix Select captures the pointer and scrolls the selected option into view;
-// jsdom implements neither.
 if (typeof Element !== "undefined") {
   Element.prototype.hasPointerCapture ??= () => false;
   Element.prototype.releasePointerCapture ??= () => {};

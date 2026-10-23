@@ -110,7 +110,6 @@ describe('Authentication and Session (e2e)', () => {
     );
     expect(refreshCookie(rotated)).not.toEqual(refreshCookie(original));
 
-    // Replaying the first token signals theft: it fails and kills the whole family.
     await testApp
       .http()
       .post('/api/auth/refresh')
