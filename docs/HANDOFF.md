@@ -20,7 +20,7 @@ All recorded in `docs/adr/` and `GLOSSARY.md`. In short:
 
 - The NestJS API is the brief's Mock API; MSW only in tests and Storybook.
 - The browser reaches the API through Next.js rewrites; session cookies are httpOnly and first-party.
-- State: URL for filters, TanStack Query for server data, Zustand for UI-only state.
+- State: URL for filters, TanStack Query for server data; UI-only state stays with its component, no Zustand (ADR 0006).
 - Every User sees every Project in their Organization; membership is informational.
 - UI in English, left-to-right, light and dark themes. Docs and code in English.
 - Project Status becomes Planned / In Progress / Completed / Archived; Finding Status `ACCEPTED` is shown as Risk Accepted; `member:manage` is removed.
@@ -37,7 +37,6 @@ All recorded in `docs/adr/` and `GLOSSARY.md`. In short:
 - An OpenCode API key was committed in `opencode.json` in the initial commit. The repository is private; the file has been removed, but the key remains in git history and must be revoked by its owner.
 - The trend chart is a single series on purpose: the five Severity colours fail the colour-blind separation check as a stacked chart, so the per-day Severity split is in the tooltip and the screen-reader table instead.
 - Filter and search changes use `router.replace`, so typing does not flood the browser history; pagination links push, so Back returns to the previous page.
-- Two decisions wait on the project owner: whether to keep Zustand (nothing needs it yet; recommended: drop it and update ADR 0003), and the hours worked so far for `docs/time-report.md`.
 - `typeorm.config.ts` uses `synchronize: true` instead of migrations. Acceptable for the assessment; listed as a limitation.
 
 ## How to resume

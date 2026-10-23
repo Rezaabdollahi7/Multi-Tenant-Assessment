@@ -182,13 +182,13 @@ src/
 └── lib/                  # api client, session, query client, utils
 ```
 
-### 6.3 State ownership ([ADR 0003](./adr/0003-state-ownership-url-query-zustand.md))
+### 6.3 State ownership ([ADR 0003](./adr/0003-state-ownership-url-query-zustand.md), [ADR 0006](./adr/0006-no-client-state-library.md))
 
 | State                       | Owner             | Example                          |
 | --------------------------- | ----------------- | -------------------------------- |
 | Server data                 | TanStack Query    | findings list, current User      |
 | Search, filters, pagination | URL search params | `/findings?severity=HIGH&page=2` |
-| Client-only UI              | Zustand           | sidebar open, theme              |
+| Client-only UI              | its own component | sidebar (cookie), theme          |
 
 ### 6.4 Data flow for a list page
 
@@ -228,9 +228,11 @@ Both Dockerfiles are multi-stage: dependencies are installed and built with the 
 
 ## 9. Decisions
 
-| ADR                                                         | Decision                                                    |
-| ----------------------------------------------------------- | ----------------------------------------------------------- |
-| [0001](./adr/0001-nestjs-backend-as-mock-api.md)            | The NestJS backend serves as the Mock API                   |
-| [0002](./adr/0002-same-origin-api-through-next-rewrites.md) | The browser reaches the API through Next.js rewrites        |
-| [0003](./adr/0003-state-ownership-url-query-zustand.md)     | State lives in the URL, TanStack Query, or Zustand, by kind |
-| [0004](./adr/0004-organization-wide-project-visibility.md)  | Every User sees every Project in their Organization         |
+| ADR                                                         | Decision                                                           |
+| ----------------------------------------------------------- | ------------------------------------------------------------------ |
+| [0001](./adr/0001-nestjs-backend-as-mock-api.md)            | The NestJS backend serves as the Mock API                          |
+| [0002](./adr/0002-same-origin-api-through-next-rewrites.md) | The browser reaches the API through Next.js rewrites               |
+| [0003](./adr/0003-state-ownership-url-query-zustand.md)     | Filters live in the URL, server data in TanStack Query             |
+| [0004](./adr/0004-organization-wide-project-visibility.md)  | Every User sees every Project in their Organization                |
+| [0005](./adr/0005-session-renewal-in-the-web-proxy.md)      | Sessions are renewed in the web proxy; refresh cookie is site-wide |
+| [0006](./adr/0006-no-client-state-library.md)               | No client state library; UI state stays with its component         |

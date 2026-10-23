@@ -1,5 +1,7 @@
 # State lives in the URL, TanStack Query, or Zustand, by kind
 
+> **Superseded in part** by [ADR 0006](./0006-no-client-state-library.md): Zustand was never needed and has been removed. The URL and TanStack Query rules below still hold.
+
 Each kind of state has one owner. Search, filters and pagination live in the URL so views are shareable and the back button works. Everything that comes from the API is owned by TanStack Query, which handles caching, refetching and loading and error states. Zustand holds only client-only UI state, such as whether the sidebar is open.
 
 ## Considered Options
