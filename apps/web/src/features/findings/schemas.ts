@@ -19,29 +19,43 @@ export const findingListParamsSchema = z.object({
 
 export type FindingListParams = z.output<typeof findingListParamsSchema>;
 
+type ValidationKey =
+  | "titleTooShort"
+  | "titleTooLong"
+  | "descriptionTooLong"
+  | "chooseProject"
+  | "chooseSeverity"
+  | "chooseStatus";
+
+/** Messages come from the caller's translator, so errors read in the UI language. */
+type Translate = (key: ValidationKey) => string;
+
 /* Limits mirror CreateFindingDto and UpdateFindingDto in apps/api. */
-const findingFields = {
-  title: z
-    .string()
-    .trim()
-    .min(3, "Enter at least 3 characters")
-    .max(200, "Keep the title under 200 characters"),
-  description: z
-    .string()
-    .trim()
-    .max(5000, "Keep the description under 5,000 characters"),
-  severity: z.enum(SEVERITIES, "Choose a Severity"),
-};
+function findingFields(t: Translate) {
+  return {
+    title: z
+      .string()
+      .trim()
+      .min(3, t("titleTooShort"))
+      .max(200, t("titleTooLong")),
+    description: z.string().trim().max(5000, t("descriptionTooLong")),
+    severity: z.enum(SEVERITIES, t("chooseSeverity")),
+  };
+}
 
-export const createFindingSchema = z.object({
-  ...findingFields,
-  projectId: z.uuid("Choose a Project"),
-});
+export function createFindingSchema(t: Translate) {
+  return z.object({
+    ...findingFields(t),
+    projectId: z.uuid(t("chooseProject")),
+  });
+}
 
-export const editFindingSchema = z.object({
-  ...findingFields,
-  status: z.enum(FINDING_STATUSES, "Choose a Finding Status"),
-});
+export function editFindingSchema(t: Translate) {
+  return z.object({
+    ...findingFields(t),
+    status: z.enum(FINDING_STATUSES, t("chooseStatus")),
+  });
+}
 
-export type CreateFindingForm = z.infer<typeof createFindingSchema>;
-export type EditFindingForm = z.infer<typeof editFindingSchema>;
+export type CreateFindingForm = z.infer<ReturnType<typeof createFindingSchema>>;
+export type EditFindingForm = z.infer<ReturnType<typeof editFindingSchema>>;

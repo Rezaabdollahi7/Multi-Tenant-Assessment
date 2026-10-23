@@ -1,37 +1,28 @@
-import {
-  FolderKanbanIcon,
-  LayoutDashboardIcon,
-  ShieldAlertIcon,
-  type LucideIcon,
-} from "lucide-react";
 import type { Permission } from "@/lib/api/types";
 import { routes } from "@/lib/routes";
 
 export type NavItem = {
-  label: string;
+  /** Key under `nav` in the messages. */
+  labelKey: "dashboard" | "projects" | "findings";
   href: string;
-  icon: LucideIcon;
   /** Shown only to Users who hold it. */
   permission: Permission;
 };
 
 export const NAV_ITEMS: NavItem[] = [
   {
-    label: "Dashboard",
+    labelKey: "dashboard",
     href: routes.dashboard(),
-    icon: LayoutDashboardIcon,
     permission: "dashboard:read",
   },
   {
-    label: "Projects",
+    labelKey: "projects",
     href: routes.projects(),
-    icon: FolderKanbanIcon,
     permission: "project:read",
   },
   {
-    label: "Findings",
+    labelKey: "findings",
     href: routes.findings(),
-    icon: ShieldAlertIcon,
     permission: "finding:read",
   },
 ];

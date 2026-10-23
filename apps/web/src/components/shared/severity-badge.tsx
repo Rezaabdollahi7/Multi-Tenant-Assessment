@@ -1,6 +1,6 @@
+import { useTranslations } from "next-intl";
 import { Badge } from "@/components/ui/badge";
 import type { FindingSeverity } from "@/lib/api/types";
-import { SEVERITY_LABELS } from "@/lib/severity";
 import { cn } from "@/lib/utils";
 
 /** Text on a tinted surface per level; contrast is AA in both themes (docs/design-system.md). */
@@ -21,12 +21,17 @@ type SeverityBadgeProps = {
 
 /** A Finding's Severity, always as text; the colour only reinforces it. */
 export function SeverityBadge({ severity, className }: SeverityBadgeProps) {
+  const t = useTranslations("severity");
   return (
     <Badge
       variant="outline"
-      className={cn(SEVERITY_BADGE_CLASSES[severity], className)}
+      className={cn(
+        "px-2.5 py-1 font-normal",
+        SEVERITY_BADGE_CLASSES[severity],
+        className,
+      )}
     >
-      {SEVERITY_LABELS[severity]}
+      {t(severity)}
     </Badge>
   );
 }

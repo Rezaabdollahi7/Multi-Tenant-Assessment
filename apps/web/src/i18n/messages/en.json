@@ -1,0 +1,279 @@
+{
+  "common": {
+    "appName": "Secure Assessment Dashboard",
+    "appShortName": "Secure Assessment",
+    "tryAgain": "Try again",
+    "cancel": "Cancel",
+    "clearFilters": "Clear filters",
+    "skipToContent": "Skip to content",
+    "unnamedUser": "Unnamed User",
+    "breadcrumb": "Breadcrumb",
+    "viewAll": "View all",
+    "none": "—"
+  },
+  "metadata": {
+    "description": "Track security assessment Projects and their Findings across Organizations.",
+    "signIn": "Sign in",
+    "dashboard": "Dashboard",
+    "projects": "Projects",
+    "findings": "Findings",
+    "reportFinding": "Report Finding",
+    "editFinding": "Edit {title}",
+    "projectNotFound": "Project not found",
+    "findingNotFound": "Finding not found"
+  },
+  "nav": {
+    "label": "Main",
+    "dashboard": "Dashboard",
+    "projects": "Projects",
+    "findings": "Findings"
+  },
+  "theme": {
+    "change": "Change theme",
+    "title": "Theme",
+    "light": "Light",
+    "dark": "Dark",
+    "system": "System"
+  },
+  "language": {
+    "change": "Change language",
+    "title": "Language",
+    "fa": "فارسی",
+    "en": "English"
+  },
+  "userMenu": {
+    "trigger": "User menu for {name}",
+    "signOut": "Sign out"
+  },
+  "roles": {
+    "ADMIN": "Admin",
+    "ANALYST": "Analyst",
+    "VIEWER": "Viewer"
+  },
+  "severity": {
+    "CRITICAL": "Critical",
+    "HIGH": "High",
+    "MEDIUM": "Medium",
+    "LOW": "Low",
+    "INFO": "Info"
+  },
+  "findingStatus": {
+    "OPEN": "Open",
+    "IN_REVIEW": "In Review",
+    "RESOLVED": "Resolved",
+    "ACCEPTED": "Risk Accepted"
+  },
+  "projectStatus": {
+    "PLANNED": "Planned",
+    "IN_PROGRESS": "In Progress",
+    "COMPLETED": "Completed",
+    "ARCHIVED": "Archived"
+  },
+  "errors": {
+    "network": "Could not reach the server. Check your connection and try again.",
+    "forbidden": "Your Role does not have Permission for this.",
+    "notFound": "It does not exist or is no longer available.",
+    "rateLimited": "Too many attempts. Wait a few minutes and try again.",
+    "server": "The server ran into a problem. Try again in a moment.",
+    "unexpected": "Something went wrong. Try again."
+  },
+  "permissionDenied": {
+    "description": "Your Role does not include this Permission. Ask an Admin if you need it."
+  },
+  "pagination": {
+    "label": "Pagination",
+    "page": "Page {page, number} of {total, number}",
+    "previous": "Previous",
+    "next": "Next",
+    "previousLabel": "Previous page",
+    "nextLabel": "Next page"
+  },
+  "auth": {
+    "title": "Sign in",
+    "intro": "We will text a one-time code to your mobile number.",
+    "phoneLabel": "Mobile number",
+    "sendCode": "Send code",
+    "codeLabel": "Verification code",
+    "sentTo": "Sent to <ltr>{phone}</ltr>",
+    "demoCode": "Demo code: <ltr>{code}</ltr>",
+    "submit": "Sign in",
+    "differentNumber": "Use a different number",
+    "wrongCode": "That code is wrong or has expired.",
+    "demoAccounts": "Demo accounts · code {code}",
+    "reasons": {
+      "session_expired": "Your Session has expired. Sign in again to continue.",
+      "signed_out": "You have been signed out."
+    },
+    "validation": {
+      "phone": "Enter an 11-digit mobile number starting with 09",
+      "code": "Enter the 5-digit code"
+    }
+  },
+  "dashboard": {
+    "title": "Dashboard",
+    "welcome": "Welcome, {name}",
+    "intro": "The security posture of {organization} at a glance.",
+    "overview": {
+      "label": "Overview",
+      "projects": "Projects",
+      "findings": "Findings",
+      "criticalAndHigh": "Critical and high",
+      "projectStatus": "Project Status",
+      "projectCount": "{count, plural, one {# Project} other {# Projects}}",
+      "error": "Could not load the summary"
+    },
+    "severity": {
+      "title": "Findings by Severity",
+      "description": "Every Finding in the Organization",
+      "error": "Could not load the Severity breakdown",
+      "empty": "No Findings reported yet"
+    },
+    "trend": {
+      "title": "Finding trend",
+      "description": "Findings reported per day, last 30 days",
+      "error": "Could not load the Finding trend",
+      "empty": "No Findings in the last 30 days",
+      "totalLabel": "{count, plural, one {Finding} other {Findings}} in the last 30 days",
+      "viewFindings": "View Findings",
+      "summary": "{total, plural, one {# Finding} other {# Findings}} reported; the busiest day was {day} with {count, number}.",
+      "tooltip": "{day}: {count, plural, one {# Finding} other {# Findings}}",
+      "tableCaption": "Findings reported per day",
+      "day": "Day",
+      "total": "Total"
+    },
+    "activity": {
+      "title": "Recent Activity",
+      "description": "The latest changes to Findings",
+      "error": "Could not load recent Activity",
+      "empty": "No Activity yet",
+      "created": "<name>{actor}</name> reported <link>{target}</link>",
+      "updated": "<name>{actor}</name> updated <link>{target}</link>",
+      "deleted": "<name>{actor}</name> deleted <link>{target}</link>"
+    }
+  },
+  "projects": {
+    "title": "Projects",
+    "intro": "Every security assessment Project in your Organization.",
+    "search": "Search Projects by name",
+    "statusFilter": "Project Status",
+    "allStatuses": "All statuses",
+    "caption": "Projects",
+    "columns": {
+      "project": "Project",
+      "status": "Project Status",
+      "findings": "Findings",
+      "members": "Members",
+      "created": "Created"
+    },
+    "empty": "No Projects yet",
+    "emptyFiltered": "No Projects match these filters",
+    "error": "Could not load Projects",
+    "count": "{count, plural, one {# Project} other {# Projects}}",
+    "details": {
+      "info": "About this Project",
+      "severityTitle": "Findings by Severity",
+      "emptyFindings": "No Findings reported yet",
+      "error": "Could not load this Project",
+      "errorDescription": "The server did not respond as expected. Try again in a moment.",
+      "loading": "Loading Project",
+      "notFound": "Project not found",
+      "notFoundDescription": "It does not exist, or it belongs to another Organization.",
+      "back": "Back to Projects"
+    },
+    "members": {
+      "title": "Members",
+      "description": "Users assigned to this Project",
+      "caption": "Project Members",
+      "name": "Name",
+      "roleInProject": "Role in Project",
+      "role": "Role",
+      "joined": "Joined",
+      "empty": "No Members assigned"
+    }
+  },
+  "findings": {
+    "title": "Findings",
+    "intro": "Every Finding reported across your Organization's Projects.",
+    "report": "Report Finding",
+    "search": "Search Findings by title",
+    "severityFilter": "Severity",
+    "allSeverities": "All Severities",
+    "statusFilter": "Finding Status",
+    "allStatuses": "All statuses",
+    "projectFilter": "Project",
+    "allProjects": "All Projects",
+    "caption": "Findings",
+    "columns": {
+      "finding": "Finding",
+      "severity": "Severity",
+      "status": "Finding Status",
+      "project": "Project",
+      "reported": "Reported"
+    },
+    "empty": "No Findings yet",
+    "emptyFiltered": "No Findings match these filters",
+    "error": "Could not load Findings",
+    "count": "{count, plural, one {# Finding} other {# Findings}}",
+    "details": {
+      "info": "About this Finding",
+      "description": "Description",
+      "noDescription": "No description yet.",
+      "project": "Project",
+      "reportedBy": "Reported by",
+      "reported": "Reported",
+      "lastUpdated": "Last updated",
+      "error": "Could not load this Finding",
+      "errorDescription": "The server did not respond as expected. Try again in a moment.",
+      "loading": "Loading Finding",
+      "notFound": "Finding not found",
+      "notFoundDescription": "It does not exist, was deleted, or belongs to another Organization.",
+      "back": "Back to Findings",
+      "backToFinding": "Back to the Finding"
+    },
+    "actions": {
+      "edit": "Edit",
+      "delete": "Delete",
+      "deleteTitle": "Delete this Finding?",
+      "deleteDescription": "“{title}” will be removed for everyone in your Organization. This cannot be undone.",
+      "deleteConfirm": "Delete Finding",
+      "deleted": "Finding deleted",
+      "deleteFailed": "Could not delete: {reason}"
+    },
+    "form": {
+      "newTitle": "Report Finding",
+      "newIntro": "New Findings start as Open.",
+      "editTitle": "Edit Finding",
+      "cannotReport": "You cannot report Findings",
+      "cannotEdit": "You cannot edit Findings",
+      "project": "Project",
+      "selectProject": "Select a Project",
+      "loadingProjects": "Loading Projects…",
+      "title": "Title",
+      "titleHint": "3 to 200 characters",
+      "description": "Description",
+      "descriptionHint": "Optional. What is affected, how to reproduce it, and its impact.",
+      "severity": "Severity",
+      "selectSeverity": "Select a Severity",
+      "status": "Finding Status",
+      "selectStatus": "Select a Finding Status",
+      "submitCreate": "Report Finding",
+      "submitEdit": "Save changes",
+      "created": "Finding reported",
+      "updated": "Finding updated"
+    },
+    "validation": {
+      "titleTooShort": "Enter at least 3 characters",
+      "titleTooLong": "Keep the title under 200 characters",
+      "descriptionTooLong": "Keep the description under 5,000 characters",
+      "chooseProject": "Choose a Project",
+      "chooseSeverity": "Choose a Severity",
+      "chooseStatus": "Choose a Finding Status"
+    },
+    "latest": {
+      "title": "Latest Findings",
+      "description": "The {shown, number} most recent of {total, number}",
+      "reported": "Reported {date}",
+      "empty": "No Findings reported yet"
+    }
+  }
+}

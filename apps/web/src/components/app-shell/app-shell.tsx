@@ -1,38 +1,40 @@
+import { useTranslations } from "next-intl";
 import type { ReactNode } from "react";
-import {
-  SidebarInset,
-  SidebarProvider,
-  SidebarTrigger,
-} from "@/components/ui/sidebar";
-import { AppSidebar } from "./app-sidebar";
+import { BrandMark } from "./brand-mark";
+import { LanguageToggle } from "./language-toggle";
+import { MainNav } from "./main-nav";
 import { ThemeToggle } from "./theme-toggle";
+import { UserMenu } from "./user-menu";
 
-type AppShellProps = {
-  children: ReactNode;
-  /** Restored from the sidebar's cookie so the first render matches the last visit. */
-  sidebarOpen: boolean;
-};
-
-export function AppShell({ children, sidebarOpen }: AppShellProps) {
+/** The page frame: a floating top bar with the brand, navigation and the User's controls. */
+export function AppShell({ children }: { children: ReactNode }) {
+  const t = useTranslations("common");
   return (
-    <SidebarProvider defaultOpen={sidebarOpen}>
+    <div className="min-h-svh">
       <a
         href="#main-content"
-        className="bg-primary text-primary-foreground sr-only z-50 rounded-md px-3 py-2 focus:not-sr-only focus:fixed focus:top-2 focus:left-2"
+        className="sr-only z-50 rounded-full bg-primary px-4 py-2 text-primary-foreground focus:not-sr-only focus:fixed focus:start-4 focus:top-4"
       >
-        Skip to content
+        {t("skipToContent")}
       </a>
-      <AppSidebar />
-      {/* SidebarInset renders the page's single <main> landmark. */}
-      <SidebarInset id="main-content" tabIndex={-1}>
-        <header className="bg-background/95 sticky top-0 z-10 flex h-14 items-center gap-2 border-b px-4 backdrop-blur">
-          <SidebarTrigger className="-ml-1" />
-          <div className="ml-auto">
+      <header className="sticky top-0 z-30 px-4 pt-4 md:px-8">
+        <div className="mx-auto flex max-w-[1440px] flex-wrap items-center gap-3">
+          <BrandMark />
+          <MainNav className="order-last w-full md:order-none md:mx-auto md:w-auto" />
+          <div className="ms-auto flex items-center gap-2 md:ms-0">
+            <LanguageToggle />
             <ThemeToggle />
+            <UserMenu />
           </div>
-        </header>
-        <div className="flex-1 p-4 md:p-6">{children}</div>
-      </SidebarInset>
-    </SidebarProvider>
+        </div>
+      </header>
+      <main
+        id="main-content"
+        tabIndex={-1}
+        className="mx-auto max-w-[1440px] px-4 pt-8 pb-16 outline-none md:px-8"
+      >
+        {children}
+      </main>
+    </div>
   );
 }

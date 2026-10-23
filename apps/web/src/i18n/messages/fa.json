@@ -1,0 +1,279 @@
+{
+  "common": {
+    "appName": "داشبورد ارزیابی امنیت",
+    "appShortName": "ارزیابی امنیت",
+    "tryAgain": "تلاش دوباره",
+    "cancel": "انصراف",
+    "clearFilters": "پاک کردن فیلترها",
+    "skipToContent": "رفتن به محتوا",
+    "unnamedUser": "کاربر بی‌نام",
+    "breadcrumb": "مسیر صفحه",
+    "viewAll": "مشاهدهٔ همه",
+    "none": "—"
+  },
+  "metadata": {
+    "description": "پیگیری پروژه‌های ارزیابی امنیت و یافته‌های آن‌ها در سازمان‌ها.",
+    "signIn": "ورود",
+    "dashboard": "داشبورد",
+    "projects": "پروژه‌ها",
+    "findings": "یافته‌ها",
+    "reportFinding": "ثبت یافته",
+    "editFinding": "ویرایش {title}",
+    "projectNotFound": "پروژه پیدا نشد",
+    "findingNotFound": "یافته پیدا نشد"
+  },
+  "nav": {
+    "label": "اصلی",
+    "dashboard": "داشبورد",
+    "projects": "پروژه‌ها",
+    "findings": "یافته‌ها"
+  },
+  "theme": {
+    "change": "تغییر پوسته",
+    "title": "پوسته",
+    "light": "روشن",
+    "dark": "تیره",
+    "system": "هماهنگ با سیستم"
+  },
+  "language": {
+    "change": "تغییر زبان",
+    "title": "زبان",
+    "fa": "فارسی",
+    "en": "English"
+  },
+  "userMenu": {
+    "trigger": "منوی کاربری {name}",
+    "signOut": "خروج"
+  },
+  "roles": {
+    "ADMIN": "مدیر",
+    "ANALYST": "تحلیلگر",
+    "VIEWER": "مشاهده‌گر"
+  },
+  "severity": {
+    "CRITICAL": "بحرانی",
+    "HIGH": "بالا",
+    "MEDIUM": "متوسط",
+    "LOW": "پایین",
+    "INFO": "اطلاعاتی"
+  },
+  "findingStatus": {
+    "OPEN": "باز",
+    "IN_REVIEW": "در حال بررسی",
+    "RESOLVED": "رفع‌شده",
+    "ACCEPTED": "ریسک پذیرفته‌شده"
+  },
+  "projectStatus": {
+    "PLANNED": "برنامه‌ریزی‌شده",
+    "IN_PROGRESS": "در حال انجام",
+    "COMPLETED": "تکمیل‌شده",
+    "ARCHIVED": "بایگانی‌شده"
+  },
+  "errors": {
+    "network": "ارتباط با سرور برقرار نشد. اتصال خود را بررسی کنید و دوباره تلاش کنید.",
+    "forbidden": "نقش شما مجوز این کار را ندارد.",
+    "notFound": "وجود ندارد یا دیگر در دسترس نیست.",
+    "rateLimited": "تلاش‌ها بیش از حد مجاز بود. چند دقیقه صبر کنید و دوباره تلاش کنید.",
+    "server": "سرور با مشکل روبه‌رو شد. کمی بعد دوباره تلاش کنید.",
+    "unexpected": "مشکلی پیش آمد. دوباره تلاش کنید."
+  },
+  "permissionDenied": {
+    "description": "نقش شما این مجوز را ندارد. اگر به آن نیاز دارید، از یک مدیر بخواهید."
+  },
+  "pagination": {
+    "label": "صفحه‌بندی",
+    "page": "صفحهٔ {page, number} از {total, number}",
+    "previous": "قبلی",
+    "next": "بعدی",
+    "previousLabel": "صفحهٔ قبل",
+    "nextLabel": "صفحهٔ بعد"
+  },
+  "auth": {
+    "title": "ورود",
+    "intro": "یک کد یک‌بارمصرف به شمارهٔ موبایل شما پیامک می‌کنیم.",
+    "phoneLabel": "شمارهٔ موبایل",
+    "sendCode": "ارسال کد",
+    "codeLabel": "کد تأیید",
+    "sentTo": "ارسال‌شده به <ltr>{phone}</ltr>",
+    "demoCode": "کد دمو: <ltr>{code}</ltr>",
+    "submit": "ورود",
+    "differentNumber": "استفاده از شمارهٔ دیگر",
+    "wrongCode": "کد اشتباه است یا منقضی شده است.",
+    "demoAccounts": "حساب‌های دمو · کد {code}",
+    "reasons": {
+      "session_expired": "نشست شما منقضی شده است. برای ادامه دوباره وارد شوید.",
+      "signed_out": "از حساب خود خارج شدید."
+    },
+    "validation": {
+      "phone": "شمارهٔ موبایل ۱۱ رقمی که با ۰۹ شروع می‌شود را وارد کنید",
+      "code": "کد ۵ رقمی را وارد کنید"
+    }
+  },
+  "dashboard": {
+    "title": "داشبورد",
+    "welcome": "{name}، خوش آمدید",
+    "intro": "نمای کلی وضعیت امنیتی {organization}.",
+    "overview": {
+      "label": "نمای کلی",
+      "projects": "پروژه‌ها",
+      "findings": "یافته‌ها",
+      "criticalAndHigh": "بحرانی و بالا",
+      "projectStatus": "وضعیت پروژه",
+      "projectCount": "{count, plural, other {# پروژه}}",
+      "error": "خلاصه بارگذاری نشد"
+    },
+    "severity": {
+      "title": "یافته‌ها بر اساس شدت",
+      "description": "همهٔ یافته‌های سازمان",
+      "error": "تفکیک شدت بارگذاری نشد",
+      "empty": "هنوز یافته‌ای ثبت نشده است"
+    },
+    "trend": {
+      "title": "روند یافته‌ها",
+      "description": "یافته‌های ثبت‌شده در هر روز، ۳۰ روز گذشته",
+      "error": "روند یافته‌ها بارگذاری نشد",
+      "empty": "در ۳۰ روز گذشته یافته‌ای ثبت نشده است",
+      "totalLabel": "یافته در ۳۰ روز گذشته",
+      "viewFindings": "مشاهدهٔ یافته‌ها",
+      "summary": "{total, plural, other {# یافته}} ثبت شد؛ پرکارترین روز {day} با {count, number} یافته بود.",
+      "tooltip": "{day}: {count, plural, other {# یافته}}",
+      "tableCaption": "یافته‌های ثبت‌شده در هر روز",
+      "day": "روز",
+      "total": "مجموع"
+    },
+    "activity": {
+      "title": "فعالیت‌های اخیر",
+      "description": "آخرین تغییرات یافته‌ها",
+      "error": "فعالیت‌های اخیر بارگذاری نشد",
+      "empty": "هنوز فعالیتی ثبت نشده است",
+      "created": "<name>{actor}</name> یافتهٔ <link>{target}</link> را ثبت کرد",
+      "updated": "<name>{actor}</name> یافتهٔ <link>{target}</link> را ویرایش کرد",
+      "deleted": "<name>{actor}</name> یافتهٔ <link>{target}</link> را حذف کرد"
+    }
+  },
+  "projects": {
+    "title": "پروژه‌ها",
+    "intro": "همهٔ پروژه‌های ارزیابی امنیت سازمان شما.",
+    "search": "جست‌وجوی پروژه با نام",
+    "statusFilter": "وضعیت پروژه",
+    "allStatuses": "همهٔ وضعیت‌ها",
+    "caption": "پروژه‌ها",
+    "columns": {
+      "project": "پروژه",
+      "status": "وضعیت پروژه",
+      "findings": "یافته‌ها",
+      "members": "اعضا",
+      "created": "تاریخ ایجاد"
+    },
+    "empty": "هنوز پروژه‌ای وجود ندارد",
+    "emptyFiltered": "هیچ پروژه‌ای با این فیلترها پیدا نشد",
+    "error": "پروژه‌ها بارگذاری نشدند",
+    "count": "{count, plural, other {# پروژه}}",
+    "details": {
+      "info": "دربارهٔ این پروژه",
+      "severityTitle": "یافته‌ها بر اساس شدت",
+      "emptyFindings": "هنوز یافته‌ای ثبت نشده است",
+      "error": "این پروژه بارگذاری نشد",
+      "errorDescription": "پاسخ سرور مطابق انتظار نبود. کمی بعد دوباره تلاش کنید.",
+      "loading": "در حال بارگذاری پروژه",
+      "notFound": "پروژه پیدا نشد",
+      "notFoundDescription": "وجود ندارد یا متعلق به سازمان دیگری است.",
+      "back": "بازگشت به پروژه‌ها"
+    },
+    "members": {
+      "title": "اعضا",
+      "description": "کاربرانی که به این پروژه اختصاص داده شده‌اند",
+      "caption": "اعضای پروژه",
+      "name": "نام",
+      "roleInProject": "نقش در پروژه",
+      "role": "نقش",
+      "joined": "تاریخ پیوستن",
+      "empty": "عضوی اختصاص داده نشده است"
+    }
+  },
+  "findings": {
+    "title": "یافته‌ها",
+    "intro": "همهٔ یافته‌های ثبت‌شده در پروژه‌های سازمان شما.",
+    "report": "ثبت یافته",
+    "search": "جست‌وجوی یافته با عنوان",
+    "severityFilter": "شدت",
+    "allSeverities": "همهٔ شدت‌ها",
+    "statusFilter": "وضعیت یافته",
+    "allStatuses": "همهٔ وضعیت‌ها",
+    "projectFilter": "پروژه",
+    "allProjects": "همهٔ پروژه‌ها",
+    "caption": "یافته‌ها",
+    "columns": {
+      "finding": "یافته",
+      "severity": "شدت",
+      "status": "وضعیت یافته",
+      "project": "پروژه",
+      "reported": "تاریخ ثبت"
+    },
+    "empty": "هنوز یافته‌ای وجود ندارد",
+    "emptyFiltered": "هیچ یافته‌ای با این فیلترها پیدا نشد",
+    "error": "یافته‌ها بارگذاری نشدند",
+    "count": "{count, plural, other {# یافته}}",
+    "details": {
+      "info": "دربارهٔ این یافته",
+      "description": "توضیحات",
+      "noDescription": "هنوز توضیحی ثبت نشده است.",
+      "project": "پروژه",
+      "reportedBy": "ثبت‌کننده",
+      "reported": "تاریخ ثبت",
+      "lastUpdated": "آخرین به‌روزرسانی",
+      "error": "این یافته بارگذاری نشد",
+      "errorDescription": "پاسخ سرور مطابق انتظار نبود. کمی بعد دوباره تلاش کنید.",
+      "loading": "در حال بارگذاری یافته",
+      "notFound": "یافته پیدا نشد",
+      "notFoundDescription": "وجود ندارد، حذف شده یا متعلق به سازمان دیگری است.",
+      "back": "بازگشت به یافته‌ها",
+      "backToFinding": "بازگشت به یافته"
+    },
+    "actions": {
+      "edit": "ویرایش",
+      "delete": "حذف",
+      "deleteTitle": "این یافته حذف شود؟",
+      "deleteDescription": "«{title}» برای همهٔ اعضای سازمان شما حذف می‌شود. این کار بازگشت‌پذیر نیست.",
+      "deleteConfirm": "حذف یافته",
+      "deleted": "یافته حذف شد",
+      "deleteFailed": "حذف انجام نشد: {reason}"
+    },
+    "form": {
+      "newTitle": "ثبت یافته",
+      "newIntro": "یافته‌های جدید با وضعیت «باز» ثبت می‌شوند.",
+      "editTitle": "ویرایش یافته",
+      "cannotReport": "شما نمی‌توانید یافته ثبت کنید",
+      "cannotEdit": "شما نمی‌توانید یافته‌ها را ویرایش کنید",
+      "project": "پروژه",
+      "selectProject": "یک پروژه انتخاب کنید",
+      "loadingProjects": "در حال بارگذاری پروژه‌ها…",
+      "title": "عنوان",
+      "titleHint": "۳ تا ۲۰۰ نویسه",
+      "description": "توضیحات",
+      "descriptionHint": "اختیاری. چه چیزی آسیب دیده، چطور بازتولید می‌شود و چه اثری دارد.",
+      "severity": "شدت",
+      "selectSeverity": "یک شدت انتخاب کنید",
+      "status": "وضعیت یافته",
+      "selectStatus": "یک وضعیت انتخاب کنید",
+      "submitCreate": "ثبت یافته",
+      "submitEdit": "ذخیرهٔ تغییرات",
+      "created": "یافته ثبت شد",
+      "updated": "یافته به‌روزرسانی شد"
+    },
+    "validation": {
+      "titleTooShort": "دست‌کم ۳ نویسه وارد کنید",
+      "titleTooLong": "عنوان باید کمتر از ۲۰۰ نویسه باشد",
+      "descriptionTooLong": "توضیحات باید کمتر از ۵٬۰۰۰ نویسه باشد",
+      "chooseProject": "پروژه را انتخاب کنید",
+      "chooseSeverity": "شدت را انتخاب کنید",
+      "chooseStatus": "وضعیت یافته را انتخاب کنید"
+    },
+    "latest": {
+      "title": "آخرین یافته‌ها",
+      "description": "{shown, number} مورد آخر از {total, number}",
+      "reported": "ثبت در {date}",
+      "empty": "هنوز یافته‌ای ثبت نشده است"
+    }
+  }
+}

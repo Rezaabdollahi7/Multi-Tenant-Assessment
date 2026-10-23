@@ -1,8 +1,10 @@
+import { getTranslations } from "next-intl/server";
 import { Skeleton } from "@/components/ui/skeleton";
 
-export default function ProjectLoading() {
+export default async function ProjectLoading() {
+  const t = await getTranslations("projects.details");
   return (
-    <div className="space-y-6" aria-busy aria-label="Loading Project">
+    <div className="space-y-6" aria-busy aria-label={t("loading")}>
       <div className="space-y-3">
         <Skeleton className="h-4 w-32" />
         <Skeleton className="h-7 w-72" />

@@ -1,49 +1,96 @@
-import { ChevronLeft, ChevronRight } from "lucide-react";
+import { ArrowLeft, ArrowRight } from "lucide-react";
+import { useFormatter, useTranslations } from "next-intl";
 import Link from "next/link";
 import type { ReactNode } from "react";
-import { Button } from "@/components/ui/button";
 import type { PaginationMeta } from "@/lib/api/types";
-import { formatCount } from "@/lib/format";
+import { cn } from "@/lib/utils";
+
+const GAP = "gap" as const;
+
+/**
+ * The pages to offer: always the first and last, the current one and its
+ * neighbours, and a gap wherever pages are skipped. `[1, gap, 4, 5, 6, gap, 9]`.
+ */
+export function pageItems(
+  page: number,
+  totalPages: number,
+): (number | typeof GAP)[] {
+  const pages = new Set([1, totalPages, page - 1, page, page + 1]);
+  const shown = [...pages]
+    .filter((candidate) => candidate >= 1 && candidate <= totalPages)
+    .sort((a, b) => a - b);
+  return shown.flatMap((current, index) => {
+    const previous = shown[index - 1];
+    return previous !== undefined && current - previous > 1
+      ? [GAP, current]
+      : [current];
+  });
+}
 
 type PaginationProps = {
   meta: PaginationMeta;
-  /** Singular name of what is listed, e.g. "Project". */
-  itemName: string;
+  /** How many items there are, in words, e.g. "23 Projects". */
+  totalLabel: string;
   /** The URL of a page, so pages are real links. */
   hrefForPage: (page: number) => string;
 };
 
-/** Previous and next links with the position in the list. */
-export function Pagination({ meta, itemName, hrefForPage }: PaginationProps) {
-  const { page, totalPages, totalItems } = meta;
+/** The position in a list, with round links to the neighbouring and numbered pages. */
+export function Pagination({ meta, totalLabel, hrefForPage }: PaginationProps) {
+  const t = useTranslations("pagination");
+  const format = useFormatter();
+  const { page, totalPages } = meta;
+
   return (
     <nav
-      aria-label="Pagination"
+      aria-label={t("label")}
       className="flex flex-wrap items-center justify-between gap-3 text-sm"
     >
       <p className="text-muted-foreground tabular-nums">
-        {formatCount(totalItems, itemName)}
-        {totalPages > 1 && ` · Page ${page} of ${totalPages}`}
+        {totalLabel}
+        {totalPages > 1 && ` · ${t("page", { page, total: totalPages })}`}
       </p>
       {totalPages > 1 && (
-        <div className="flex gap-2">
-          <PageLink
-            href={hrefForPage(page - 1)}
-            disabled={page <= 1}
-            label="Previous page"
-          >
-            <ChevronLeft aria-hidden />
-            Previous
-          </PageLink>
-          <PageLink
-            href={hrefForPage(page + 1)}
-            disabled={page >= totalPages}
-            label="Next page"
-          >
-            Next
-            <ChevronRight aria-hidden />
-          </PageLink>
-        </div>
+        <ol className="flex items-center gap-1.5">
+          <li>
+            <PageLink
+              href={page > 1 ? hrefForPage(page - 1) : undefined}
+              label={t("previousLabel")}
+            >
+              {/* Arrows point along the reading direction. */}
+              <ArrowLeft aria-hidden className="size-4 rtl:rotate-180" />
+            </PageLink>
+          </li>
+          {pageItems(page, totalPages).map((item, index) =>
+            item === GAP ? (
+              <li
+                key={`gap-${index}`}
+                aria-hidden
+                className="px-1 text-muted-foreground"
+              >
+                …
+              </li>
+            ) : (
+              <li key={item}>
+                <PageLink
+                  href={hrefForPage(item)}
+                  label={t("page", { page: item, total: totalPages })}
+                  current={item === page}
+                >
+                  {format.number(item)}
+                </PageLink>
+              </li>
+            ),
+          )}
+          <li>
+            <PageLink
+              href={page < totalPages ? hrefForPage(page + 1) : undefined}
+              label={t("nextLabel")}
+            >
+              <ArrowRight aria-hidden className="size-4 rtl:rotate-180" />
+            </PageLink>
+          </li>
+        </ol>
       )}
     </nav>
   );
@@ -51,27 +98,39 @@ export function Pagination({ meta, itemName, hrefForPage }: PaginationProps) {
 
 function PageLink({
   href,
-  disabled,
   label,
+  current = false,
   children,
 }: {
-  href: string;
-  disabled: boolean;
+  /** Undefined when there is no such page, e.g. "previous" on page 1. */
+  href: string | undefined;
   label: string;
+  current?: boolean;
   children: ReactNode;
 }) {
-  if (disabled) {
+  const classes = cn(
+    "flex size-10 items-center justify-center rounded-full tabular-nums transition-colors",
+    current
+      ? "bg-primary text-primary-foreground"
+      : "glass hover:bg-card-solid",
+  );
+  if (href === undefined) {
     return (
-      <Button variant="outline" size="sm" disabled aria-label={label}>
+      <span aria-disabled className={cn(classes, "opacity-40")}>
+        <span className="sr-only">{label}</span>
         {children}
-      </Button>
+      </span>
     );
   }
   return (
-    <Button variant="outline" size="sm" asChild>
-      <Link href={href} aria-label={label} scroll={false}>
-        {children}
-      </Link>
-    </Button>
+    <Link
+      href={href}
+      aria-label={label}
+      aria-current={current ? "page" : undefined}
+      scroll={false}
+      className={classes}
+    >
+      {children}
+    </Link>
   );
 }

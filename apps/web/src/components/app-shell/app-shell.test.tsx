@@ -28,7 +28,7 @@ function renderShell(user: CurrentUser = analyst) {
   return renderWithProviders(
     <ThemeProvider attribute="class">
       <SessionProvider user={user}>
-        <AppShell sidebarOpen>
+        <AppShell>
           <p>Page content</p>
         </AppShell>
       </SessionProvider>
@@ -85,7 +85,7 @@ describe("AppShell", () => {
 
     await user.click(
       screen.getByRole("button", {
-        name: "Account menu for Sara Mohammadi",
+        name: "User menu for Sara Mohammadi",
       }),
     );
     await user.click(await screen.findByRole("menuitem", { name: "Sign out" }));

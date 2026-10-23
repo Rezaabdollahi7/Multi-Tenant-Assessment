@@ -1,4 +1,5 @@
 import { CircleAlert } from "lucide-react";
+import { useTranslations } from "next-intl";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 
@@ -19,6 +20,7 @@ export function ErrorState({
   onRetry,
   className,
 }: ErrorStateProps) {
+  const t = useTranslations("common");
   return (
     <div
       role="alert"
@@ -27,7 +29,9 @@ export function ErrorState({
         className,
       )}
     >
-      <CircleAlert aria-hidden className="size-6 text-destructive" />
+      <span className="flex size-12 items-center justify-center rounded-full bg-muted">
+        <CircleAlert aria-hidden className="size-5 text-destructive" />
+      </span>
       <div className="space-y-1">
         <p className="font-medium">{title}</p>
         {description && (
@@ -36,7 +40,7 @@ export function ErrorState({
       </div>
       {onRetry && (
         <Button variant="outline" size="sm" onClick={onRetry}>
-          Try again
+          {t("tryAgain")}
         </Button>
       )}
     </div>

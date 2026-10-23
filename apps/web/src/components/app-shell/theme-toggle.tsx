@@ -1,8 +1,11 @@
 "use client";
 
 import { MonitorIcon, MoonIcon, SunIcon } from "lucide-react";
+import { useReducedMotion } from "motion/react";
+import { useTranslations } from "next-intl";
 import { useTheme } from "next-themes";
-import { Button } from "@/components/ui/button";
+import { useRef } from "react";
+import { flushSync } from "react-dom";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -11,31 +14,78 @@ import {
   DropdownMenuRadioItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { ShellButton } from "./shell-button";
 
 const THEMES = [
-  { value: "light", label: "Light", icon: SunIcon },
-  { value: "dark", label: "Dark", icon: MoonIcon },
-  { value: "system", label: "System", icon: MonitorIcon },
+  { value: "light", icon: SunIcon },
+  { value: "dark", icon: MoonIcon },
+  { value: "system", icon: MonitorIcon },
 ] as const;
+
+/** Milliseconds for the new theme to spread over the page. */
+const SPREAD_DURATION = 550;
 
 export function ThemeToggle() {
   const { theme, setTheme } = useTheme();
+  const t = useTranslations("theme");
+  const triggerRef = useRef<HTMLButtonElement>(null);
+  const reduceMotion = useReducedMotion();
+
+  /**
+   * The new theme grows out of the button as a circle, where the browser can
+   * snapshot the page (View Transitions); elsewhere, or with reduced motion,
+   * it simply switches.
+   */
+  function changeTheme(value: string) {
+    const button = triggerRef.current;
+    if (!document.startViewTransition || reduceMotion || !button) {
+      setTheme(value);
+      return;
+    }
+    const { left, top, width, height } = button.getBoundingClientRect();
+    const x = left + width / 2;
+    const y = top + height / 2;
+    const radius = Math.hypot(
+      Math.max(x, window.innerWidth - x),
+      Math.max(y, window.innerHeight - y),
+    );
+    // next-themes sets the class in an effect; a synchronous update runs its
+    // effects before returning, so the browser snapshots the new theme.
+    const transition = document.startViewTransition(() => {
+      flushSync(() => setTheme(value));
+    });
+    void transition.ready.then(() =>
+      document.documentElement.animate(
+        {
+          clipPath: [
+            `circle(0px at ${x}px ${y}px)`,
+            `circle(${radius}px at ${x}px ${y}px)`,
+          ],
+        },
+        {
+          duration: SPREAD_DURATION,
+          easing: "cubic-bezier(0.22, 1, 0.36, 1)",
+          pseudoElement: "::view-transition-new(root)",
+        },
+      ),
+    );
+  }
 
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <Button variant="ghost" size="icon" aria-label="Change theme">
+        <ShellButton ref={triggerRef} aria-label={t("change")}>
           <SunIcon className="dark:hidden" aria-hidden />
           <MoonIcon className="hidden dark:block" aria-hidden />
-        </Button>
+        </ShellButton>
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end">
-        <DropdownMenuLabel>Theme</DropdownMenuLabel>
-        <DropdownMenuRadioGroup value={theme} onValueChange={setTheme}>
-          {THEMES.map(({ value, label, icon: Icon }) => (
+        <DropdownMenuLabel>{t("title")}</DropdownMenuLabel>
+        <DropdownMenuRadioGroup value={theme} onValueChange={changeTheme}>
+          {THEMES.map(({ value, icon: Icon }) => (
             <DropdownMenuRadioItem key={value} value={value}>
               <Icon aria-hidden />
-              {label}
+              {t(value)}
             </DropdownMenuRadioItem>
           ))}
         </DropdownMenuRadioGroup>

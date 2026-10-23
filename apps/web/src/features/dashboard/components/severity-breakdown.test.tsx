@@ -75,7 +75,9 @@ describe("SeverityBreakdown", () => {
 
     const alert = await screen.findByRole("alert");
     expect(alert).toHaveTextContent("Could not load the Severity breakdown");
-    expect(alert).toHaveTextContent("Missing Permission");
+    expect(alert).toHaveTextContent(
+      "Your Role does not have Permission for this.",
+    );
 
     await userEvent.click(
       within(alert).getByRole("button", { name: "Try again" }),
@@ -83,5 +85,18 @@ describe("SeverityBreakdown", () => {
 
     expect(await screen.findByText("Critical")).toBeInTheDocument();
     expect(screen.queryByRole("alert")).not.toBeInTheDocument();
+  });
+
+  it("reads in Persian, with Persian digits, in the Persian locale", async () => {
+    server.use(http.get(summaryUrl, () => HttpResponse.json(summary)));
+    renderWithProviders(<SeverityBreakdown />, { locale: "fa" });
+
+    expect(
+      await screen.findByRole("region", { name: "یافته‌ها بر اساس شدت" }),
+    ).toBeInTheDocument();
+    const [critical] = await screen.findAllByRole("listitem");
+    expect(critical).toHaveTextContent("بحرانی");
+    expect(critical).toHaveTextContent("۲");
+    expect(critical).toHaveTextContent("۱۰٪");
   });
 });

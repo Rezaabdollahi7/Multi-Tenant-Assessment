@@ -1,52 +1,72 @@
 "use client";
 
-import { History } from "lucide-react";
+import {
+  History,
+  PencilIcon,
+  PlusIcon,
+  Trash2Icon,
+  type LucideIcon,
+} from "lucide-react";
+import { motion } from "motion/react";
+import { useFormatter, useNow, useTranslations } from "next-intl";
 import Link from "next/link";
+import type { ReactNode } from "react";
 import { EmptyState } from "@/components/shared/empty-state";
 import { ErrorState } from "@/components/shared/error-state";
 import { Panel } from "@/components/shared/panel";
 import { Skeleton } from "@/components/ui/skeleton";
+import { useErrorMessage } from "@/hooks/use-error-message";
 import type { Activity } from "@/lib/api/types";
-import { formatDateTime, formatRelativeTime } from "@/lib/format";
+import { DURATION, EASE_OUT, STAGGER } from "@/lib/motion";
 import { routes } from "@/lib/routes";
-import { displayName } from "@/lib/users";
 import { useRecentActivities } from "../hooks/use-dashboard";
 
-const ACTION_PHRASES: Record<Activity["action"], string> = {
-  "finding.created": "reported",
+/** Message keys under `dashboard.activity`, one sentence per action. */
+const ACTION_KEYS = {
+  "finding.created": "created",
   "finding.updated": "updated",
   "finding.deleted": "deleted",
+} as const satisfies Record<Activity["action"], string>;
+
+const ACTION_ICONS: Record<Activity["action"], LucideIcon> = {
+  "finding.created": PlusIcon,
+  "finding.updated": PencilIcon,
+  "finding.deleted": Trash2Icon,
 };
 
-const PLACEHOLDER_ROWS = 5;
+const PLACEHOLDER_ROWS = 6;
+const ONE_MINUTE = 60_000;
 
 export function RecentActivity({ className }: { className?: string }) {
   const { data, error, refetch } = useRecentActivities();
+  const t = useTranslations("dashboard.activity");
+  const errorMessage = useErrorMessage();
 
   return (
     <Panel
-      title="Recent Activity"
-      description="The latest changes to Findings"
+      variant="ink"
+      title={t("title")}
+      description={t("description")}
       className={className}
     >
       {error ? (
         <ErrorState
-          title="Could not load recent Activity"
-          description={error.message}
+          title={t("error")}
+          description={errorMessage(error)}
           onRetry={() => void refetch()}
         />
       ) : !data ? (
         <div className="space-y-4" aria-busy>
           {Array.from({ length: PLACEHOLDER_ROWS }, (_, index) => (
-            <Skeleton key={index} className="h-5 w-full" />
+            <Skeleton key={index} className="h-10 w-full bg-ink-subtle" />
           ))}
         </div>
       ) : data.length === 0 ? (
-        <EmptyState icon={History} title="No Activity yet" />
+        <EmptyState icon={History} title={t("empty")} />
       ) : (
-        <ol className="divide-y">
-          {data.map((activity) => (
-            <ActivityItem key={activity.id} activity={activity} />
+        <ol className="space-y-1">
+          {data.map((activity, index) => (
+            <ActivityItem key={activity.id} activity={activity} index={index} />
           ))}
         </ol>
       )}
@@ -54,31 +74,69 @@ export function RecentActivity({ className }: { className?: string }) {
   );
 }
 
-function ActivityItem({ activity }: { activity: Activity }) {
+function ActivityItem({
+  activity,
+  index,
+}: {
+  activity: Activity;
+  /** Position in the list, for the entrance stagger. */
+  index: number;
+}) {
+  const t = useTranslations();
+  const format = useFormatter();
+  // Re-renders every minute so "just now" moves on to "1 minute ago".
+  const now = useNow({ updateInterval: ONE_MINUTE });
   const { actor, action, target, createdAt } = activity;
+  const deleted = action === "finding.deleted";
+  const Icon = ACTION_ICONS[action];
+
   return (
-    <li className="flex flex-col gap-0.5 py-2.5 text-sm first:pt-0 last:pb-0 sm:flex-row sm:items-baseline sm:justify-between sm:gap-4">
-      <p className="min-w-0">
-        <span className="font-medium">{displayName(actor.name)}</span>{" "}
-        {ACTION_PHRASES[action]}{" "}
-        {action === "finding.deleted" ? (
-          <span className="text-muted-foreground">{target.name}</span>
-        ) : (
-          <Link
-            href={routes.finding(target.id)}
-            className="rounded-sm text-primary underline-offset-4 hover:underline focus-visible:ring-2 focus-visible:ring-ring focus-visible:outline-none"
-          >
-            {target.name}
-          </Link>
-        )}
-      </p>
-      <time
-        dateTime={createdAt}
-        title={formatDateTime(createdAt)}
-        className="shrink-0 text-xs text-muted-foreground tabular-nums"
+    <motion.li
+      className="flex items-center gap-3 rounded-2xl py-2 text-sm"
+      initial={{ opacity: 0, y: 8 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{
+        duration: DURATION.base,
+        ease: EASE_OUT,
+        delay: index * STAGGER,
+      }}
+    >
+      <span
+        aria-hidden
+        className="flex size-10 shrink-0 items-center justify-center rounded-full bg-ink-subtle"
       >
-        {formatRelativeTime(createdAt)}
-      </time>
-    </li>
+        <Icon className="size-4" />
+      </span>
+      <div className="min-w-0 flex-1 space-y-0.5">
+        <p className="line-clamp-2">
+          {t.rich(`dashboard.activity.${ACTION_KEYS[action]}`, {
+            actor: actor.name ?? t("common.unnamedUser"),
+            target: target.name,
+            name: (chunks: ReactNode) => (
+              <bdi className="font-medium">{chunks}</bdi>
+            ),
+            // A deleted Finding has no page to link to.
+            link: (chunks: ReactNode) =>
+              deleted ? (
+                <bdi className="text-ink-muted line-through">{chunks}</bdi>
+              ) : (
+                <Link
+                  href={routes.finding(target.id)}
+                  className="rounded-sm underline decoration-ink-muted underline-offset-4 hover:decoration-ink-foreground"
+                >
+                  <bdi>{chunks}</bdi>
+                </Link>
+              ),
+          })}
+        </p>
+        <time
+          dateTime={createdAt}
+          title={format.dateTime(new Date(createdAt), "dateTime")}
+          className="block text-xs text-ink-muted tabular-nums"
+        >
+          {format.relativeTime(new Date(createdAt), now)}
+        </time>
+      </div>
+    </motion.li>
   );
 }
