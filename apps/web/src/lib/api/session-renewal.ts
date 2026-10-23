@@ -2,7 +2,7 @@ import type { Middleware } from "openapi-fetch";
 
 const AUTH_PATH = "/api/auth/";
 
-export type SessionRenewalOptions = {
+type SessionRenewalOptions = {
   onSessionExpired: () => void;
   fetch?: typeof fetch;
 };

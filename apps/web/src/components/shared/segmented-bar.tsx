@@ -7,7 +7,7 @@ import { cn } from "@/lib/utils";
 
 export type SegmentTone = "ink" | "highlight" | "hatch" | "outline";
 
-export type Segment = {
+type Segment = {
   id: string;
   label: string;
   value: number;

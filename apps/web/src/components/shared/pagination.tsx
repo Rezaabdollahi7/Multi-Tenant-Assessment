@@ -52,7 +52,7 @@ export function Pagination({ meta, totalLabel, hrefForPage }: PaginationProps) {
               href={page > 1 ? hrefForPage(page - 1) : undefined}
               label="صفحهٔ قبل"
             >
-              <ArrowLeft aria-hidden className="size-4 rtl:rotate-180" />
+              <ArrowRight aria-hidden className="size-4" />
             </PageLink>
           </li>
           {pageItems(page, totalPages).map((item, index) =>
@@ -81,7 +81,7 @@ export function Pagination({ meta, totalLabel, hrefForPage }: PaginationProps) {
               href={page < totalPages ? hrefForPage(page + 1) : undefined}
               label="صفحهٔ بعد"
             >
-              <ArrowRight aria-hidden className="size-4 rtl:rotate-180" />
+              <ArrowLeft aria-hidden className="size-4" />
             </PageLink>
           </li>
         </ol>

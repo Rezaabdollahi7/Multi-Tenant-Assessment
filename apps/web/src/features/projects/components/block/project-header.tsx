@@ -1,4 +1,4 @@
-import { ChevronRight } from "lucide-react";
+import { ChevronLeft } from "lucide-react";
 import Link from "next/link";
 import type { ReactNode } from "react";
 import type { ProjectDetail } from "@/assets/types/project";
@@ -25,7 +25,7 @@ export function ProjectHeader({ project, action }: ProjectHeaderProps) {
             </Link>
           </li>
           <li aria-hidden>
-            <ChevronRight className="size-3.5 rtl:rotate-180" />
+            <ChevronLeft className="size-3.5" />
           </li>
           <li aria-current="page" className="truncate text-foreground">
             <bdi>{project.name}</bdi>

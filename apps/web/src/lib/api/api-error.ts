@@ -39,7 +39,7 @@ export function errorMessage(error: unknown): string {
   return "مشکلی پیش آمد. دوباره تلاش کنید.";
 }
 
-export type Settled<T> = { ok: true; data: T } | { ok: false; error: unknown };
+type Settled<T> = { ok: true; data: T } | { ok: false; error: unknown };
 
 export function settle<T>(promise: Promise<T>): Promise<Settled<T>> {
   return promise.then(

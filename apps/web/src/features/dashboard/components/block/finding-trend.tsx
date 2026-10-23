@@ -1,4 +1,4 @@
-import { ArrowUpRight, ChartColumn } from "lucide-react";
+import { ArrowUpLeft, ChartColumn } from "lucide-react";
 import Link from "next/link";
 import { Suspense } from "react";
 import { EmptyState } from "@/components/shared/empty-state";
@@ -22,7 +22,7 @@ export function FindingTrend({ className }: { className?: string }) {
           aria-label="مشاهدهٔ یافته‌ها"
           className="flex size-10 shrink-0 items-center justify-center rounded-full border border-border-strong transition-colors hover:bg-card-solid"
         >
-          <ArrowUpRight aria-hidden className="size-4 rtl:-scale-x-100" />
+          <ArrowUpLeft aria-hidden className="size-4" />
         </Link>
       }
     >

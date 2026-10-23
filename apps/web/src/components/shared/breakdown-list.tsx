@@ -5,7 +5,7 @@ import { formatNumber, formatPercent } from "@/lib/format";
 import { DURATION, EASE_OUT, STAGGER } from "@/lib/motion";
 import { cn } from "@/lib/utils";
 
-export type BreakdownItem = {
+type BreakdownItem = {
   id: string;
   label: string;
   value: number;

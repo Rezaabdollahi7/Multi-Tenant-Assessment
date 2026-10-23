@@ -1,7 +1,7 @@
 import type { ReactNode } from "react";
 import { cn } from "@/lib/utils";
 
-export type Detail = { label: string; value: ReactNode };
+type Detail = { label: string; value: ReactNode };
 
 export function DetailList({
   details,

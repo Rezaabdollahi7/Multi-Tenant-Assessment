@@ -178,7 +178,7 @@ function CodeStepForm({
             </>
           )}
         </p>
-        <div dir="ltr" className="flex rtl:justify-end">
+        <div dir="ltr" className="flex justify-end">
           <InputOTP
             id="code"
             maxLength={CODE_LENGTH}

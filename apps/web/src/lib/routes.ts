@@ -14,7 +14,6 @@ function withQuery(path: string, params: Record<string, string | undefined>) {
 }
 
 export const routes = {
-  home: () => "/",
   login: (params: LoginParams = {}) => withQuery("/login", params),
   dashboard: () => "/dashboard",
   projects: () => "/projects",
