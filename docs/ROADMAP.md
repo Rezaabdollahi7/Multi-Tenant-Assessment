@@ -45,7 +45,7 @@ Each milestone is delivered as one or more pull requests into `main`. Tick items
 ## M3 · Authentication UI and Dashboard: 1405/08/02 (Oct 24)
 
 - [x] **A.** Login (phone → code), logout, signed-in state in the header, auth error messages, redirect to protected routes and back via `next`, session-expired message
-- [ ] **B.** Dashboard: Project count, Finding count, Severity breakdown, Project Status breakdown, 30-day Finding trend chart, latest Activities
+- [x] **B.** Dashboard: Project count, Finding count, Severity breakdown, Project Status breakdown, 30-day Finding trend chart, latest Activities
 
 ## M4 · Projects and Findings: 1405/08/03 (Oct 25)
 

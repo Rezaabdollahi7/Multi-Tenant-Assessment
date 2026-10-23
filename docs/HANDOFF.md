@@ -2,13 +2,13 @@
 
 The current state of the work, written for whoever picks it up next: a teammate, a reviewer, or a new AI session. Update it at the end of every work session; replace stale content rather than appending.
 
-**Last updated:** 1405/07/30 (2026-10-22)
-**Current milestone:** M3 · Dashboard next; M2 and M3-A (authentication UI) done (see `docs/ROADMAP.md`)
+**Last updated:** 1405/08/01 (2026-10-23)
+**Current milestone:** M4 · Projects and Findings next; M0–M3 done (see `docs/ROADMAP.md`)
 
 ## Where things stand
 
 - **API (`apps/api`):** reviewed and hardened (PR `refactor/api-hardening`). All routes under `/api`, typed response DTOs on every route, strict TypeScript, env validated at startup, OTP state in Redis, deterministic seed, 10 unit and 15 e2e tests (e2e run in CI against Postgres and Redis). `apps/api/README.md` documents the security model and routes.
-- **Web (`apps/web`):** typed API client generated from the API contract (`pnpm api:contract`), TanStack Query, design system (`docs/design-system.md`), and the session: `proxy.ts` guard with silent renewal, protected `(app)` layout, sign-in page (phone → code, demo accounts), sign-out, `SessionProvider` / `useCan` / `<Can>`. App shell in `components/app-shell` (sidebar, header, User menu, theme toggle, skip link). Dashboard, Projects and Findings pages are placeholders. 34 tests (Vitest + RTL + MSW).
+- **Web (`apps/web`):** typed API client generated from the API contract (`pnpm api:contract`), TanStack Query, design system (`docs/design-system.md`), and the session: `proxy.ts` guard with silent renewal, protected `(app)` layout, sign-in page (phone → code, demo accounts), sign-out, `SessionProvider` / `useCan` / `<Can>`. App shell in `components/app-shell` (sidebar, header, User menu, theme toggle, skip link). Dashboard (`features/dashboard`): headline counts, Severity and Project Status breakdowns, 30-day Finding trend (Recharts, with a text summary and a screen-reader table), recent Activity; each panel has its own loading, empty and error-with-retry state. Shared so far: `StatCard`, `BreakdownList`, `EmptyState`, `ErrorState` in `components/shared`; Severity and status labels in `lib/severity.ts` and `lib/status.ts`; date and count formatting in `lib/format.ts`. Projects and Findings pages are placeholders. 50 tests (Vitest + RTL + MSW).
 - **Infrastructure:** `docker compose -f docker/compose.yml up --build` runs Postgres, Redis, the API (seeds on first start, health-checked at `/api/health`) and the web app (Next.js standalone) with no configuration. Web on :3000, API on :3001. The web app rewrites `/api/*` to the API, baked in at build time from `API_URL`.
 - **Docs:** glossary, ADRs 0001–0004, rules, architecture and roadmap are written.
 - **Quality gates:** CI runs format check, lint, typecheck, unit tests and build on every PR and on `main`. A Husky pre-commit hook runs lint-staged (ESLint and Prettier on staged files). pnpm is pinned to 11.25.0.
@@ -28,13 +28,15 @@ All recorded in `docs/adr/` and `GLOSSARY.md`. In short:
 
 ## Next steps
 
-1. Merge the app shell PR.
-2. M3-B dashboard: summary cards, Severity and Project Status breakdowns, 30-day trend chart, latest Activities.
-3. M4: Projects and Findings.
+1. Merge the dashboard PR.
+2. M4: Projects (list, search, Project Status filter, pagination, details with Members and Findings), then Findings (list and filters, `SeverityBadge`, details, create and edit pages, delete for Admins).
+3. Finding mutations must invalidate the Dashboard's queries too (`["dashboard"]`); features may not import each other, so move the shared key root to `lib/` when M4 needs it.
 
 ## Open issues and risks
 
 - An OpenCode API key was committed in `opencode.json` in the initial commit. The repository is private; the file has been removed, but the key remains in git history and must be revoked by its owner.
+- The trend chart is a single series on purpose: the five Severity colours fail the colour-blind separation check as a stacked chart, so the per-day Severity split is in the tooltip and the screen-reader table instead.
+- Two decisions wait on the project owner: whether to keep Zustand (nothing needs it yet; recommended: drop it and update ADR 0003), and the hours worked so far for `docs/time-report.md`.
 - `typeorm.config.ts` uses `synchronize: true` instead of migrations. Acceptable for the assessment; listed as a limitation.
 
 ## How to resume
