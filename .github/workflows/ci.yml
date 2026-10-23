@@ -48,6 +48,9 @@ jobs:
       - name: Typecheck
         run: pnpm check-types
 
+      - name: Browser for the Storybook tests
+        run: pnpm --filter frontend exec playwright install --with-deps --only-shell chromium
+
       - name: Test
         run: pnpm test
 
