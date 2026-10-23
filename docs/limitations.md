@@ -12,14 +12,14 @@ What this submission does not do, or does in a simplified way, and why. Each ite
 ## Data
 
 - **Schema by `synchronize: true`.** TypeORM creates the tables from the entities on start; there are no migrations. Fine for seeded demo data, not for data that must survive schema changes. _production_
-- **Fabricated data only.** Three Organizations with five Projects each, seeded deterministically (`pnpm --filter api seed`). There is no screen to create Organizations, Users or Projects, and none to manage Project Members (`member:manage` was removed from the brief's Permission list). The API and seed are the only way to change them.
+- **Fabricated data only.** Three Organizations, each with three Users (one per Role), three to five Projects and 36 Findings, seeded deterministically (`pnpm --filter api seed`). There is no screen to create Organizations, Users or Projects, and none to manage Project Members (`member:manage` was removed from the brief's Permission list). The API and seed are the only way to change them.
 - **Every User sees every Project of their Organization.** Project membership is shown but grants nothing (ADR 0004).
 - **No Finding history.** Activity records who created, edited or deleted a Finding, but not the previous values.
 
 ## Interface
 
 - **API messages are English.** The UI shows its own localized message for each HTTP status, so only an API field-validation message, placed on its field, can appear in English inside the Persian UI.
-- **The Finding form lists at most 100 Projects**, the API's largest page. Seeded Organizations have five.
+- **The Finding form lists at most 100 Projects**, the API's largest page. Seeded Organizations have at most five.
 - **The Finding trend is a single series.** A stacked chart by Severity would need five colours that fail the colour-blind separation check, so the per-day Severity split is in the tooltip and in the screen-reader table instead.
 - **The interface is not translated by URL.** The language is a cookie (ADR 0007), so a link always opens in the reader's own language and search engines see one language per page. That suits a signed-in tool, not a public site.
 - **Dana is a commercial typeface** (fontiran.com), committed under the project owner's licence. Anyone reusing the code needs their own licence or another font.
