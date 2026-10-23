@@ -95,5 +95,5 @@ A feature may import from `components/`, `hooks/`, `lib/` and its own folder. Fe
 ## 6. Documentation
 
 - Domain terms: `GLOSSARY.md`. Decisions: `docs/adr/`. Component props: `docs/components.md`.
-- At the end of every work session, update `docs/HANDOFF.md`, add a row to `docs/time-report.md`, and record AI involvement in `AI_USAGE.md`.
+- At the end of every work session, update `docs/HANDOFF.md` and record AI involvement in `AI_USAGE.md`.
 - Docs, code, comments and commits are written in English. The UI is Persian by default and also English (ADR 0007); domain terms in both are in `GLOSSARY.md`.

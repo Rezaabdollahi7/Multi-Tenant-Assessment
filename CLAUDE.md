@@ -37,7 +37,7 @@ pnpm --filter frontend storybook    # component catalogue on :6006
 
 - Never commit to `main`. Branch as `<type>/<kebab-scope>` (`feat/findings-list`, `fix/session-refresh`), open a PR, merge with a merge commit.
 - Conventional Commits with a scope: `feat(web): ...`, `fix(api): ...`, `docs: ...`.
-- At the end of a work session, update `docs/HANDOFF.md`, `docs/time-report.md` and `AI_USAGE.md`.
+- At the end of a work session, update `docs/HANDOFF.md` and `AI_USAGE.md`.
 - New domain term or changed meaning → update `GLOSSARY.md` in the same PR. Hard-to-reverse decision with a real trade-off → add an ADR.
 - No secrets in the repo. `.env.example` files hold placeholders only.
 
