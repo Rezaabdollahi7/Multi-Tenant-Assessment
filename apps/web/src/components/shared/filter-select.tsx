@@ -10,22 +10,17 @@ import {
 import type { Option } from "@/assets/types/common";
 import { cn } from "@/lib/utils";
 
-/** Radix Select cannot use "" as an item value, so "no filter" needs a name. */
 const ALL = "all";
 
 type FilterSelectProps<Value extends string> = {
-  /** Accessible name, e.g. "Project Status". */
   label: string;
-  /** Text of the "no filter" option, e.g. "All statuses". */
   allLabel: string;
   options: readonly Option<Value>[];
-  /** The applied filter; undefined means no filter. */
   value: Value | undefined;
   onChange: (value: Value | undefined) => void;
   className?: string;
 };
 
-/** A single-choice filter with an "all" option. */
 export function FilterSelect<Value extends string>({
   label,
   allLabel,

@@ -2,7 +2,6 @@ import type { Finding } from "@/assets/types/finding";
 import type { Permission } from "@/assets/types/permissions";
 import type { CurrentUser, Role } from "@/assets/types/user";
 
-/** Mirrors ROLE_PERMISSIONS in apps/api/src/common/constants/permissions.constants.ts. */
 const ROLE_PERMISSIONS: Record<Role, Permission[]> = {
   VIEWER: [
     "dashboard:read",

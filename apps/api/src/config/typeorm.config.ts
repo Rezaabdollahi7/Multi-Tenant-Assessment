@@ -19,7 +19,6 @@ export class TypeOrmConfig implements TypeOrmOptionsFactory {
       password: this.config.get('POSTGRES_PASSWORD', { infer: true }),
       database: this.config.get('POSTGRES_DB', { infer: true }),
       autoLoadEntities: true,
-      // Schema is derived from the entities; see docs/limitations.md.
       synchronize: true,
     };
   }

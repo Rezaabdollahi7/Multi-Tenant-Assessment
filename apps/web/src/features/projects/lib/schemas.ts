@@ -1,7 +1,6 @@
 import { z } from "zod";
 import { PROJECT_STATUSES } from "@/lib/status";
 
-/** The Projects list's URL search params; invalid values fall back to defaults. */
 export const projectListParamsSchema = z.object({
   search: z
     .string()

@@ -21,7 +21,6 @@ const THEMES = [
   { value: "system", label: "هماهنگ با سیستم", icon: MonitorIcon },
 ] as const;
 
-/** Milliseconds for the new theme to spread over the page. */
 const SPREAD_DURATION = 550;
 
 export function ThemeToggle() {
@@ -29,11 +28,6 @@ export function ThemeToggle() {
   const triggerRef = useRef<HTMLButtonElement>(null);
   const reduceMotion = useReducedMotion();
 
-  /**
-   * The new theme grows out of the button as a circle, where the browser can
-   * snapshot the page (View Transitions); elsewhere, or with reduced motion,
-   * it simply switches.
-   */
   function changeTheme(value: string) {
     const button = triggerRef.current;
     if (!document.startViewTransition || reduceMotion || !button) {
@@ -47,8 +41,6 @@ export function ThemeToggle() {
       Math.max(x, window.innerWidth - x),
       Math.max(y, window.innerHeight - y),
     );
-    // next-themes sets the class in an effect; a synchronous update runs its
-    // effects before returning, so the browser snapshots the new theme.
     const transition = document.startViewTransition(() => {
       flushSync(() => setTheme(value));
     });

@@ -13,7 +13,6 @@ function withQuery(path: string, params: Record<string, string | undefined>) {
   return query ? `${path}?${query}` : path;
 }
 
-/** Every in-app URL, so links and redirects cannot drift apart. */
 export const routes = {
   home: () => "/",
   login: (params: LoginParams = {}) => withQuery("/login", params),
@@ -27,10 +26,6 @@ export const routes = {
   editFinding: (id: string) => `/findings/${id}/edit`,
 };
 
-/**
- * A `next` parameter is only honoured when it is a path on this site; anything
- * else (`//evil.example`, `/\evil.example`) would make login an open redirect.
- */
 export function safeNextPath(next: string | null | undefined): string {
   const isLocalPath =
     !!next &&

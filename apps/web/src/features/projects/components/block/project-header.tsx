@@ -8,7 +8,6 @@ import { revealOrder } from "@/lib/motion";
 
 type ProjectHeaderProps = {
   project: ProjectDetail;
-  /** A primary action beside the title, shown by Permission. */
   action?: ReactNode;
 };
 

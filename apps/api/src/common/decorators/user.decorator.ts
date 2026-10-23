@@ -6,7 +6,6 @@ import {
 } from '@nestjs/common';
 import type { Request } from 'express';
 
-/** The verified access-token payload, or one of its fields. */
 export const UserInfo = createParamDecorator(
   (field: keyof JwtPayload | undefined, ctx: ExecutionContext) => {
     const user = ctx.switchToHttp().getRequest<Request>().user;

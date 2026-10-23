@@ -8,16 +8,10 @@ import { formatNumber } from "@/lib/format";
 
 type HeadlineStatProps = {
   label: string;
-  /** Omitted while loading; a skeleton takes its place. */
   value?: number;
   icon: LucideIcon;
 };
 
-/**
- * One large, light figure with a small icon and label under it; the figure
- * counts up when it arrives. Renders a label-value pair, so place it inside
- * a <dl>.
- */
 export function HeadlineStat({ label, value, icon: Icon }: HeadlineStatProps) {
   return (
     <div className="flex flex-col gap-1" aria-busy={value === undefined}>
@@ -42,7 +36,6 @@ function CountUp({ value }: { value: number }) {
   const text = useCountUp(value, formatNumber);
   return (
     <>
-      {/* Assistive technology reads the final figure, not the count. */}
       <span className="sr-only">{formatNumber(value)}</span>
       <motion.span aria-hidden>{text}</motion.span>
     </>

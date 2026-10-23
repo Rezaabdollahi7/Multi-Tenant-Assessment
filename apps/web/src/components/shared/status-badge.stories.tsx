@@ -18,7 +18,6 @@ type Story = StoryObj<typeof meta>;
 
 export const Active: Story = {};
 
-/** The four tones: not started, under way, done, set aside. */
 export const AllTones: Story = {
   render: () => (
     <div className="flex flex-wrap gap-2">

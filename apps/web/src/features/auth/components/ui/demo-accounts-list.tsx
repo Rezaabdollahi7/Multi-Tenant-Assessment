@@ -5,7 +5,6 @@ type DemoAccountsListProps = {
   onSelect: (phone: string) => void;
 };
 
-/** Seeded Users for evaluators: choosing one fills in the phone number. */
 export function DemoAccountsList({ onSelect }: DemoAccountsListProps) {
   return (
     <section aria-labelledby="demo-accounts-heading" className="space-y-2">

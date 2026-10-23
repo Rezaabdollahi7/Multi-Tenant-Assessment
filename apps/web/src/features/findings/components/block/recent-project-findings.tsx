@@ -14,7 +14,6 @@ type RecentProjectFindingsProps = {
   findings: FindingList;
 };
 
-/** The latest Findings of one Project, linking to the full filtered list. */
 export function RecentProjectFindings({
   projectId,
   findings: { data, meta },

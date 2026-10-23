@@ -9,7 +9,6 @@ export type BreakdownItem = {
   id: string;
   label: string;
   value: number;
-  /** CSS colour of the bar; the label always carries the meaning too. */
   color: string;
 };
 
@@ -18,7 +17,6 @@ type BreakdownListProps = {
   className?: string;
 };
 
-/** Each part of a whole as a labelled row with its count, share and a bar on a hatched track. */
 export function BreakdownList({ items, className }: BreakdownListProps) {
   const total = items.reduce((sum, item) => sum + item.value, 0);
   return (
@@ -37,7 +35,6 @@ export function BreakdownList({ items, className }: BreakdownListProps) {
               </span>
             </div>
             <div aria-hidden className="bg-hatch h-2.5 rounded-full">
-              {/* Grows to its share, and moves when the data changes. */}
               <motion.div
                 className="h-full rounded-full"
                 style={{ backgroundColor: item.color }}

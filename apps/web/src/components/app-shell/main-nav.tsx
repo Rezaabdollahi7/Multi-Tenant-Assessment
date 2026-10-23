@@ -8,7 +8,6 @@ import { useCurrentUser } from "@/lib/session/session-provider";
 import { cn } from "@/lib/utils";
 import { isActive, NAV_ITEMS } from "./nav-items";
 
-/** Sections as pills; the current one is filled with ink. */
 export function MainNav({ className }: { className?: string }) {
   const pathname = usePathname();
   const user = useCurrentUser();
@@ -22,7 +21,6 @@ export function MainNav({ className }: { className?: string }) {
           return (
             <li key={href} className="relative flex-1 md:flex-none">
               {active && (
-                // One shared pill that slides from the old section to the new.
                 <motion.span
                   layoutId="main-nav-current"
                   aria-hidden

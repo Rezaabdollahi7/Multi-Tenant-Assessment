@@ -7,7 +7,6 @@ export type OrganizationSeed = {
   projects: { name: string; description: string; status: ProjectStatus }[];
 };
 
-/** Three Organizations, each with one User per Role. Phones match the README. */
 export const ORGANIZATIONS: OrganizationSeed[] = [
   {
     name: 'Org A',

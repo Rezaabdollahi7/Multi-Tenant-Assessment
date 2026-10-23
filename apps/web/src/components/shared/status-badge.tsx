@@ -14,12 +14,10 @@ const TONE_CLASSES: Record<StatusTone, { pill: string; dot: string }> = {
 
 type StatusBadgeProps = {
   label: string;
-  /** Colour of the dot; the label always carries the meaning. */
   tone: StatusTone;
   className?: string;
 };
 
-/** The state of something in its life, such as a Project Status. */
 export function StatusBadge({ label, tone, className }: StatusBadgeProps) {
   return (
     <Badge

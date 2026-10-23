@@ -8,11 +8,6 @@ import {
 
 const API_URL = process.env.API_URL ?? "http://localhost:3001";
 
-/**
- * First gate for every page: lets fresh sessions through, renews expiring ones
- * with the refresh cookie, and sends everyone else to sign-in (ADR 0005). The
- * protected layout and the API still verify the session; this only routes.
- */
 export async function proxy(request: NextRequest): Promise<NextResponse> {
   const { pathname, search } = request.nextUrl;
   if (pathname === routes.login()) return NextResponse.next();
@@ -32,10 +27,6 @@ export async function proxy(request: NextRequest): Promise<NextResponse> {
   );
 }
 
-/**
- * Rotates the tokens and continues the request: the browser receives the new
- * cookies, and the page being rendered already sees them.
- */
 async function renewSession(
   request: NextRequest,
 ): Promise<NextResponse | null> {
@@ -74,7 +65,6 @@ function redirectToSignIn(
   const response = NextResponse.redirect(
     new URL(routes.login(params), request.url),
   );
-  // Drop a refresh token the API has rejected, so the next visit starts clean.
   if (params?.reason === "session_expired") {
     response.cookies.delete(ACCESS_TOKEN_COOKIE);
     response.cookies.delete(REFRESH_TOKEN_COOKIE);
@@ -83,6 +73,5 @@ function redirectToSignIn(
 }
 
 export const config = {
-  // Pages only: not the /api proxy, Next internals, or files with an extension.
   matcher: ["/((?!api/|_next/|.*\\..*).*)"],
 };

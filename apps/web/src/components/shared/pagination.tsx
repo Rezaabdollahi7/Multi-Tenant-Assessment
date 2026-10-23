@@ -7,10 +7,6 @@ import { cn } from "@/lib/utils";
 
 const GAP = "gap" as const;
 
-/**
- * The pages to offer: always the first and last, the current one and its
- * neighbours, and a gap wherever pages are skipped. `[1, gap, 4, 5, 6, gap, 9]`.
- */
 export function pageItems(
   page: number,
   totalPages: number,
@@ -33,13 +29,10 @@ function pageLabel(page: number, total: number) {
 
 type PaginationProps = {
   meta: PaginationMeta;
-  /** How many items there are, in words, e.g. "23 Projects". */
   totalLabel: string;
-  /** The URL of a page, so pages are real links. */
   hrefForPage: (page: number) => string;
 };
 
-/** The position in a list, with round links to the neighbouring and numbered pages. */
 export function Pagination({ meta, totalLabel, hrefForPage }: PaginationProps) {
   const { page, totalPages } = meta;
 
@@ -59,7 +52,6 @@ export function Pagination({ meta, totalLabel, hrefForPage }: PaginationProps) {
               href={page > 1 ? hrefForPage(page - 1) : undefined}
               label="صفحهٔ قبل"
             >
-              {/* Arrows point along the reading direction. */}
               <ArrowLeft aria-hidden className="size-4 rtl:rotate-180" />
             </PageLink>
           </li>
@@ -104,7 +96,6 @@ function PageLink({
   current = false,
   children,
 }: {
-  /** Undefined when there is no such page, e.g. "previous" on page 1. */
   href: string | undefined;
   label: string;
   current?: boolean;

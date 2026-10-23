@@ -4,7 +4,6 @@ import { MainNav } from "./main-nav";
 import { ThemeToggle } from "./theme-toggle";
 import { UserMenu } from "./user-menu";
 
-/** The page frame: a floating top bar with the brand, navigation and the User's controls. */
 export function AppShell({ children }: { children: ReactNode }) {
   return (
     <div className="min-h-svh">

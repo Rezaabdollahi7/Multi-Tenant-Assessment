@@ -14,7 +14,6 @@ type Story = StoryObj<typeof meta>;
 
 export const Critical: Story = {};
 
-/** Every level, most serious first; the name is always written out. */
 export const AllLevels: Story = {
   render: () => (
     <div className="flex flex-wrap gap-2">

@@ -1,11 +1,3 @@
-/**
- * Writes the OpenAPI document to apps/api/openapi.json, the contract the web app
- * generates its types from. Runs from the compiled build (`pnpm openapi`) so the
- * Swagger CLI plugin's metadata is included, exactly as at runtime.
- *
- * Preview mode builds the module graph without instantiating providers, so no
- * database or Redis is needed; the environment only has to pass validation.
- */
 import { NestFactory } from '@nestjs/core';
 import { writeFileSync } from 'node:fs';
 import { join } from 'node:path';
@@ -28,7 +20,6 @@ async function exportOpenApi(): Promise<void> {
     process.env[key] ??= value;
   }
 
-  // Imported after the environment is set: ConfigModule validates on import.
   const { AppModule } = await import('../app.module.js');
   const { API_PREFIX } = await import('../common/constants/jwt.constants.js');
   const { createOpenApiDocument } = await import('../config/swagger.config.js');

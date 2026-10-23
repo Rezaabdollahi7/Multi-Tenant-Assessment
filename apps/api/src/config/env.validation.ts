@@ -52,7 +52,6 @@ class EnvironmentVariables {
   @MinLength(32)
   REFRESH_TOKEN_SECRET!: string;
 
-  /** Lower it (for example to 60) to demonstrate session expiry quickly. */
   @IsInt()
   @Min(10)
   ACCESS_TOKEN_TTL_SECONDS: number = 900;

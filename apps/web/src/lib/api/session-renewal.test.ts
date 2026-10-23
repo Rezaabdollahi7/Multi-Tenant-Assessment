@@ -25,7 +25,6 @@ const summary = {
   },
 };
 
-/** The summary endpoint answers 401 until a refresh succeeds. */
 function expiringSession({ refreshSucceeds }: { refreshSucceeds: boolean }) {
   let refreshed = false;
   const refreshCalls = vi.fn();

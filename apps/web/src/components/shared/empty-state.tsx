@@ -5,16 +5,12 @@ import { cn } from "@/lib/utils";
 type EmptyStateProps = {
   title: string;
   description?: string;
-  /** Decorative icon above the title. */
   icon?: LucideIcon;
-  /** A next step, such as a link to create the first item. */
   action?: ReactNode;
-  /** The title's element: `h1` when the state stands in for the whole page. */
   titleAs?: "p" | "h1";
   className?: string;
 };
 
-/** Shown in place of a list or chart that has nothing to show yet. */
 export function EmptyState({
   title,
   description,

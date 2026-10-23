@@ -17,7 +17,6 @@ export type ActivityRecord = {
 
 @Injectable()
 export class ActivityService {
-  /** Records an Activity inside the caller's transaction, so both commit or neither. */
   async record(manager: EntityManager, record: ActivityRecord): Promise<void> {
     await manager.save(manager.create(Activity, record));
   }

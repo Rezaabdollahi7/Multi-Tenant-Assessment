@@ -175,7 +175,6 @@ export class FindingsService {
     return finding;
   }
 
-  /** Resolves Project and author names in two queries for the whole page. */
   private async toDtos(findings: Finding[]): Promise<FindingDto[]> {
     if (findings.length === 0) return [];
 

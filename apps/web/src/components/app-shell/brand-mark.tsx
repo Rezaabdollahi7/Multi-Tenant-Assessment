@@ -2,7 +2,6 @@ import { ShieldCheckIcon } from "lucide-react";
 import Link from "next/link";
 import { routes } from "@/lib/routes";
 
-/** The product's name in an outlined pill, linking home. */
 export function BrandMark() {
   return (
     <Link

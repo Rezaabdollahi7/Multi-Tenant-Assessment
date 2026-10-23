@@ -3,7 +3,6 @@ import { cn } from "@/lib/utils";
 
 export type Detail = { label: string; value: ReactNode };
 
-/** Label and value joined by a dotted leader, one pair per line. */
 export function DetailList({
   details,
   className,

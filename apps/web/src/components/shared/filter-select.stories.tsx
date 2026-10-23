@@ -32,20 +32,17 @@ const meta = {
 export default meta;
 type Story = StoryObj<typeof meta>;
 
-/** No filter applied: the "all" option shows. */
 export const NoFilter: Story = {
   play: async ({ args, canvasElement }) => {
     const canvas = within(canvasElement);
     await userEvent.click(
       canvas.getByRole("combobox", { name: "وضعیت پروژه" }),
     );
-    // The listbox is portalled to the document body.
     const body = within(canvasElement.ownerDocument.body);
     await userEvent.click(
       await body.findByRole("option", { name: "تکمیل‌شده" }),
     );
     await expect(args.onChange).toHaveBeenCalledWith("COMPLETED");
-    // Choosing closes the list and gives the page back to assistive technology.
     await waitFor(() => expect(body.queryByRole("listbox")).toBeNull());
   },
 };

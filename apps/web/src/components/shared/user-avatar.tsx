@@ -1,6 +1,5 @@
 import { cn } from "@/lib/utils";
 
-/** Up to two initials from a name, or from the fallback when there is none. */
 export function initials(name: string | null, fallback: string): string {
   return (name ?? fallback)
     .split(/\s+/)
@@ -12,12 +11,10 @@ export function initials(name: string | null, fallback: string): string {
 
 type UserAvatarProps = {
   name: string | null;
-  /** Used for the initials when the User has no name. */
   fallback: string;
   className?: string;
 };
 
-/** A round badge with a User's initials; decorative next to their name. */
 export function UserAvatar({ name, fallback, className }: UserAvatarProps) {
   return (
     <span

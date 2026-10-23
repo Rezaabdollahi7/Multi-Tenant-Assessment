@@ -11,7 +11,6 @@ function extractTokenFromHeader(request: Request): string | undefined {
   return type === 'Bearer' ? token : undefined;
 }
 
-/** Browsers send the cookie; Swagger and API clients may send a Bearer header. */
 export function extractToken(request: Request): string | undefined {
   return extractTokenFromCookie(request) ?? extractTokenFromHeader(request);
 }

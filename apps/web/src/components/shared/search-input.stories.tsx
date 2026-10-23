@@ -18,7 +18,6 @@ const meta = {
 export default meta;
 type Story = StoryObj<typeof meta>;
 
-/** Searches once typing pauses, with the trimmed text. */
 export const Default: Story = {
   play: async ({ args, canvasElement }) => {
     const box = within(canvasElement).getByRole("searchbox", {

@@ -41,10 +41,6 @@ import {
   type EditFindingForm,
 } from "../../lib/schemas";
 
-/**
- * Puts the API's validation messages on their fields, and reports whether
- * any landed; whatever did not goes to the form-level alert.
- */
 function placeServerErrors<Form extends Record<string, unknown>>(
   error: unknown,
   fields: readonly Path<Form>[],

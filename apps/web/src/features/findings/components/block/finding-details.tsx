@@ -12,7 +12,6 @@ import { revealOrder } from "@/lib/motion";
 
 type FindingDetailsProps = {
   finding: Finding;
-  /** Edit and delete controls, shown only with the Permissions for them. */
   actions?: ReactNode;
 };
 
@@ -58,7 +57,6 @@ export function FindingDetails({ finding, actions }: FindingDetailsProps) {
       >
         <Panel title="توضیحات" className="lg:col-span-2">
           {finding.description ? (
-            // User-written text reads in its own direction.
             <p dir="auto" className="leading-loose whitespace-pre-wrap">
               {finding.description}
             </p>

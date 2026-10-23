@@ -10,12 +10,6 @@ import { cn } from "@/lib/utils";
 const LABEL_EVERY_DAYS = 7;
 const BAR_STAGGER = 0.02;
 
-/**
- * One thin pill per day in the reading direction, so time runs right to left
- * in Persian. One series on purpose: the five Severity colours are too close
- * for colour-blind readers at bar size, so the split per day is in the
- * tooltip and the table, as text.
- */
 export function FindingTrendChart({ points }: { points: TrendPoint[] }) {
   const total = points.reduce((sum, point) => sum + point.total, 0);
   const busiest = points.reduce((max, point) =>
@@ -70,10 +64,8 @@ function DayBar({
   height,
   busiest,
 }: {
-  /** Position in the window, for the rising stagger. */
   index: number;
   point: TrendPoint;
-  /** Share of the busiest day, 0 to 1. */
   height: number;
   busiest: boolean;
 }) {
@@ -93,14 +85,12 @@ function DayBar({
               ? "bg-foreground group-hover:bg-highlight"
               : "bg-border-strong",
         )}
-        // Empty days keep a stub so the rhythm of the month stays visible.
         style={{ height: `${Math.max(height * 100, 4)}%` }}
         initial={{ scaleY: 0 }}
         animate={{ scaleY: 1 }}
         transition={rise}
       >
         {busiest && (
-          // The value lands once its bar has risen.
           <motion.span
             className="absolute bottom-full left-1/2 mb-2 -translate-x-1/2 rounded-full bg-highlight px-2 py-0.5 text-xs font-medium text-highlight-foreground tabular-nums"
             initial={{ opacity: 0, y: 6 }}
@@ -115,7 +105,6 @@ function DayBar({
         )}
       </motion.div>
       <span className="size-1 rounded-full bg-foreground/30" />
-      {/* Shown only on hover, so it never widens the page. */}
       <div className="pointer-events-none absolute bottom-full left-1/2 z-10 mb-2 hidden -translate-x-1/2 group-hover:block">
         <TrendTooltip point={point} />
       </div>
@@ -147,7 +136,6 @@ function TrendTooltip({ point }: { point: TrendPoint }) {
   );
 }
 
-/** The chart's data for screen readers, which cannot read the bars. */
 function TrendTable({ points }: { points: TrendPoint[] }) {
   return (
     <table className="sr-only">

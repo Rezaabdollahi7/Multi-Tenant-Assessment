@@ -19,10 +19,8 @@ const meta = {
 export default meta;
 type Story = StoryObj<typeof meta>;
 
-/** Project Status on the Dashboard: parts told apart by look as well as label. */
 export const ProjectStatus: Story = {};
 
-/** An empty part keeps a small, readable pill. */
 export const WithEmptyPart: Story = {
   args: {
     segments: [

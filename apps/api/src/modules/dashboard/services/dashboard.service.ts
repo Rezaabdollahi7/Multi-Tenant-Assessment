@@ -62,7 +62,6 @@ export class DashboardService {
     };
   }
 
-  /** Findings created per UTC day for the last `days` days, today included. */
   async trend(orgId: string, days: number): Promise<TrendPointDto[]> {
     const todayStart = Date.UTC(
       new Date().getUTCFullYear(),

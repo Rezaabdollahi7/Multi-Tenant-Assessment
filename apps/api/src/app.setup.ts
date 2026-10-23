@@ -5,7 +5,6 @@ import cookieParser from 'cookie-parser';
 import helmet from 'helmet';
 import { createValidationPipe } from './config/validation-pipe.config';
 
-/** Middleware, prefix, validation and error shape shared by the server and e2e tests. */
 export function configureApp(app: INestApplication): void {
   app.use(helmet());
   app.use(cookieParser());
