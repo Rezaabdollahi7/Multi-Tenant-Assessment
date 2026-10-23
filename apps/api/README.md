@@ -15,7 +15,7 @@ Every route is served under `/api`. The OpenAPI document and Swagger UI are at `
 
 ## Setup
 
-Requires Postgres and Redis; `docker compose -f ../../docker/compose.yml up -d postgres redis` starts both.
+Requires Postgres and Redis; `docker compose -f ../../docker/compose.yml up -d` starts both (copy `docker/.env.example` to `docker/.env` first).
 
 ```bash
 cp .env.example .env

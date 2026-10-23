@@ -30,30 +30,23 @@ More in [`docs/screenshots/`](docs/screenshots/README.md): every main page in bo
 **API (the Mock API):** NestJS 11, TypeORM, PostgreSQL, Redis, JWT in httpOnly cookies, Swagger.
 **Tooling:** pnpm workspaces, Turborepo, ESLint, Prettier, Docker Compose, GitHub Actions.
 
-## Quick start
-
-Requires Docker. No configuration needed.
-
-```bash
-docker compose -f docker/compose.yml up --build
-```
-
-- Web: http://localhost:3000
-- API docs (Swagger): http://localhost:3001/docs
-
-The API seeds fabricated data on first start. To see session expiry within a minute, start with `ACCESS_TOKEN_TTL_SECONDS=60 docker compose -f docker/compose.yml up --build`. `docker compose -f docker/compose.yml down -v` removes everything, data included.
-
-## Local development
+## Getting started
 
 Requires Node.js 22, pnpm 11.25.0 and Docker (for Postgres and Redis).
 
 ```bash
 pnpm install
+cp docker/.env.example docker/.env
 cp apps/api/.env.example apps/api/.env
-docker compose -f docker/compose.yml up -d postgres redis
+docker compose -f docker/compose.yml up -d
 pnpm --filter api seed
 pnpm dev
 ```
+
+- Web: http://localhost:3000
+- API docs (Swagger): http://localhost:3001/docs
+
+To see session expiry within a minute, set `ACCESS_TOKEN_TTL_SECONDS=60` in `apps/api/.env`. `docker compose -f docker/compose.yml down -v` removes Postgres and Redis, data included.
 
 ## Demo accounts
 
