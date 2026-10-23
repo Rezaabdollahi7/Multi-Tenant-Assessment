@@ -2,6 +2,7 @@
 
 import { createContext, useContext, type ReactNode } from "react";
 import type { CurrentUser, Permission } from "@/lib/api/types";
+import { hasPermissions } from "./permissions";
 
 const SessionContext = createContext<CurrentUser | null>(null);
 
@@ -26,13 +27,9 @@ export function useCurrentUser(): CurrentUser {
   return user;
 }
 
-/**
- * Whether the User holds every given Permission. Decides what the UI offers;
- * the API enforces the same rules on every request.
- */
+/** Whether the signed-in User holds every given Permission. */
 export function useCan(...required: Permission[]): boolean {
-  const { permissions } = useCurrentUser();
-  return required.every((permission) => permissions.includes(permission));
+  return hasPermissions(useCurrentUser(), ...required);
 }
 
 type CanProps = {

@@ -3,7 +3,7 @@ import { redirect } from "next/navigation";
 import type { ReactNode } from "react";
 import { AppShell } from "@/components/app-shell/app-shell";
 import { getCurrentUser } from "@/features/auth/api/get-current-user";
-import { SessionProvider } from "@/features/auth/components/session-provider";
+import { SessionProvider } from "@/lib/session/session-provider";
 import { routes } from "@/lib/routes";
 
 /** Written by the sidebar primitive whenever it is opened or collapsed. */

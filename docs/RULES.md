@@ -63,7 +63,7 @@ A feature may import from `components/`, `hooks/`, `lib/` and its own folder. Fe
 
 ### Roles and Permissions
 
-- UI decisions use **Permissions from `/auth/me`**, through `<Can permission="finding:create">` or `useCan()`. Never branch on Role names.
+- UI decisions use **Permissions from `/auth/me`**, through `<Can permission="finding:create">` or `useCan()` in client components and `hasPermissions(user, ...)` in Server Components. Never branch on Role names.
 - Hiding a control is UX, not security; the API is the authority. Every hidden action is also rejected by the API, and a test proves it.
 
 ### Components

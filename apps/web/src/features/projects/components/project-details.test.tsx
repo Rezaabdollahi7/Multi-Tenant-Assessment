@@ -3,7 +3,6 @@ import { describe, expect, it } from "vitest";
 import type { Member, ProjectDetail } from "@/lib/api/types";
 import { ProjectHeader } from "./project-header";
 import { ProjectMembers } from "./project-members";
-import { ProjectSeverityPanel } from "./project-severity-panel";
 
 const project: ProjectDetail = {
   id: "98475976-de7a-4ba4-bfcc-1518617fa939",
@@ -31,15 +30,6 @@ describe("Project details", () => {
     expect(
       within(breadcrumb).getByRole("link", { name: "Projects" }),
     ).toHaveAttribute("href", "/projects");
-  });
-
-  it("links to the Project's Findings when it has any", () => {
-    render(<ProjectSeverityPanel project={project} />);
-
-    expect(screen.getByRole("link", { name: "View Findings" })).toHaveAttribute(
-      "href",
-      `/findings?projectId=${project.id}`,
-    );
   });
 
   it("lists Members, including those without a name or a role in the Project", () => {

@@ -1,5 +1,6 @@
 type LoginParams = { reason?: "session_expired" | "signed_out"; next?: string };
 type FindingsParams = { projectId?: string };
+type NewFindingParams = { projectId?: string };
 
 function withQuery(path: string, params: Record<string, string | undefined>) {
   const query = new URLSearchParams(
@@ -19,7 +20,8 @@ export const routes = {
   project: (id: string) => `/projects/${id}`,
   findings: (params: FindingsParams = {}) => withQuery("/findings", params),
   finding: (id: string) => `/findings/${id}`,
-  newFinding: () => "/findings/new",
+  newFinding: (params: NewFindingParams = {}) =>
+    withQuery("/findings/new", params),
   editFinding: (id: string) => `/findings/${id}/edit`,
 };
 

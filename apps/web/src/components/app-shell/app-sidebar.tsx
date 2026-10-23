@@ -15,7 +15,7 @@ import {
   SidebarMenuItem,
   SidebarRail,
 } from "@/components/ui/sidebar";
-import { useCurrentUser } from "@/features/auth/components/session-provider";
+import { useCurrentUser } from "@/lib/session/session-provider";
 import { routes } from "@/lib/routes";
 import { isActive, NAV_ITEMS } from "./nav-items";
 import { UserMenu } from "./user-menu";

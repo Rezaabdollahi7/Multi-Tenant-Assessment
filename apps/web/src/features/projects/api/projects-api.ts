@@ -1,11 +1,12 @@
 import { unwrap } from "@/lib/api/api-error";
 import { api } from "@/lib/api/client";
+import { QUERY_ROOTS } from "@/lib/query-keys";
 import type { ProjectListParams } from "../schemas";
 
 export const PROJECTS_PAGE_SIZE = 10;
 
 export const projectKeys = {
-  all: ["projects"] as const,
+  all: [QUERY_ROOTS.projects] as const,
   list: (params: ProjectListParams) =>
     [...projectKeys.all, "list", params] as const,
 };
