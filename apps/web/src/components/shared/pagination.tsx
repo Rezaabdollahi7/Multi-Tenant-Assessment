@@ -1,47 +1,49 @@
 import { ChevronLeft, ChevronRight } from "lucide-react";
+import { useTranslations } from "next-intl";
 import Link from "next/link";
 import type { ReactNode } from "react";
 import { Button } from "@/components/ui/button";
 import type { PaginationMeta } from "@/lib/api/types";
-import { formatCount } from "@/lib/format";
 
 type PaginationProps = {
   meta: PaginationMeta;
-  /** Singular name of what is listed, e.g. "Project". */
-  itemName: string;
+  /** How many items there are, in words, e.g. "23 Projects". */
+  totalLabel: string;
   /** The URL of a page, so pages are real links. */
   hrefForPage: (page: number) => string;
 };
 
 /** Previous and next links with the position in the list. */
-export function Pagination({ meta, itemName, hrefForPage }: PaginationProps) {
-  const { page, totalPages, totalItems } = meta;
+export function Pagination({ meta, totalLabel, hrefForPage }: PaginationProps) {
+  const t = useTranslations("pagination");
+  const { page, totalPages } = meta;
   return (
     <nav
-      aria-label="Pagination"
+      aria-label={t("label")}
       className="flex flex-wrap items-center justify-between gap-3 text-sm"
     >
       <p className="text-muted-foreground tabular-nums">
-        {formatCount(totalItems, itemName)}
-        {totalPages > 1 && ` · Page ${page} of ${totalPages}`}
+        {totalLabel}
+        {totalPages > 1 && ` · ${t("page", { page, total: totalPages })}`}
       </p>
       {totalPages > 1 && (
         <div className="flex gap-2">
           <PageLink
             href={hrefForPage(page - 1)}
             disabled={page <= 1}
-            label="Previous page"
+            label={t("previousLabel")}
           >
-            <ChevronLeft aria-hidden />
-            Previous
+            {/* Chevrons point along the reading direction. */}
+            <ChevronLeft aria-hidden className="rtl:rotate-180" />
+            {t("previous")}
           </PageLink>
           <PageLink
             href={hrefForPage(page + 1)}
             disabled={page >= totalPages}
-            label="Next page"
+            label={t("nextLabel")}
           >
-            Next
-            <ChevronRight aria-hidden />
+            {t("next")}
+            <ChevronRight aria-hidden className="rtl:rotate-180" />
           </PageLink>
         </div>
       )}

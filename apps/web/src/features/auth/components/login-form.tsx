@@ -3,8 +3,9 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation } from "@tanstack/react-query";
 import { Loader2Icon } from "lucide-react";
+import { useTranslations } from "next-intl";
 import { useRouter } from "next/navigation";
-import { useState } from "react";
+import { useMemo, useState, type ReactNode } from "react";
 import { useForm, useWatch } from "react-hook-form";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
@@ -15,6 +16,7 @@ import {
   InputOTPSlot,
 } from "@/components/ui/input-otp";
 import { Label } from "@/components/ui/label";
+import { useErrorMessage } from "@/hooks/use-error-message";
 import { ApiError } from "@/lib/api/api-error";
 import { safeNextPath } from "@/lib/routes";
 import { requestOtp, verifyOtp } from "../api/auth-api";
@@ -28,6 +30,15 @@ import { DemoAccountsList } from "./demo-accounts-list";
 
 const CODE_LENGTH = 5;
 
+/** Phone numbers and codes read left to right inside Persian text. */
+function LeftToRight(chunks: ReactNode) {
+  return (
+    <bdi dir="ltr" className="text-foreground tabular-nums">
+      {chunks}
+    </bdi>
+  );
+}
+
 type LoginFormProps = {
   /** Where to go after signing in; validated against open redirects. */
   next?: string;
@@ -35,12 +46,6 @@ type LoginFormProps = {
 };
 
 type CodeStep = { phone: string; demoCode?: string };
-
-function errorMessage(error: unknown): string {
-  return error instanceof ApiError
-    ? error.message
-    : "Something went wrong. Check your connection and try again.";
-}
 
 export function LoginForm({ next, showDemoAccounts = false }: LoginFormProps) {
   const [codeStep, setCodeStep] = useState<CodeStep | null>(null);
@@ -66,8 +71,14 @@ function PhoneStepForm({
   showDemoAccounts: boolean;
   onCodeSent: (step: CodeStep) => void;
 }) {
+  const t = useTranslations("auth");
+  const errorMessage = useErrorMessage();
+  const schema = useMemo(
+    () => phoneFormSchema((key) => t(`validation.${key}`)),
+    [t],
+  );
   const form = useForm<PhoneForm>({
-    resolver: zodResolver(phoneFormSchema),
+    resolver: zodResolver(schema),
     defaultValues: { phone: "" },
   });
   const sendCode = useMutation({
@@ -100,10 +111,11 @@ function PhoneStepForm({
           </Alert>
         )}
         <div className="space-y-2">
-          <Label htmlFor="phone">Mobile number</Label>
+          <Label htmlFor="phone">{t("phoneLabel")}</Label>
           <Input
             id="phone"
             type="tel"
+            dir="ltr"
             inputMode="numeric"
             autoComplete="tel"
             placeholder="09121234567"
@@ -121,7 +133,7 @@ function PhoneStepForm({
           {sendCode.isPending && (
             <Loader2Icon className="animate-spin" aria-hidden />
           )}
-          Send code
+          {t("sendCode")}
         </Button>
       </form>
 
@@ -144,8 +156,14 @@ function CodeStepForm({
   onChangePhone,
 }: CodeStep & { next?: string; onChangePhone: () => void }) {
   const router = useRouter();
+  const t = useTranslations("auth");
+  const errorMessage = useErrorMessage();
+  const schema = useMemo(
+    () => codeFormSchema((key) => t(`validation.${key}`)),
+    [t],
+  );
   const form = useForm<CodeForm>({
-    resolver: zodResolver(codeFormSchema),
+    resolver: zodResolver(schema),
     defaultValues: { code: "" },
   });
   const signIn = useMutation({
@@ -157,7 +175,7 @@ function CodeStepForm({
     onError: (error) => {
       // A rejected code belongs to the field; throttling and outages to the form.
       if (error instanceof ApiError && error.status === 401) {
-        form.setError("code", { message: error.message });
+        form.setError("code", { message: t("wrongCode") });
         form.setValue("code", "");
       }
     },
@@ -182,38 +200,42 @@ function CodeStepForm({
         </Alert>
       )}
       <div className="space-y-2">
-        <Label htmlFor="code">Verification code</Label>
+        <Label htmlFor="code">{t("codeLabel")}</Label>
         <p id="code-hint" className="text-muted-foreground text-sm">
-          Sent to <span className="text-foreground font-mono">{phone}</span>
+          {t.rich("sentTo", { phone, ltr: LeftToRight })}
           {demoCode && (
             <>
-              . Demo code:{" "}
-              <span className="text-foreground font-mono">{demoCode}</span>
+              {" · "}
+              {t.rich("demoCode", { code: demoCode, ltr: LeftToRight })}
             </>
           )}
         </p>
-        <InputOTP
-          id="code"
-          maxLength={CODE_LENGTH}
-          inputMode="numeric"
-          autoComplete="one-time-code"
-          autoFocus
-          value={code}
-          onChange={(code) =>
-            form.setValue("code", code, { shouldValidate: !!codeError })
-          }
-          onComplete={() =>
-            form.handleSubmit((values) => signIn.mutate(values))()
-          }
-          aria-invalid={!!codeError}
-          aria-describedby={codeError ? "code-hint code-error" : "code-hint"}
-        >
-          <InputOTPGroup>
-            {Array.from({ length: CODE_LENGTH }, (_, index) => (
-              <InputOTPSlot key={index} index={index} />
-            ))}
-          </InputOTPGroup>
-        </InputOTP>
+        {/* Digits are entered left to right in every language; the boxes
+            still sit at the start of the line. */}
+        <div dir="ltr" className="flex rtl:justify-end">
+          <InputOTP
+            id="code"
+            maxLength={CODE_LENGTH}
+            inputMode="numeric"
+            autoComplete="one-time-code"
+            autoFocus
+            value={code}
+            onChange={(code) =>
+              form.setValue("code", code, { shouldValidate: !!codeError })
+            }
+            onComplete={() =>
+              form.handleSubmit((values) => signIn.mutate(values))()
+            }
+            aria-invalid={!!codeError}
+            aria-describedby={codeError ? "code-hint code-error" : "code-hint"}
+          >
+            <InputOTPGroup>
+              {Array.from({ length: CODE_LENGTH }, (_, index) => (
+                <InputOTPSlot key={index} index={index} />
+              ))}
+            </InputOTPGroup>
+          </InputOTP>
+        </div>
         {codeError && (
           <p id="code-error" className="text-destructive text-sm">
             {codeError}
@@ -224,7 +246,7 @@ function CodeStepForm({
         {signIn.isPending && (
           <Loader2Icon className="animate-spin" aria-hidden />
         )}
-        Sign in
+        {t("submit")}
       </Button>
       <Button
         type="button"
@@ -232,7 +254,7 @@ function CodeStepForm({
         className="w-full"
         onClick={onChangePhone}
       >
-        Use a different number
+        {t("differentNumber")}
       </Button>
     </form>
   );

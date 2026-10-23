@@ -67,4 +67,19 @@ describe("RecentActivity", () => {
 
     expect(await screen.findByText("No Activity yet")).toBeInTheDocument();
   });
+
+  it("follows Persian word order in the Persian locale", async () => {
+    server.use(
+      http.get(activitiesUrl, () =>
+        HttpResponse.json([
+          activity("finding.updated", "SQL injection in search", "a1"),
+        ]),
+      ),
+    );
+    renderWithProviders(<RecentActivity />, { locale: "fa" });
+
+    expect(await screen.findByRole("listitem")).toHaveTextContent(
+      "Sara Mohammadi یافتهٔ SQL injection in search را ویرایش کرد",
+    );
+  });
 });

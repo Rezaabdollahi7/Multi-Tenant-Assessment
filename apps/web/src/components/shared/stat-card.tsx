@@ -1,4 +1,5 @@
 import type { LucideIcon } from "lucide-react";
+import { useFormatter } from "next-intl";
 import { Card } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 
@@ -11,10 +12,9 @@ type StatCardProps = {
   icon: LucideIcon;
 };
 
-const numberFormat = new Intl.NumberFormat("en");
-
 /** A single headline number with its label. */
 export function StatCard({ label, value, hint, icon: Icon }: StatCardProps) {
+  const format = useFormatter();
   const loading = value === undefined;
   return (
     <Card className="gap-0 px-5 py-4" aria-busy={loading}>
@@ -28,7 +28,7 @@ export function StatCard({ label, value, hint, icon: Icon }: StatCardProps) {
           {loading ? (
             <Skeleton className="my-1 h-6 w-16" />
           ) : (
-            numberFormat.format(value)
+            format.number(value)
           )}
         </dd>
         {hint && !loading && (

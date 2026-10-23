@@ -1,5 +1,6 @@
 import { PlusIcon } from "lucide-react";
 import type { Metadata } from "next";
+import { getTranslations } from "next-intl/server";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { Button } from "@/components/ui/button";
@@ -21,14 +22,18 @@ type ProjectPageProps = { params: Promise<{ id: string }> };
 export async function generateMetadata({
   params,
 }: ProjectPageProps): Promise<Metadata> {
-  const project = await getProject((await params).id);
-  return { title: project?.name ?? "Project not found" };
+  const [project, t] = await Promise.all([
+    getProject((await params).id),
+    getTranslations("metadata"),
+  ]);
+  return { title: project?.name ?? t("projectNotFound") };
 }
 
 export default async function ProjectPage({ params }: ProjectPageProps) {
   const { id } = await params;
   const [project, user] = await Promise.all([getProject(id), getCurrentUser()]);
   if (!project) notFound();
+  const t = await getTranslations("findings");
 
   const [members, findings] = await Promise.all([
     hasPermissions(user, "member:read") ? getProjectMembers(id) : null,
@@ -44,7 +49,7 @@ export default async function ProjectPage({ params }: ProjectPageProps) {
             <Button size="sm" asChild>
               <Link href={routes.newFinding({ projectId: id })}>
                 <PlusIcon aria-hidden />
-                Report Finding
+                {t("report")}
               </Link>
             </Button>
           )

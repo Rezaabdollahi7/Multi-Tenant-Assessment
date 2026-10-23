@@ -1,5 +1,6 @@
 "use client";
 
+import { useTranslations } from "next-intl";
 import { ErrorState } from "@/components/shared/error-state";
 import { Card } from "@/components/ui/card";
 
@@ -10,11 +11,12 @@ export default function ProjectError({
   error: Error & { digest?: string };
   unstable_retry: () => void;
 }) {
+  const t = useTranslations("projects.details");
   return (
     <Card className="py-0">
       <ErrorState
-        title="Could not load this Project"
-        description="The server did not respond as expected. Try again in a moment."
+        title={t("error")}
+        description={t("errorDescription")}
         onRetry={unstable_retry}
       />
     </Card>

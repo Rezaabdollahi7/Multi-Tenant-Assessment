@@ -9,14 +9,6 @@ export const SEVERITIES = [
   "INFO",
 ] as const satisfies readonly FindingSeverity[];
 
-export const SEVERITY_LABELS: Record<FindingSeverity, string> = {
-  CRITICAL: "Critical",
-  HIGH: "High",
-  MEDIUM: "Medium",
-  LOW: "Low",
-  INFO: "Info",
-};
-
 /** The solid colour of each level, for bars and indicators (see docs/design-system.md). */
 export const SEVERITY_COLORS: Record<FindingSeverity, string> = {
   CRITICAL: "var(--severity-critical)",

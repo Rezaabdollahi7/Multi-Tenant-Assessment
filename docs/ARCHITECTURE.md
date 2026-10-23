@@ -179,6 +179,7 @@ src/
 │   └── shared/           # SeverityBadge, StatusBadge, DataTable, SearchInput,
 │                         # FilterSelect, StatCard, BreakdownList, EmptyState, ErrorState
 ├── hooks/                # app-wide React hooks
+├── i18n/                 # next-intl config, request config, fa/en messages, formats
 └── lib/                  # api client, session, query client, utils
 ```
 
@@ -205,6 +206,10 @@ sequenceDiagram
     A-->>Q: { data, meta }
     Q-->>P: data → table, or loading / empty / error state
 ```
+
+### 6.5 Languages ([ADR 0007](./adr/0007-persian-default-locale-in-a-cookie.md))
+
+The UI speaks Persian (default, right to left) and English. `src/i18n/request.ts` reads the `NEXT_LOCALE` cookie, loads that language's messages and the shared named formats, and fixes the time zone so server and browser render the same dates. The root layout sets `<html lang dir>` from it; the header's language menu sets the cookie through a Server Action and refreshes. Components never hold UI text: Server Components call `getTranslations`, client components `useTranslations`, and dates and numbers go through the `next-intl` formatter, which gives Persian digits and the Solar Hijri calendar in Persian.
 
 ## 7. Quality
 
@@ -236,3 +241,4 @@ Both Dockerfiles are multi-stage: dependencies are installed and built with the 
 | [0004](./adr/0004-organization-wide-project-visibility.md)  | Every User sees every Project in their Organization                |
 | [0005](./adr/0005-session-renewal-in-the-web-proxy.md)      | Sessions are renewed in the web proxy; refresh cookie is site-wide |
 | [0006](./adr/0006-no-client-state-library.md)               | No client state library; UI state stays with its component         |
+| [0007](./adr/0007-persian-default-locale-in-a-cookie.md)    | Persian is the default language; the choice lives in a cookie      |

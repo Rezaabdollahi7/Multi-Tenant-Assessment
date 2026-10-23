@@ -1,4 +1,5 @@
 import { ShieldX } from "lucide-react";
+import { useTranslations } from "next-intl";
 import type { ReactNode } from "react";
 import { EmptyState } from "@/components/shared/empty-state";
 import { Card } from "@/components/ui/card";
@@ -12,12 +13,13 @@ type PermissionDeniedProps = {
 
 /** Shown on a page the User's Role has no Permission for. */
 export function PermissionDenied({ title, action }: PermissionDeniedProps) {
+  const t = useTranslations("permissionDenied");
   return (
     <Card className="py-0">
       <EmptyState
         icon={ShieldX}
         title={title}
-        description="Your Role does not include this Permission. Ask an Admin if you need it."
+        description={t("description")}
         action={action}
       />
     </Card>

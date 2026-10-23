@@ -7,6 +7,9 @@ export type DemoAccount = {
   phone: string;
 };
 
+/** The fixed one-time code the API accepts in development (`DEV_OTP`). */
+export const DEMO_CODE = "00000";
+
 /** The seeded Users (apps/api/src/seed/seed-data.ts), listed on sign-in in demo mode. */
 export const DEMO_ACCOUNTS: DemoAccount[] = [
   {
