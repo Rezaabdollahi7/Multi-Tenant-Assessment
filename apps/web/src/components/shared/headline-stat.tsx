@@ -1,10 +1,10 @@
 "use client";
 
 import type { LucideIcon } from "lucide-react";
-import { motion, useReducedMotion } from "motion/react";
-import { useFormatter, useLocale } from "next-intl";
+import { motion } from "motion/react";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useCountUp } from "@/hooks/use-count-up";
+import { formatNumber } from "@/lib/format";
 
 type HeadlineStatProps = {
   label: string;
@@ -19,7 +19,6 @@ type HeadlineStatProps = {
  * a <dl>.
  */
 export function HeadlineStat({ label, value, icon: Icon }: HeadlineStatProps) {
-  const locale = useLocale();
   return (
     <div className="flex flex-col gap-1" aria-busy={value === undefined}>
       <dt className="order-2 flex items-center gap-1.5 text-sm text-muted-foreground">
@@ -32,32 +31,19 @@ export function HeadlineStat({ label, value, icon: Icon }: HeadlineStatProps) {
         {value === undefined ? (
           <Skeleton className="h-14 w-20 rounded-2xl" />
         ) : (
-          // A new language restarts the count in its own digits.
-          <CountingFigure key={locale} value={value} />
+          <CountUp value={value} />
         )}
       </dd>
     </div>
   );
 }
 
-function CountingFigure({ value }: { value: number }) {
-  const format = useFormatter();
-  if (useReducedMotion()) return format.number(value);
-  return <CountUp value={value} format={(current) => format.number(current)} />;
-}
-
-function CountUp({
-  value,
-  format,
-}: {
-  value: number;
-  format: (value: number) => string;
-}) {
-  const text = useCountUp(value, format);
+function CountUp({ value }: { value: number }) {
+  const text = useCountUp(value, formatNumber);
   return (
     <>
       {/* Assistive technology reads the final figure, not the count. */}
-      <span className="sr-only">{format(value)}</span>
+      <span className="sr-only">{formatNumber(value)}</span>
       <motion.span aria-hidden>{text}</motion.span>
     </>
   );

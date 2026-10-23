@@ -1,15 +1,16 @@
-import type { CurrentUser, Permission } from "@/lib/api/types";
+import type {
+  PermissionAction,
+  PermissionResource,
+} from "@/assets/types/permissions";
+import type { CurrentUser } from "@/assets/types/user";
 
-/**
- * Whether the User holds every given Permission. Decides what the UI offers;
- * the API enforces the same rules on every request.
- */
-export function hasPermissions(
+export function can<Resource extends PermissionResource>(
   user: CurrentUser | null,
-  ...required: Permission[]
+  resource: Resource,
+  action: PermissionAction<Resource>,
 ): boolean {
+  const required = `${resource}:${action}`;
   return (
-    user !== null &&
-    required.every((permission) => user.permissions.includes(permission))
+    user?.permissions.some((permission) => permission === required) ?? false
   );
 }

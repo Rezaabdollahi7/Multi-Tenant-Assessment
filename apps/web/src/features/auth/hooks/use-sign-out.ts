@@ -1,21 +1,21 @@
 "use client";
 
-import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useRouter } from "next/navigation";
+import { useTransition } from "react";
 import { routes } from "@/lib/routes";
-import { signOut } from "../api/auth-api";
+import { signOut } from "../lib/auth-api";
 
 export function useSignOut() {
   const router = useRouter();
-  const queryClient = useQueryClient();
+  const [pending, startTransition] = useTransition();
 
-  return useMutation({
-    mutationFn: signOut,
-    // Leave even if the request failed: the cookies may already be gone.
-    onSettled() {
-      queryClient.clear();
+  function signOutAndLeave() {
+    startTransition(async () => {
+      await signOut().catch(() => undefined);
       router.replace(routes.login({ reason: "signed_out" }));
       router.refresh();
-    },
-  });
+    });
+  }
+
+  return { signOut: signOutAndLeave, pending };
 }

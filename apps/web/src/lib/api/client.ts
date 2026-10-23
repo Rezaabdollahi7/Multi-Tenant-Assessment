@@ -1,6 +1,6 @@
 import createClient from "openapi-fetch";
 import { routes } from "@/lib/routes";
-import type { paths } from "./schema";
+import type { paths } from "@/assets/types/api-schema";
 import { createSessionRenewal } from "./session-renewal";
 
 /**

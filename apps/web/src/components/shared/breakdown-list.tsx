@@ -1,7 +1,7 @@
 "use client";
 
 import { motion } from "motion/react";
-import { useFormatter } from "next-intl";
+import { formatNumber, formatPercent } from "@/lib/format";
 import { DURATION, EASE_OUT, STAGGER } from "@/lib/motion";
 import { cn } from "@/lib/utils";
 
@@ -20,7 +20,6 @@ type BreakdownListProps = {
 
 /** Each part of a whole as a labelled row with its count, share and a bar on a hatched track. */
 export function BreakdownList({ items, className }: BreakdownListProps) {
-  const format = useFormatter();
   const total = items.reduce((sum, item) => sum + item.value, 0);
   return (
     <ul className={cn("space-y-4", className)}>
@@ -31,9 +30,9 @@ export function BreakdownList({ items, className }: BreakdownListProps) {
             <div className="flex items-baseline justify-between gap-3 text-sm">
               <span>{item.label}</span>
               <span className="tabular-nums">
-                <span className="font-medium">{format.number(item.value)}</span>
+                <span className="font-medium">{formatNumber(item.value)}</span>
                 <span className="ms-2 inline-block w-10 text-end text-muted-foreground">
-                  {format.number(share, "percent")}
+                  {formatPercent(share)}
                 </span>
               </span>
             </div>

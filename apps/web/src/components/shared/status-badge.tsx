@@ -1,5 +1,5 @@
 import { Badge } from "@/components/ui/badge";
-import type { StatusTone } from "@/lib/status";
+import type { StatusTone } from "@/assets/types/common";
 import { cn } from "@/lib/utils";
 
 const TONE_CLASSES: Record<StatusTone, { pill: string; dot: string }> = {

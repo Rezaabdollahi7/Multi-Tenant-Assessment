@@ -7,6 +7,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import type { Option } from "@/assets/types/common";
 import { cn } from "@/lib/utils";
 
 /** Radix Select cannot use "" as an item value, so "no filter" needs a name. */
@@ -17,7 +18,7 @@ type FilterSelectProps<Value extends string> = {
   label: string;
   /** Text of the "no filter" option, e.g. "All statuses". */
   allLabel: string;
-  options: readonly { value: Value; label: string }[];
+  options: readonly Option<Value>[];
   /** The applied filter; undefined means no filter. */
   value: Value | undefined;
   onChange: (value: Value | undefined) => void;

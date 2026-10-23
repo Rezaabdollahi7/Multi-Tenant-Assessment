@@ -1,4 +1,6 @@
-type LoginParams = { reason?: "session_expired" | "signed_out"; next?: string };
+import type { SignInReason } from "@/assets/types/auth";
+
+type LoginParams = { reason?: SignInReason; next?: string };
 type FindingsParams = { projectId?: string };
 type NewFindingParams = { projectId?: string };
 

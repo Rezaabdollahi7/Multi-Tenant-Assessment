@@ -1,8 +1,8 @@
 import { ArrowLeft, ArrowRight } from "lucide-react";
-import { useFormatter, useTranslations } from "next-intl";
 import Link from "next/link";
 import type { ReactNode } from "react";
-import type { PaginationMeta } from "@/lib/api/types";
+import type { PaginationMeta } from "@/assets/types/api";
+import { formatNumber } from "@/lib/format";
 import { cn } from "@/lib/utils";
 
 const GAP = "gap" as const;
@@ -27,6 +27,10 @@ export function pageItems(
   });
 }
 
+function pageLabel(page: number, total: number) {
+  return `صفحهٔ ${formatNumber(page)} از ${formatNumber(total)}`;
+}
+
 type PaginationProps = {
   meta: PaginationMeta;
   /** How many items there are, in words, e.g. "23 Projects". */
@@ -37,25 +41,23 @@ type PaginationProps = {
 
 /** The position in a list, with round links to the neighbouring and numbered pages. */
 export function Pagination({ meta, totalLabel, hrefForPage }: PaginationProps) {
-  const t = useTranslations("pagination");
-  const format = useFormatter();
   const { page, totalPages } = meta;
 
   return (
     <nav
-      aria-label={t("label")}
+      aria-label="صفحه‌بندی"
       className="flex flex-wrap items-center justify-between gap-3 text-sm"
     >
       <p className="text-muted-foreground tabular-nums">
         {totalLabel}
-        {totalPages > 1 && ` · ${t("page", { page, total: totalPages })}`}
+        {totalPages > 1 && ` · ${pageLabel(page, totalPages)}`}
       </p>
       {totalPages > 1 && (
         <ol className="flex items-center gap-1.5">
           <li>
             <PageLink
               href={page > 1 ? hrefForPage(page - 1) : undefined}
-              label={t("previousLabel")}
+              label="صفحهٔ قبل"
             >
               {/* Arrows point along the reading direction. */}
               <ArrowLeft aria-hidden className="size-4 rtl:rotate-180" />
@@ -74,10 +76,10 @@ export function Pagination({ meta, totalLabel, hrefForPage }: PaginationProps) {
               <li key={item}>
                 <PageLink
                   href={hrefForPage(item)}
-                  label={t("page", { page: item, total: totalPages })}
+                  label={pageLabel(item, totalPages)}
                   current={item === page}
                 >
-                  {format.number(item)}
+                  {formatNumber(item)}
                 </PageLink>
               </li>
             ),
@@ -85,7 +87,7 @@ export function Pagination({ meta, totalLabel, hrefForPage }: PaginationProps) {
           <li>
             <PageLink
               href={page < totalPages ? hrefForPage(page + 1) : undefined}
-              label={t("nextLabel")}
+              label="صفحهٔ بعد"
             >
               <ArrowRight aria-hidden className="size-4 rtl:rotate-180" />
             </PageLink>

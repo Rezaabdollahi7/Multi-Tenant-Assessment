@@ -3,7 +3,7 @@ import { http, HttpResponse } from "msw";
 import { describe, expect, it, vi } from "vitest";
 import { apiUrl, server, TEST_ORIGIN } from "@/test/msw/server";
 import { ApiError, unwrap } from "./api-error";
-import type { paths } from "./schema";
+import type { paths } from "@/assets/types/api-schema";
 import { createSessionRenewal } from "./session-renewal";
 
 function createTestClient() {

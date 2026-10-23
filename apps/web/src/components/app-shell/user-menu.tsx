@@ -1,7 +1,6 @@
 "use client";
 
 import { LogOutIcon } from "lucide-react";
-import { useTranslations } from "next-intl";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -12,31 +11,28 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { initials } from "@/components/shared/user-avatar";
 import { useSignOut } from "@/features/auth/hooks/use-sign-out";
+import { ROLE_LABELS } from "@/lib/session/roles";
 import { useCurrentUser } from "@/lib/session/session-provider";
 import { ShellButton } from "./shell-button";
 
 export function UserMenu() {
   const user = useCurrentUser();
-  const signOut = useSignOut();
-  const t = useTranslations();
+  const { signOut, pending } = useSignOut();
   const displayName = user.name ?? user.phone;
 
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
         <ShellButton className="text-xs font-medium">
-          {/* The name is spoken in full; the initials are only its picture. */}
           <span aria-hidden>{initials(user.name, user.phone)}</span>
-          <span className="sr-only">
-            {t("userMenu.trigger", { name: displayName })}
-          </span>
+          <span className="sr-only">منوی کاربری {displayName}</span>
         </ShellButton>
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end" className="w-60">
         <DropdownMenuLabel className="font-normal">
           <bdi className="block font-medium">{displayName}</bdi>
           <span className="block text-xs text-muted-foreground">
-            {t(`roles.${user.role}`)} · <bdi>{user.organization.name}</bdi>
+            {ROLE_LABELS[user.role]} · <bdi>{user.organization.name}</bdi>
           </span>
           <span
             dir="ltr"
@@ -46,12 +42,9 @@ export function UserMenu() {
           </span>
         </DropdownMenuLabel>
         <DropdownMenuSeparator />
-        <DropdownMenuItem
-          disabled={signOut.isPending}
-          onSelect={() => signOut.mutate()}
-        >
+        <DropdownMenuItem disabled={pending} onSelect={signOut}>
           <LogOutIcon aria-hidden />
-          {t("userMenu.signOut")}
+          خروج
         </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>

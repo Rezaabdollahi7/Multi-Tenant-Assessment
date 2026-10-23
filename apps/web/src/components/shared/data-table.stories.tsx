@@ -1,5 +1,5 @@
 import type { Meta, StoryObj } from "@storybook/nextjs-vite";
-import type { FindingSeverity } from "@/lib/api/types";
+import type { FindingSeverity } from "@/assets/types/finding";
 import { SeverityBadge } from "./severity-badge";
 import { StatusBadge } from "./status-badge";
 import { DataTable, type DataTableColumn } from "./data-table";
@@ -59,6 +59,3 @@ export default meta;
 type Story = StoryObj<typeof meta>;
 
 export const Rows: Story = {};
-
-/** While `rows` is undefined, skeleton rows hold the space. */
-export const Loading: Story = { args: { rows: undefined, loadingRows: 3 } };

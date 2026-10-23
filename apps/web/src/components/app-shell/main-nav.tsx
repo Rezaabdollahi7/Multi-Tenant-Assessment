@@ -1,26 +1,23 @@
 "use client";
 
 import { motion } from "motion/react";
-import { useTranslations } from "next-intl";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { can } from "@/lib/session/permissions";
 import { useCurrentUser } from "@/lib/session/session-provider";
 import { cn } from "@/lib/utils";
 import { isActive, NAV_ITEMS } from "./nav-items";
 
 /** Sections as pills; the current one is filled with ink. */
 export function MainNav({ className }: { className?: string }) {
-  const t = useTranslations("nav");
   const pathname = usePathname();
-  const { permissions } = useCurrentUser();
-  const items = NAV_ITEMS.filter((item) =>
-    permissions.includes(item.permission),
-  );
+  const user = useCurrentUser();
+  const items = NAV_ITEMS.filter((item) => can(user, item.resource, "read"));
 
   return (
-    <nav aria-label={t("label")} className={className}>
+    <nav aria-label="اصلی" className={className}>
       <ul className="glass flex w-full gap-1 overflow-x-auto rounded-full p-1 md:w-auto">
-        {items.map(({ labelKey, href }) => {
+        {items.map(({ label, href }) => {
           const active = isActive(pathname, href);
           return (
             <li key={href} className="relative flex-1 md:flex-none">
@@ -43,7 +40,7 @@ export function MainNav({ className }: { className?: string }) {
                     : "text-foreground hover:bg-accent",
                 )}
               >
-                {t(labelKey)}
+                {label}
               </Link>
             </li>
           );

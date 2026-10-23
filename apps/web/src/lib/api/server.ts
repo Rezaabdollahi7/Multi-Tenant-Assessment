@@ -1,7 +1,7 @@
 import "server-only";
 import createClient from "openapi-fetch";
 import { cookies } from "next/headers";
-import type { paths } from "./schema";
+import type { paths } from "@/assets/types/api-schema";
 
 const API_URL = process.env.API_URL ?? "http://localhost:3001";
 

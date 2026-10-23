@@ -1,22 +1,12 @@
 "use client";
 
-import { QueryClientProvider } from "@tanstack/react-query";
 import { MotionConfig } from "motion/react";
 import { ThemeProvider } from "next-themes";
 import { Direction } from "radix-ui";
-import { useState, type ReactNode } from "react";
+import type { ReactNode } from "react";
 import { Toaster } from "@/components/ui/sonner";
-import { createQueryClient } from "@/lib/query-client";
 
-type ProvidersProps = {
-  /** Mirrors <html dir>; Radix menus and selects read it to open the right way. */
-  direction: "rtl" | "ltr";
-  children: ReactNode;
-};
-
-export function Providers({ direction, children }: ProvidersProps) {
-  // One client per browser session; created lazily so the server never shares it.
-  const [queryClient] = useState(createQueryClient);
+export function Providers({ children }: { children: ReactNode }) {
   return (
     <ThemeProvider
       attribute="class"
@@ -24,13 +14,10 @@ export function Providers({ direction, children }: ProvidersProps) {
       enableSystem
       disableTransitionOnChange
     >
-      <Direction.Provider dir={direction}>
-        {/* Animations follow the User's reduced-motion preference. */}
+      <Direction.Provider dir="rtl">
         <MotionConfig reducedMotion="user">
-          <QueryClientProvider client={queryClient}>
-            {children}
-            <Toaster richColors closeButton dir={direction} />
-          </QueryClientProvider>
+          {children}
+          <Toaster richColors closeButton dir="rtl" />
         </MotionConfig>
       </Direction.Provider>
     </ThemeProvider>

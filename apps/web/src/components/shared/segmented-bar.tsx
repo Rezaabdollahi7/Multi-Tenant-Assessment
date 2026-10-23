@@ -1,7 +1,7 @@
 "use client";
 
 import { motion } from "motion/react";
-import { useFormatter } from "next-intl";
+import { formatPercent } from "@/lib/format";
 import { DURATION, EASE_OUT } from "@/lib/motion";
 import { cn } from "@/lib/utils";
 
@@ -41,7 +41,6 @@ export function SegmentedBar({
   describeValue,
   className,
 }: SegmentedBarProps) {
-  const format = useFormatter();
   const total = segments.reduce((sum, segment) => sum + segment.value, 0);
 
   return (
@@ -68,7 +67,7 @@ export function SegmentedBar({
                 TONE_CLASSES[segment.tone],
               )}
             >
-              {format.number(share, "percent")}
+              {formatPercent(share)}
             </span>
           </motion.li>
         );

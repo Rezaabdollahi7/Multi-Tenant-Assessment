@@ -1,44 +1,39 @@
 import { PlusIcon } from "lucide-react";
 import type { Metadata } from "next";
-import { getTranslations } from "next-intl/server";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { Button } from "@/components/ui/button";
-import { getCurrentUser } from "@/features/auth/api/get-current-user";
-import { getRecentProjectFindings } from "@/features/findings/api/get-finding";
-import { RecentProjectFindings } from "@/features/findings/components/recent-project-findings";
+import { getCurrentUser } from "@/features/auth/lib/get-current-user";
+import { RecentProjectFindings } from "@/features/findings/components/block/recent-project-findings";
+import { getRecentProjectFindings } from "@/features/findings/lib/findings-api";
+import { ProjectHeader } from "@/features/projects/components/block/project-header";
+import { ProjectInfo } from "@/features/projects/components/block/project-info";
+import { ProjectMembers } from "@/features/projects/components/block/project-members";
+import { ProjectSeverityPanel } from "@/features/projects/components/block/project-severity-panel";
 import {
   getProject,
   getProjectMembers,
-} from "@/features/projects/api/get-project";
-import { ProjectHeader } from "@/features/projects/components/project-header";
-import { ProjectInfo } from "@/features/projects/components/project-info";
-import { ProjectMembers } from "@/features/projects/components/project-members";
-import { ProjectSeverityPanel } from "@/features/projects/components/project-severity-panel";
-import { routes } from "@/lib/routes";
-import { hasPermissions } from "@/lib/session/permissions";
+} from "@/features/projects/lib/projects-api";
 import { revealOrder } from "@/lib/motion";
+import { routes } from "@/lib/routes";
+import { can } from "@/lib/session/permissions";
 
 type ProjectPageProps = { params: Promise<{ id: string }> };
 
 export async function generateMetadata({
   params,
 }: ProjectPageProps): Promise<Metadata> {
-  const [project, t] = await Promise.all([
-    getProject((await params).id),
-    getTranslations("metadata"),
-  ]);
-  return { title: project?.name ?? t("projectNotFound") };
+  const project = await getProject((await params).id);
+  return { title: project?.name ?? "پروژه پیدا نشد" };
 }
 
 export default async function ProjectPage({ params }: ProjectPageProps) {
   const { id } = await params;
   const [project, user] = await Promise.all([getProject(id), getCurrentUser()]);
   if (!project) notFound();
-  const t = await getTranslations("findings");
 
   const [members, findings] = await Promise.all([
-    hasPermissions(user, "member:read") ? getProjectMembers(id) : null,
+    can(user, "member", "read") ? getProjectMembers(id) : null,
     getRecentProjectFindings(id),
   ]);
 
@@ -47,11 +42,11 @@ export default async function ProjectPage({ params }: ProjectPageProps) {
       <ProjectHeader
         project={project}
         action={
-          hasPermissions(user, "finding:create") && (
+          can(user, "finding", "create") && (
             <Button asChild>
               <Link href={routes.newFinding({ projectId: id })}>
                 <PlusIcon aria-hidden />
-                {t("report")}
+                ثبت یافته
               </Link>
             </Button>
           )

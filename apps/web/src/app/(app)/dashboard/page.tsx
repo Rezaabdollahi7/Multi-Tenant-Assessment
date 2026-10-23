@@ -1,32 +1,24 @@
 import type { Metadata } from "next";
-import { getTranslations } from "next-intl/server";
-import { getCurrentUser } from "@/features/auth/api/get-current-user";
-import { DashboardOverview } from "@/features/dashboard/components/dashboard-overview";
-import { FindingTrendChart } from "@/features/dashboard/components/finding-trend-chart";
-import { RecentActivity } from "@/features/dashboard/components/recent-activity";
-import { SeverityBreakdown } from "@/features/dashboard/components/severity-breakdown";
-import { Can } from "@/lib/session/session-provider";
+import { DashboardOverview } from "@/features/dashboard/components/block/dashboard-overview";
+import { FindingTrend } from "@/features/dashboard/components/block/finding-trend";
+import { RecentActivity } from "@/features/dashboard/components/block/recent-activity";
+import { SeverityBreakdown } from "@/features/dashboard/components/block/severity-breakdown";
+import { getCurrentUser } from "@/features/auth/lib/get-current-user";
 import { revealOrder } from "@/lib/motion";
+import { can } from "@/lib/session/permissions";
 
-export async function generateMetadata(): Promise<Metadata> {
-  const t = await getTranslations("metadata");
-  return { title: t("dashboard") };
-}
+export const metadata: Metadata = { title: "داشبورد" };
 
 export default async function DashboardPage() {
-  const [t, user] = await Promise.all([getTranslations(), getCurrentUser()]);
-  const firstName = user?.name?.split(/\s+/)[0] ?? t("common.unnamedUser");
+  const user = await getCurrentUser();
+  const firstName = user?.name?.split(/\s+/)[0] ?? "کاربر بی‌نام";
 
   return (
     <div className="space-y-8">
       <header className="reveal space-y-2" style={revealOrder(0)}>
-        <h1 className="text-display font-light">
-          {t("dashboard.welcome", { name: firstName })}
-        </h1>
+        <h1 className="text-display font-light">{firstName}، خوش آمدید</h1>
         <p className="text-muted-foreground">
-          {t("dashboard.intro", {
-            organization: user?.organization.name ?? "",
-          })}
+          نمای کلی وضعیت امنیتی {user?.organization.name}.
         </p>
       </header>
       <div className="reveal" style={revealOrder(1)}>
@@ -37,12 +29,10 @@ export default async function DashboardPage() {
         style={revealOrder(2)}
       >
         <div className="grid gap-6 lg:col-span-2">
-          <FindingTrendChart />
+          <FindingTrend />
           <SeverityBreakdown />
         </div>
-        <Can permission="activity:read">
-          <RecentActivity />
-        </Can>
+        {can(user, "activity", "read") && <RecentActivity />}
       </div>
     </div>
   );

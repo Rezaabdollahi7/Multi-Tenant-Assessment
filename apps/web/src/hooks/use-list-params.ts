@@ -1,15 +1,11 @@
 "use client";
 
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
+import { useTransition } from "react";
 import type { z } from "zod";
 
 type ListParams = { page: number };
 
-/**
- * The search, filters and page of a list, kept in the URL (ADR 0003).
- * The schema parses the query string and repairs anything invalid, so a
- * hand-edited URL never breaks the page.
- */
 export function useListParams<Schema extends z.ZodType<ListParams>>(
   schema: Schema,
 ) {
@@ -17,9 +13,9 @@ export function useListParams<Schema extends z.ZodType<ListParams>>(
   const searchParams = useSearchParams();
   const pathname = usePathname();
   const router = useRouter();
+  const [pending, startTransition] = useTransition();
   const params: Params = schema.parse(Object.fromEntries(searchParams));
 
-  /** The URL with `patch` applied. Changing anything but the page returns to page 1. */
   function hrefWith(patch: Partial<Params>) {
     const next: Record<string, unknown> = { ...params, page: 1, ...patch };
     const query = new URLSearchParams();
@@ -34,8 +30,8 @@ export function useListParams<Schema extends z.ZodType<ListParams>>(
   }
 
   function update(patch: Partial<Params>) {
-    router.replace(hrefWith(patch), { scroll: false });
+    startTransition(() => router.replace(hrefWith(patch), { scroll: false }));
   }
 
-  return { params, hrefWith, update };
+  return { params, hrefWith, update, pending };
 }
