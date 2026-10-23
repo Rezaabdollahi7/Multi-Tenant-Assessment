@@ -17,6 +17,7 @@ import { ProjectMembers } from "@/features/projects/components/project-members";
 import { ProjectSeverityPanel } from "@/features/projects/components/project-severity-panel";
 import { routes } from "@/lib/routes";
 import { hasPermissions } from "@/lib/session/permissions";
+import { revealOrder } from "@/lib/motion";
 
 type ProjectPageProps = { params: Promise<{ id: string }> };
 
@@ -56,7 +57,10 @@ export default async function ProjectPage({ params }: ProjectPageProps) {
           )
         }
       />
-      <div className="grid items-start gap-6 lg:grid-cols-3">
+      <div
+        className="reveal grid items-start gap-6 lg:grid-cols-3"
+        style={revealOrder(1)}
+      >
         <div className="grid gap-6 lg:col-span-2">
           <ProjectSeverityPanel project={project} />
           <RecentProjectFindings projectId={id} findings={findings} />

@@ -1,5 +1,6 @@
 "use client";
 
+import { motion } from "motion/react";
 import { useTranslations } from "next-intl";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
@@ -22,14 +23,23 @@ export function MainNav({ className }: { className?: string }) {
         {items.map(({ labelKey, href }) => {
           const active = isActive(pathname, href);
           return (
-            <li key={href} className="flex-1 md:flex-none">
+            <li key={href} className="relative flex-1 md:flex-none">
+              {active && (
+                // One shared pill that slides from the old section to the new.
+                <motion.span
+                  layoutId="main-nav-current"
+                  aria-hidden
+                  className="absolute inset-0 rounded-full bg-primary"
+                  transition={{ type: "spring", stiffness: 380, damping: 32 }}
+                />
+              )}
               <Link
                 href={href}
                 aria-current={active ? "page" : undefined}
                 className={cn(
-                  "flex h-9 items-center justify-center rounded-full px-5 text-sm whitespace-nowrap transition-colors",
+                  "relative flex h-9 items-center justify-center rounded-full px-5 text-sm whitespace-nowrap transition-colors duration-300",
                   active
-                    ? "bg-primary text-primary-foreground"
+                    ? "text-primary-foreground"
                     : "text-foreground hover:bg-accent",
                 )}
               >

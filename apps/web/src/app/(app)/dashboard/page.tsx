@@ -6,6 +6,7 @@ import { FindingTrendChart } from "@/features/dashboard/components/finding-trend
 import { RecentActivity } from "@/features/dashboard/components/recent-activity";
 import { SeverityBreakdown } from "@/features/dashboard/components/severity-breakdown";
 import { Can } from "@/lib/session/session-provider";
+import { revealOrder } from "@/lib/motion";
 
 export async function generateMetadata(): Promise<Metadata> {
   const t = await getTranslations("metadata");
@@ -18,7 +19,7 @@ export default async function DashboardPage() {
 
   return (
     <div className="space-y-8">
-      <header className="space-y-2">
+      <header className="reveal space-y-2" style={revealOrder(0)}>
         <h1 className="text-display font-light">
           {t("dashboard.welcome", { name: firstName })}
         </h1>
@@ -28,8 +29,13 @@ export default async function DashboardPage() {
           })}
         </p>
       </header>
-      <DashboardOverview />
-      <div className="grid items-start gap-6 lg:grid-cols-3">
+      <div className="reveal" style={revealOrder(1)}>
+        <DashboardOverview />
+      </div>
+      <div
+        className="reveal grid items-start gap-6 lg:grid-cols-3"
+        style={revealOrder(2)}
+      >
         <div className="grid gap-6 lg:col-span-2">
           <FindingTrendChart />
           <SeverityBreakdown />

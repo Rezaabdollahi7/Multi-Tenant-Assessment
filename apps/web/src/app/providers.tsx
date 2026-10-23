@@ -1,6 +1,7 @@
 "use client";
 
 import { QueryClientProvider } from "@tanstack/react-query";
+import { MotionConfig } from "motion/react";
 import { ThemeProvider } from "next-themes";
 import { Direction } from "radix-ui";
 import { useState, type ReactNode } from "react";
@@ -24,10 +25,13 @@ export function Providers({ direction, children }: ProvidersProps) {
       disableTransitionOnChange
     >
       <Direction.Provider dir={direction}>
-        <QueryClientProvider client={queryClient}>
-          {children}
-          <Toaster richColors closeButton dir={direction} />
-        </QueryClientProvider>
+        {/* Animations follow the User's reduced-motion preference. */}
+        <MotionConfig reducedMotion="user">
+          <QueryClientProvider client={queryClient}>
+            {children}
+            <Toaster richColors closeButton dir={direction} />
+          </QueryClientProvider>
+        </MotionConfig>
       </Direction.Provider>
     </ThemeProvider>
   );

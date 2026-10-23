@@ -66,6 +66,23 @@ Radius scale: 10 / 14 / 18 / 22 / **28 (cards)** / 36 (large containers, dialogs
 
 A floating top bar: the brand in an outlined pill at the start, the sections as a pill group in the centre (current one in ink), and round glass buttons for language, theme and the User at the end. On small screens the sections drop to a full-width row under it. Content is centred up to 1440px.
 
+## Motion
+
+Motion explains change; it never decorates or delays. Everything below is skipped under `prefers-reduced-motion` (`MotionConfig reducedMotion="user"`, the CSS reduced-motion rule, and plain figures instead of counting).
+
+| Where                       | What moves                                                        | How                                                                                                |
+| --------------------------- | ----------------------------------------------------------------- | -------------------------------------------------------------------------------------------------- |
+| Every page                  | Sections rise into place one after another (70ms apart)           | CSS `reveal` + `revealOrder(i)`: runs on first paint, never replays on a refetch                   |
+| Top bar                     | The ink pill slides from the old section to the new               | Motion `layoutId`, spring                                                                          |
+| Dashboard figures           | Count up to their value, then from value to value                 | `useCountUp` on a motion value (no React re-render per frame); screen readers get the final figure |
+| Trend chart                 | Bars rise in reading order; the busiest day's value lands last    | Motion `scaleY`, 20ms stagger                                                                      |
+| Severity and Project Status | Bars and segments grow to their share, and move when data changes | Motion `width` / `flexGrow`                                                                        |
+| Recent Activity             | Items fade up one after another                                   | Motion, 50ms stagger                                                                               |
+| Tables                      | New rows (page, filter) fade up                                   | `tw-animate-css` classes, 30ms stagger                                                             |
+| Theme change                | The new theme grows as a circle from the theme button             | View Transitions API; a plain switch where unsupported                                             |
+
+One easing (`EASE_OUT`, quick out, soft landing) and three durations (`lib/motion.ts`) keep it consistent.
+
 ## Themes
 
 Light, dark and system, via `next-themes` (`class` strategy). Default: system.

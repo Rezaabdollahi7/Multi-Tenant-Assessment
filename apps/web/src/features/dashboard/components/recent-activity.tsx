@@ -7,6 +7,7 @@ import {
   Trash2Icon,
   type LucideIcon,
 } from "lucide-react";
+import { motion } from "motion/react";
 import { useFormatter, useNow, useTranslations } from "next-intl";
 import Link from "next/link";
 import type { ReactNode } from "react";
@@ -16,6 +17,7 @@ import { Panel } from "@/components/shared/panel";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useErrorMessage } from "@/hooks/use-error-message";
 import type { Activity } from "@/lib/api/types";
+import { DURATION, EASE_OUT, STAGGER } from "@/lib/motion";
 import { routes } from "@/lib/routes";
 import { useRecentActivities } from "../hooks/use-dashboard";
 
@@ -63,8 +65,8 @@ export function RecentActivity({ className }: { className?: string }) {
         <EmptyState icon={History} title={t("empty")} />
       ) : (
         <ol className="space-y-1">
-          {data.map((activity) => (
-            <ActivityItem key={activity.id} activity={activity} />
+          {data.map((activity, index) => (
+            <ActivityItem key={activity.id} activity={activity} index={index} />
           ))}
         </ol>
       )}
@@ -72,7 +74,14 @@ export function RecentActivity({ className }: { className?: string }) {
   );
 }
 
-function ActivityItem({ activity }: { activity: Activity }) {
+function ActivityItem({
+  activity,
+  index,
+}: {
+  activity: Activity;
+  /** Position in the list, for the entrance stagger. */
+  index: number;
+}) {
   const t = useTranslations();
   const format = useFormatter();
   // Re-renders every minute so "just now" moves on to "1 minute ago".
@@ -82,7 +91,16 @@ function ActivityItem({ activity }: { activity: Activity }) {
   const Icon = ACTION_ICONS[action];
 
   return (
-    <li className="flex items-center gap-3 rounded-2xl py-2 text-sm">
+    <motion.li
+      className="flex items-center gap-3 rounded-2xl py-2 text-sm"
+      initial={{ opacity: 0, y: 8 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{
+        duration: DURATION.base,
+        ease: EASE_OUT,
+        delay: index * STAGGER,
+      }}
+    >
       <span
         aria-hidden
         className="flex size-10 shrink-0 items-center justify-center rounded-full bg-ink-subtle"
@@ -119,6 +137,6 @@ function ActivityItem({ activity }: { activity: Activity }) {
           {format.relativeTime(new Date(createdAt), now)}
         </time>
       </div>
-    </li>
+    </motion.li>
   );
 }

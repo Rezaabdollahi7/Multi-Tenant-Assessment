@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import { FindingsList } from "@/features/findings/components/findings-list";
 import { routes } from "@/lib/routes";
 import { Can } from "@/lib/session/session-provider";
+import { revealOrder } from "@/lib/motion";
 
 export async function generateMetadata(): Promise<Metadata> {
   const t = await getTranslations("metadata");
@@ -16,7 +17,10 @@ export default async function FindingsPage() {
   const t = await getTranslations("findings");
   return (
     <div className="space-y-8">
-      <header className="flex flex-wrap items-start justify-between gap-3">
+      <header
+        className="reveal flex flex-wrap items-start justify-between gap-3"
+        style={revealOrder(0)}
+      >
         <div className="space-y-1">
           <h1 className="text-display font-light">{t("title")}</h1>
           <p className="text-muted-foreground">{t("intro")}</p>
@@ -30,7 +34,9 @@ export default async function FindingsPage() {
           </Button>
         </Can>
       </header>
-      <FindingsList />
+      <div className="reveal" style={revealOrder(1)}>
+        <FindingsList />
+      </div>
     </div>
   );
 }

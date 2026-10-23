@@ -1,4 +1,8 @@
+"use client";
+
+import { motion } from "motion/react";
 import { useFormatter } from "next-intl";
+import { DURATION, EASE_OUT } from "@/lib/motion";
 import { cn } from "@/lib/utils";
 
 /** The four looks of a segment; together they tell parts apart without hue. */
@@ -10,6 +14,9 @@ export type Segment = {
   value: number;
   tone: SegmentTone;
 };
+
+/** The smallest share a segment is drawn at, so an empty part stays visible. */
+const MIN_GROW = 0.08;
 
 const TONE_CLASSES: Record<SegmentTone, string> = {
   ink: "bg-ink text-ink-foreground dark:ring-1 dark:ring-border-strong",
@@ -42,11 +49,14 @@ export function SegmentedBar({
       {segments.map((segment) => {
         const share = total === 0 ? 0 : segment.value / total;
         return (
-          <li
+          <motion.li
             key={segment.id}
             className="flex min-w-16 flex-col gap-2"
-            // Grow with the share; every part stays wide enough to read.
-            style={{ flexGrow: Math.max(share, 0.08), flexBasis: 0 }}
+            style={{ flexBasis: 0 }}
+            // Grow to the share; every part stays wide enough to read.
+            initial={{ flexGrow: MIN_GROW }}
+            animate={{ flexGrow: Math.max(share, MIN_GROW) }}
+            transition={{ duration: DURATION.base, ease: EASE_OUT }}
           >
             <span className="truncate text-sm text-muted-foreground">
               {segment.label}
@@ -60,7 +70,7 @@ export function SegmentedBar({
             >
               {format.number(share, "percent")}
             </span>
-          </li>
+          </motion.li>
         );
       })}
     </ul>

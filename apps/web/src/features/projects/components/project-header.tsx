@@ -5,6 +5,7 @@ import type { ReactNode } from "react";
 import type { ProjectDetail } from "@/lib/api/types";
 import { routes } from "@/lib/routes";
 import { ProjectStatusBadge } from "./project-status-badge";
+import { revealOrder } from "@/lib/motion";
 
 type ProjectHeaderProps = {
   project: ProjectDetail;
@@ -15,7 +16,7 @@ type ProjectHeaderProps = {
 export function ProjectHeader({ project, action }: ProjectHeaderProps) {
   const t = useTranslations();
   return (
-    <header className="space-y-4">
+    <header className="reveal space-y-4" style={revealOrder(0)}>
       <nav aria-label={t("common.breadcrumb")}>
         <ol className="flex items-center gap-1 text-sm text-muted-foreground">
           <li>

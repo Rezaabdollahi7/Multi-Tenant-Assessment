@@ -15,6 +15,9 @@ import { cn } from "@/lib/utils";
 const ROW_CLASSES =
   "border-0 transition-colors hover:bg-highlight-subtle [&>td:first-child]:rounded-s-full [&>td:last-child]:rounded-e-full";
 
+const ROW_ENTRANCE =
+  "animate-in fade-in slide-in-from-bottom-1 fill-mode-both duration-300";
+
 export type DataTableColumn<Row> = {
   id: string;
   header: string;
@@ -72,8 +75,13 @@ export function DataTable<Row>({
                 ))}
               </TableRow>
             ))
-          : rows.map((row) => (
-              <TableRow key={getRowId(row)} className={ROW_CLASSES}>
+          : rows.map((row, index) => (
+              // New rows (a new page, a new filter) fade up one after another.
+              <TableRow
+                key={getRowId(row)}
+                className={cn(ROW_CLASSES, ROW_ENTRANCE)}
+                style={{ animationDelay: `${index * 30}ms` }}
+              >
                 {columns.map((column) => (
                   <TableCell
                     key={column.id}
