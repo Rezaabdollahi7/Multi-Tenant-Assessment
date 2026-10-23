@@ -4,19 +4,20 @@ A hiring assessment (brief `MB-BE-01`) delivered on **1405/08/05 (2026-10-27)**.
 
 ## Read before working
 
-- @docs/RULES.md: how code is written, tested and committed here. Binding.
 - @GLOSSARY.md: domain language. Use these terms in code, UI and docs; never the _Avoid_ words.
-- @docs/HANDOFF.md: where the last session stopped and what comes next.
-- `docs/ARCHITECTURE.md`: system design. `docs/ROADMAP.md`: milestones and the brief's checklist. `docs/adr/`: decisions already made; don't reopen one without a new ADR.
+- `README.md`: setup, scripts and structure. `apps/api/README.md`: the API's security model.
 
 ## Repository
 
 pnpm + Turborepo monorepo.
 
 - `apps/api`: NestJS 11, TypeORM, Postgres, Redis. Swagger at `http://localhost:3001/docs`.
-- `apps/web`: Next.js 16 App Router, React 19, Tailwind 4, shadcn/ui, TanStack Query, Vitest, Storybook.
+- `apps/web`: Next.js 16 App Router (Server Components fetch data), React 19, Tailwind 4, shadcn/ui, Vitest, Storybook. Persian only, right to left.
+  - `src/assets/types`: shared types, one file per domain. `src/assets/fonts`: Dana.
+  - `src/features/<feature>`: `lib/`, `hooks/`, `components/{block,ui,ui/skeleton}/`, `test/`, created only when needed.
+  - Permissions: `can(user, resource, action)` on the server, `useCan(resource, action)` in client components. The API enforces them; these only shape the UI.
 - `packages/eslint-config`, `packages/typescript-config`: shared configs.
-- `docker/compose.yml`: local infrastructure.
+- `docker/compose.yml`: Postgres and Redis for local development (`docker/.env` from `docker/.env.example`).
 
 ## Commands
 
@@ -26,7 +27,7 @@ Run from the repo root unless noted.
 pnpm install
 pnpm dev                            # api + web via turbo
 pnpm lint && pnpm check-types       # must pass before every commit
-pnpm --filter frontend test         # web unit/component tests (Vitest)
+pnpm --filter frontend test         # web unit tests and stories (Vitest)
 pnpm --filter api test              # api unit tests (Jest)
 pnpm --filter api seed              # reseed fabricated data
 pnpm api:contract                   # after any API change: regenerate openapi.json and web types
@@ -37,8 +38,8 @@ pnpm --filter frontend storybook    # component catalogue on :6006
 
 - Never commit to `main`. Branch as `<type>/<kebab-scope>` (`feat/findings-list`, `fix/session-refresh`), open a PR, merge with a merge commit.
 - Conventional Commits with a scope: `feat(web): ...`, `fix(api): ...`, `docs: ...`.
-- At the end of a work session, update `docs/HANDOFF.md` and `AI_USAGE.md`.
-- New domain term or changed meaning → update `GLOSSARY.md` in the same PR. Hard-to-reverse decision with a real trade-off → add an ADR.
+- At the end of a work session, update `AI_USAGE.md`.
+- New domain term or changed meaning → update `GLOSSARY.md` in the same PR.
 - No secrets in the repo. `.env.example` files hold placeholders only.
 
 ## graphify
