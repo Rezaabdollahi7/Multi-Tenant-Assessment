@@ -14,7 +14,7 @@ A hiring assessment (brief `MB-BE-01`) delivered on **1405/08/05 (2026-10-27)**.
 pnpm + Turborepo monorepo.
 
 - `apps/api`: NestJS 11, TypeORM, Postgres, Redis. Swagger at `http://localhost:3001/docs`.
-- `apps/web`: Next.js 16 App Router, React 19, Tailwind 4, shadcn/ui, TanStack Query, Zustand, Vitest, Storybook.
+- `apps/web`: Next.js 16 App Router, React 19, Tailwind 4, shadcn/ui, TanStack Query, Vitest, Storybook.
 - `packages/eslint-config`, `packages/typescript-config`: shared configs.
 - `docker/compose.yml`: local infrastructure.
 

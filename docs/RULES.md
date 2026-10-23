@@ -47,12 +47,12 @@ src/
 
 A feature may import from `components/`, `hooks/`, `lib/` and its own folder. Features do not import from each other; shared needs move to `components/shared` or `lib`.
 
-### State (see ADR 0003)
+### State (see ADR 0003 and 0006)
 
 - Server data: **TanStack Query only**. Query keys come from one factory per feature (`findingKeys.list(filters)`). Mutations invalidate the keys they affect.
 - Search, filters, sort and pagination: **the URL**. Read and write them through one typed hook per page.
-- Client-only UI state (sidebar, theme): **Zustand**, one small store per concern, read with selectors.
-- Never copy server data into Zustand or `useState`.
+- Client-only UI state stays with its owner: the sidebar in `SidebarProvider` (cookie-backed), the theme in `next-themes`, anything else local to its component. There is no global client store (ADR 0006).
+- Never copy server data into `useState` or context.
 
 ### Data and types
 

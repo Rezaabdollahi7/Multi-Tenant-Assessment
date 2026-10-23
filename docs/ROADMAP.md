@@ -36,7 +36,7 @@ Each milestone is delivered as one or more pull requests into `main`. Tick items
 - [x] Next.js rewrites `/api/*` (with the Docker setup)
 - [x] `proxy.ts` route guard with silent renewal; protected layout loading `/auth/me` (ADR 0005)
 - [x] TanStack Query provider
-- [ ] Query-key factories (per feature, with the feature); Zustand UI store
+- [x] Query-key factories (per feature, with the feature); no client state library needed (ADR 0006)
 - [x] `Can` / `useCan` from `/auth/me` Permissions
 - [x] Design system: tokens, Severity palette, Fira fonts, clean shadcn new-york primitives, light/dark/system themes (`docs/design-system.md`)
 - [x] App shell: responsive sidebar (collapsible, drawer on mobile, Permission-filtered navigation), header with theme toggle (light / dark / system), User menu with sign-out, skip link
@@ -72,18 +72,18 @@ Each milestone is delivered as one or more pull requests into `main`. Tick items
 
 ## Brief checklist
 
-| Brief item                                                                                                                                                 | Milestone    |
-| ---------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------ |
-| Next.js App Router, React + TypeScript strict, Tailwind, shadcn/ui                                                                                         | M2           |
-| Zustand (with rationale), TanStack Query for server state                                                                                                  | M2, ADR 0003 |
-| Vitest + React Testing Library                                                                                                                             | M5           |
-| Storybook for main components                                                                                                                              | M5           |
-| A. Authentication UI, server-enforced session                                                                                                              | M1, M3       |
-| B. Dashboard                                                                                                                                               | M3           |
-| C. Assessment (Project) management                                                                                                                         | M4           |
-| D. Findings management                                                                                                                                     | M4           |
-| E. Role-aware interface, API rejects unauthorised requests                                                                                                 | M1, M4       |
-| F. Component architecture                                                                                                                                  | M5           |
-| G. Testing                                                                                                                                                 | M5           |
-| H. Responsive and accessibility                                                                                                                            | M5           |
-| Deliverables 1–11 (private repo, source, README, architecture, Mock API and data, component docs, Storybook, tests, screenshots, time report, limitations) | M0–M6        |
+| Brief item                                                                                                                                                 | Milestone      |
+| ---------------------------------------------------------------------------------------------------------------------------------------------------------- | -------------- |
+| Next.js App Router, React + TypeScript strict, Tailwind, shadcn/ui                                                                                         | M2             |
+| Zustand or an equivalent (with rationale), TanStack Query for server state                                                                                 | ADR 0003, 0006 |
+| Vitest + React Testing Library                                                                                                                             | M5             |
+| Storybook for main components                                                                                                                              | M5             |
+| A. Authentication UI, server-enforced session                                                                                                              | M1, M3         |
+| B. Dashboard                                                                                                                                               | M3             |
+| C. Assessment (Project) management                                                                                                                         | M4             |
+| D. Findings management                                                                                                                                     | M4             |
+| E. Role-aware interface, API rejects unauthorised requests                                                                                                 | M1, M4         |
+| F. Component architecture                                                                                                                                  | M5             |
+| G. Testing                                                                                                                                                 | M5             |
+| H. Responsive and accessibility                                                                                                                            | M5             |
+| Deliverables 1–11 (private repo, source, README, architecture, Mock API and data, component docs, Storybook, tests, screenshots, time report, limitations) | M0–M6          |

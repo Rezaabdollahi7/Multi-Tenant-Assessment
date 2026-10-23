@@ -19,7 +19,7 @@ Built for technical assessment `MB-BE-01`.
 
 ## Tech stack
 
-**Web:** Next.js 16 (App Router), React 19, TypeScript (strict), Tailwind CSS 4, shadcn/ui, TanStack Query, Zustand, react-hook-form + zod, Vitest + React Testing Library + MSW, Storybook.
+**Web:** Next.js 16 (App Router), React 19, TypeScript (strict), Tailwind CSS 4, shadcn/ui, TanStack Query, react-hook-form + zod, Vitest + React Testing Library + MSW, Storybook.
 **API (the Mock API):** NestJS 11, TypeORM, PostgreSQL, Redis, JWT in httpOnly cookies, Swagger.
 **Tooling:** pnpm workspaces, Turborepo, ESLint, Prettier, Docker Compose, GitHub Actions.
 
