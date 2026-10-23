@@ -15,7 +15,9 @@ permissions:
 jobs:
   verify:
     name: Lint, typecheck, test, build
-    runs-on: ubuntu-latest
+    # Pinned: the Storybook tests need Playwright's Chromium, which Playwright
+    # 1.56 cannot install on ubuntu-latest (26.04).
+    runs-on: ubuntu-24.04
     timeout-minutes: 15
     env:
       TURBO_TELEMETRY_DISABLED: 1
