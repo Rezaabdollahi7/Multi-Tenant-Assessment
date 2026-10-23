@@ -90,7 +90,7 @@ A feature may import from `components/`, `hooks/`, `lib/` and its own folder. Fe
 - Each feature covers: rendering, user interaction, form validation, API error, loading state, role-based UI. Session expiry and filtering have their own tests.
 - API: unit tests for guards and services; e2e tests for tenant isolation and Permission enforcement.
 - A bug fix starts with a failing test.
-- Every reusable component in `components/shared` has a Storybook story documenting its props and states.
+- Every reusable component in `components/shared` has a Storybook story documenting its props and states. Props carry JSDoc, which the docs page shows. Interactive behaviour is asserted in a `play` function; `pnpm --filter frontend test` runs every story in Chromium and fails on an accessibility violation.
 
 ## 6. Documentation
 

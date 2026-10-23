@@ -62,15 +62,15 @@ Signing in as different Roles of the same Organization shows the Role-aware UI; 
 
 ## Scripts
 
-| Command                               | Purpose                       |
-| ------------------------------------- | ----------------------------- |
-| `pnpm dev`                            | Run API and web in watch mode |
-| `pnpm build`                          | Build all apps                |
-| `pnpm lint`                           | Lint all packages             |
-| `pnpm check-types`                    | Type-check all packages       |
-| `pnpm --filter frontend test`         | Web tests (Vitest)            |
-| `pnpm --filter api test` / `test:e2e` | API unit / e2e tests (Jest)   |
-| `pnpm --filter frontend storybook`    | Storybook on :6006            |
+| Command                               | Purpose                        |
+| ------------------------------------- | ------------------------------ |
+| `pnpm dev`                            | Run API and web in watch mode  |
+| `pnpm build`                          | Build all apps                 |
+| `pnpm lint`                           | Lint all packages              |
+| `pnpm check-types`                    | Type-check all packages        |
+| `pnpm --filter frontend test`         | Web tests and stories (Vitest) |
+| `pnpm --filter api test` / `test:e2e` | API unit / e2e tests (Jest)    |
+| `pnpm --filter frontend storybook`    | Storybook on :6006             |
 
 ## Project structure
 
