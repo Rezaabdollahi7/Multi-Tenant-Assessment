@@ -10,6 +10,7 @@ import { getFinding } from "@/features/findings/api/get-finding";
 import { EditFindingForm } from "@/features/findings/components/finding-form";
 import { routes } from "@/lib/routes";
 import { hasPermissions } from "@/lib/session/permissions";
+import { revealOrder } from "@/lib/motion";
 
 type EditFindingPageProps = { params: Promise<{ id: string }> };
 
@@ -50,13 +51,16 @@ export default async function EditFindingPage({
 
   return (
     <div className="space-y-8">
-      <header className="space-y-1">
+      <header className="reveal space-y-1" style={revealOrder(0)}>
         <h1 className="text-display font-light">{t("form.editTitle")}</h1>
         <p className="truncate text-sm text-muted-foreground">
           {finding.title}
         </p>
       </header>
-      <Card className="max-w-3xl rounded-3xl p-6 sm:p-8">
+      <Card
+        className="reveal max-w-3xl rounded-3xl p-6 sm:p-8"
+        style={revealOrder(1)}
+      >
         <EditFindingForm finding={finding} />
       </Card>
     </div>

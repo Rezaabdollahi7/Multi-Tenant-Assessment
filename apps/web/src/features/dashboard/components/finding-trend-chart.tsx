@@ -1,6 +1,7 @@
 "use client";
 
 import { ArrowUpRight, ChartColumn } from "lucide-react";
+import { motion } from "motion/react";
 import { useFormatter, useTranslations } from "next-intl";
 import Link from "next/link";
 import { EmptyState } from "@/components/shared/empty-state";
@@ -9,6 +10,7 @@ import { Panel } from "@/components/shared/panel";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useErrorMessage } from "@/hooks/use-error-message";
 import type { TrendPoint } from "@/lib/api/types";
+import { DURATION, EASE_OUT } from "@/lib/motion";
 import { routes } from "@/lib/routes";
 import { SEVERITIES } from "@/lib/severity";
 import { cn } from "@/lib/utils";
@@ -86,9 +88,10 @@ function TrendBars({ points }: { points: TrendPoint[] }) {
       </p>
 
       <div aria-hidden className="flex h-44 items-end gap-1 pt-8 sm:gap-1.5">
-        {points.map((point) => (
+        {points.map((point, index) => (
           <DayBar
             key={point.date}
+            index={index}
             point={point}
             height={point.total / busiest.total}
             busiest={point === busiest}
@@ -118,22 +121,33 @@ function TrendBars({ points }: { points: TrendPoint[] }) {
   );
 }
 
+/** Seconds between neighbouring bars as they rise, oldest first. */
+const BAR_STAGGER = 0.02;
+
 function DayBar({
+  index,
   point,
   height,
   busiest,
 }: {
+  /** Position in the window, for the rising stagger. */
+  index: number;
   point: TrendPoint;
   /** Share of the busiest day, 0 to 1. */
   height: number;
   busiest: boolean;
 }) {
   const format = useFormatter();
+  const rise = {
+    duration: DURATION.base,
+    ease: EASE_OUT,
+    delay: index * BAR_STAGGER,
+  };
   return (
     <div className="group relative flex h-full flex-1 flex-col items-center justify-end gap-2">
-      <div
+      <motion.div
         className={cn(
-          "relative w-full max-w-2.5 rounded-full transition-colors",
+          "relative w-full max-w-2.5 origin-bottom rounded-full transition-colors",
           busiest
             ? "bg-highlight"
             : point.total > 0
@@ -142,13 +156,25 @@ function DayBar({
         )}
         // Empty days keep a stub so the rhythm of the month stays visible.
         style={{ height: `${Math.max(height * 100, 4)}%` }}
+        initial={{ scaleY: 0 }}
+        animate={{ scaleY: 1 }}
+        transition={rise}
       >
         {busiest && (
-          <span className="absolute bottom-full left-1/2 mb-2 -translate-x-1/2 rounded-full bg-highlight px-2 py-0.5 text-xs font-medium text-highlight-foreground tabular-nums">
+          // The value lands once its bar has risen.
+          <motion.span
+            className="absolute bottom-full left-1/2 mb-2 -translate-x-1/2 rounded-full bg-highlight px-2 py-0.5 text-xs font-medium text-highlight-foreground tabular-nums"
+            initial={{ opacity: 0, y: 6 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{
+              duration: DURATION.quick,
+              delay: rise.delay + DURATION.base,
+            }}
+          >
             {format.number(point.total)}
-          </span>
+          </motion.span>
         )}
-      </div>
+      </motion.div>
       <span className="size-1 rounded-full bg-foreground/30" />
       {/* Shown only on hover, so it never widens the page. */}
       <div className="pointer-events-none absolute bottom-full left-1/2 z-10 mb-2 hidden -translate-x-1/2 group-hover:block">

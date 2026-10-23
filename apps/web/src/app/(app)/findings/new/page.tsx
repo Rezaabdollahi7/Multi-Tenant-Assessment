@@ -8,6 +8,7 @@ import { getCurrentUser } from "@/features/auth/api/get-current-user";
 import { CreateFindingForm } from "@/features/findings/components/finding-form";
 import { routes } from "@/lib/routes";
 import { hasPermissions } from "@/lib/session/permissions";
+import { revealOrder } from "@/lib/motion";
 
 export async function generateMetadata(): Promise<Metadata> {
   const t = await getTranslations("metadata");
@@ -42,11 +43,14 @@ export default async function NewFindingPage({
 
   return (
     <div className="space-y-8">
-      <header className="space-y-1">
+      <header className="reveal space-y-1" style={revealOrder(0)}>
         <h1 className="text-display font-light">{t("form.newTitle")}</h1>
         <p className="text-muted-foreground">{t("form.newIntro")}</p>
       </header>
-      <Card className="max-w-3xl rounded-3xl p-6 sm:p-8">
+      <Card
+        className="reveal max-w-3xl rounded-3xl p-6 sm:p-8"
+        style={revealOrder(1)}
+      >
         <CreateFindingForm
           defaultProjectId={
             typeof projectId === "string" ? projectId : undefined

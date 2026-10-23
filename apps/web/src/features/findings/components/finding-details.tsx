@@ -8,6 +8,7 @@ import { SeverityBadge } from "@/components/shared/severity-badge";
 import type { Finding } from "@/lib/api/types";
 import { routes } from "@/lib/routes";
 import { FindingStatusBadge } from "./finding-status-badge";
+import { revealOrder } from "@/lib/motion";
 
 type FindingDetailsProps = {
   finding: Finding;
@@ -20,7 +21,7 @@ export function FindingDetails({ finding, actions }: FindingDetailsProps) {
   const format = useFormatter();
   return (
     <article className="space-y-8">
-      <header className="space-y-4">
+      <header className="reveal space-y-4" style={revealOrder(0)}>
         <nav aria-label={t("common.breadcrumb")}>
           <ol className="flex items-center gap-1 text-sm text-muted-foreground">
             <li>
@@ -53,7 +54,10 @@ export function FindingDetails({ finding, actions }: FindingDetailsProps) {
         </div>
       </header>
 
-      <div className="grid items-start gap-6 lg:grid-cols-3">
+      <div
+        className="reveal grid items-start gap-6 lg:grid-cols-3"
+        style={revealOrder(1)}
+      >
         <Panel
           title={t("findings.details.description")}
           className="lg:col-span-2"

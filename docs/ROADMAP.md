@@ -49,7 +49,7 @@ Each milestone is delivered as one or more pull requests into `main`. Tick items
 ## M2.6 · Visual redesign
 
 - [x] Visual language after the owner's reference boards: ambient background, glass cards, ink and yellow accents, pill controls, segmented bars, hand-drawn trend chart (`docs/design-system.md`)
-- [ ] Motion: navigation, entrances, figures and bars
+- [x] Motion: navigation, entrances, figures and bars (Motion 13; `docs/design-system.md` § Motion)
 
 ## M3 · Authentication UI and Dashboard: 1405/08/02 (Oct 24)
 

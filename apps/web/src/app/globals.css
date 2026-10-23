@@ -217,6 +217,24 @@
   );
 }
 
+/*
+ * Page entrance: sections rise into place one after another. CSS only, so it
+ * runs on the first paint of server-rendered HTML with nothing to hydrate,
+ * and a client re-render (a filter, a refetch) never replays it. Order comes
+ * from `--reveal-index` (lib/motion.ts); reduced motion makes it instant.
+ */
+@keyframes reveal-rise {
+  from {
+    opacity: 0;
+    translate: 0 16px;
+  }
+}
+
+@utility reveal {
+  animation: reveal-rise 0.6s cubic-bezier(0.22, 1, 0.36, 1) both;
+  animation-delay: calc(var(--reveal-index, 0) * 70ms);
+}
+
 /* A frosted surface: translucent fill, a light top edge and a soft shadow. */
 @utility glass {
   background-color: var(--card);
@@ -254,6 +272,14 @@
       var(--background);
     background-attachment: fixed;
     min-height: 100svh;
+  }
+
+  /* The theme toggle grows the new theme as a circle (theme-toggle.tsx), so
+     both snapshots must hold still instead of cross-fading. */
+  ::view-transition-old(root),
+  ::view-transition-new(root) {
+    animation: none;
+    mix-blend-mode: normal;
   }
 
   :focus-visible {
