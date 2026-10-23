@@ -3,7 +3,7 @@
 The current state of the work, written for whoever picks it up next: a teammate, a reviewer, or a new AI session. Update it at the end of every work session; replace stale content rather than appending.
 
 **Last updated:** 1405/08/01 (2026-10-23)
-**Current milestone:** M6 · Delivery next; M0–M5 done (see `docs/ROADMAP.md`)
+**Current milestone:** M6 · Delivery; everything but the final review is done (see `docs/ROADMAP.md`)
 
 ## Where things stand
 
@@ -11,8 +11,8 @@ The current state of the work, written for whoever picks it up next: a teammate,
 - **Web (`apps/web`):** typed API client generated from the API contract (`pnpm api:contract`), TanStack Query, design system (`docs/design-system.md`), and the session: `proxy.ts` guard with silent renewal, protected `(app)` layout, sign-in page (phone → code, demo accounts), sign-out, `SessionProvider` / `useCan` / `<Can>` and `hasPermissions` for Server Components, all in `lib/session`. App shell in `components/app-shell`: a floating top bar with the brand pill, section pills, language, theme and User menus, and a skip link. Visual language after the owner's reference boards, with purposeful animation (Motion; `docs/design-system.md`). Dashboard (`features/dashboard`): headline counts, Severity and Project Status breakdowns, 30-day Finding trend (hand-built bars with a text summary and a screen-reader table), recent Activity; each panel has its own loading, empty and error-with-retry state. Projects (`features/projects`): list with debounced search, Project Status filter and pagination, all kept in the URL through `hooks/use-list-params.ts` and a zod schema that repairs hand-edited URLs; Project details rendered on the server with `loading`, `error` and `not-found` (also for other Organizations' Projects), Severity breakdown, Members and latest Findings. Findings (`features/findings`): list with search and Severity / Finding Status / Project filters; details rendered on the server; create and edit pages (react-hook-form + zod, limits mirroring the API DTOs, API validation messages placed on their fields); delete with confirmation; every action gated by Permission (Viewer: none, Analyst: report and edit, Admin: also delete), with a Permission-denied page for direct visits. Finding changes invalidate the Findings, Dashboard and Projects queries through the shared roots in `lib/query-keys.ts`. The whole UI is Persian by default (right to left, Dana, Persian digits and dates) with English selectable in the header (ADR 0007).
 - **Shared components and Storybook:** 16 components in `components/shared` (`Panel`, `HeadlineStat`, `SegmentedBar`, `BreakdownList`, `DataTable`, `DetailList`, `Pagination`, `SearchInput`, `FilterSelect`, `StatusBadge`, `SeverityBadge`, `UserAvatar`, `FormField`, `EmptyState`, `ErrorState`, `PermissionDenied`), each with stories and JSDoc-documented props. The Storybook toolbar switches language (Persian by default) and theme. Vitest has two projects: `unit` (80 tests, jsdom, RTL + MSW, English unless a test is about Persian) and `storybook` (34 stories run in headless Chromium, with `play` assertions and an axe check that fails on any violation). CI installs Chromium for it.
 - **Infrastructure:** `docker compose -f docker/compose.yml up --build` runs Postgres, Redis, the API (seeds on first start, health-checked at `/api/health`) and the web app (Next.js standalone) with no configuration. Web on :3000, API on :3001. The web app rewrites `/api/*` to the API, baked in at build time from `API_URL`.
-- **Docs:** glossary, ADRs 0001–0004, rules, architecture and roadmap are written.
-- **Quality gates:** CI runs format check, lint, typecheck, unit tests and build on every PR and on `main`. A Husky pre-commit hook runs lint-staged (ESLint and Prettier on staged files). pnpm is pinned to 11.25.0.
+- **Docs:** glossary, ADRs 0001–0007, rules, architecture, roadmap, design system, component reference (`docs/components.md`), screenshots of every main page (`docs/screenshots/`), known limitations (`docs/limitations.md`) and the AI usage declaration (`AI_USAGE.md`). The README was run through on a fresh clone (Local development path); CI runs the Docker quick start.
+- **Quality gates:** CI runs format check, lint, typecheck, unit and story tests, build, the API e2e tests and a Docker stack smoke test on every PR and on `main`. A Husky pre-commit hook runs lint-staged (ESLint and Prettier on staged files). pnpm is pinned to 11.25.0.
 - **Tooling:** Claude Code is the only AI assistant; all agent skills live in `.agents/skills` and are linked into `.claude/skills`.
 
 ## Decisions made so far
@@ -29,14 +29,14 @@ All recorded in `docs/adr/` and `GLOSSARY.md`. In short:
 
 ## Next steps
 
-1. Merge the accessibility PR (`fix/web-accessibility`); M5 is then done.
-2. M6 · Delivery: `docs/components.md`, screenshots, `docs/limitations.md`, `AI_USAGE.md` in English, a fresh-clone run-through.
+1. Merge the delivery docs PR (`docs/delivery`).
+2. Final review against the brief's checklist in `docs/ROADMAP.md`, then submit. The time report was dropped by the project owner.
 
 ## Open issues and risks
 
 - An OpenCode API key was committed in `opencode.json` in the initial commit. The repository is private; the file has been removed, but the key remains in git history and must be revoked by its owner.
 - The trend chart is a single series on purpose: the five Severity colours fail the colour-blind separation check as a stacked chart, so the per-day Severity split is in the tooltip and the screen-reader table instead.
-- The Finding form lists at most 100 Projects (the API's largest page); seeded Organizations have five.
+- The Finding form lists at most 100 Projects (the API's largest page); seeded Organizations have at most five.
 - Dana is a commercial typeface (fontiran.com) committed under the project owner's licence.
 - The API's messages are English; the UI shows its own message per HTTP status, so only API field-validation text can appear untranslated.
 - Filter and search changes use `router.replace`, so typing does not flood the browser history; pagination links push, so Back returns to the previous page.

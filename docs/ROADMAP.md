@@ -71,12 +71,12 @@ Each milestone is delivered as one or more pull requests into `main`. Tick items
 
 ## M6 · Delivery: 1405/08/05 (Oct 27)
 
-- [ ] `docs/components.md`: component documentation
-- [ ] `docs/screenshots/`: every main page, light and dark, desktop and mobile
-- [ ] `docs/time-report.md`: time spent
-- [ ] `docs/limitations.md`: known limitations and issues
-- [ ] `AI_USAGE.md`: how AI assistants were used, in English
-- [ ] Fresh-clone run-through of `README.md` on a clean machine
+- [x] `docs/components.md`: component documentation
+- [x] `docs/screenshots/`: every main page, light and dark, desktop and mobile
+- [ ] ~~`docs/time-report.md`: time spent~~ dropped by the project owner (`docs/limitations.md`)
+- [x] `docs/limitations.md`: known limitations and issues
+- [x] `AI_USAGE.md`: how AI assistants were used, in English
+- [x] Fresh-clone run-through of `README.md` on a clean machine (Local development path; the Docker quick start is run by CI's Docker smoke test on every pull request)
 - [ ] Final review against the checklist below
 
 ## Brief checklist
