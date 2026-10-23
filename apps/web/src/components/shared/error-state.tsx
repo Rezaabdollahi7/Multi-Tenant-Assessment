@@ -1,4 +1,5 @@
 import { CircleAlert } from "lucide-react";
+import { useTranslations } from "next-intl";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 
@@ -19,6 +20,7 @@ export function ErrorState({
   onRetry,
   className,
 }: ErrorStateProps) {
+  const t = useTranslations("common");
   return (
     <div
       role="alert"
@@ -36,7 +38,7 @@ export function ErrorState({
       </div>
       {onRetry && (
         <Button variant="outline" size="sm" onClick={onRetry}>
-          Try again
+          {t("tryAgain")}
         </Button>
       )}
     </div>

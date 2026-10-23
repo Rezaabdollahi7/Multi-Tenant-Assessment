@@ -2,9 +2,10 @@
 
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Loader2Icon } from "lucide-react";
+import { useTranslations } from "next-intl";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import type { Ref } from "react";
+import { useMemo, type Ref } from "react";
 import {
   Controller,
   useForm,
@@ -27,11 +28,12 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
+import { useErrorMessage } from "@/hooks/use-error-message";
 import { ApiError } from "@/lib/api/api-error";
 import type { Finding } from "@/lib/api/types";
 import { routes } from "@/lib/routes";
-import { SEVERITIES, SEVERITY_LABELS } from "@/lib/severity";
-import { FINDING_STATUSES, FINDING_STATUS_LABELS } from "@/lib/status";
+import { SEVERITIES } from "@/lib/severity";
+import { FINDING_STATUSES } from "@/lib/status";
 import {
   useCreateFinding,
   useProjectOptions,
@@ -44,28 +46,25 @@ import {
   type EditFindingForm,
 } from "../schemas";
 
-const UNEXPECTED_ERROR =
-  "Something went wrong. Check your connection and try again.";
-
 /**
- * Puts the API's validation messages on their fields and returns whatever
- * cannot be shown on a field, for the form-level alert.
+ * Puts the API's validation messages on their fields, and reports whether
+ * any landed; whatever did not goes to the form-level alert.
  */
-function applyServerErrors<Form extends Record<string, unknown>>(
+function placeServerErrors<Form extends Record<string, unknown>>(
   error: Error,
   fields: readonly Path<Form>[],
   setFieldError: (field: Path<Form>, message: string) => void,
-): string | null {
-  if (!(error instanceof ApiError)) return UNEXPECTED_ERROR;
-  let placedOnField = false;
+): boolean {
+  if (!(error instanceof ApiError)) return false;
+  let placed = false;
   for (const field of fields) {
     const message = error.fieldErrors[field]?.[0];
     if (message) {
       setFieldError(field, message);
-      placedOnField = true;
+      placed = true;
     }
   }
-  return placedOnField ? null : error.message;
+  return placed;
 }
 
 export function CreateFindingForm({
@@ -74,11 +73,15 @@ export function CreateFindingForm({
   /** Preselected when the User came from a Project. */
   defaultProjectId?: string;
 }) {
+  const t = useTranslations();
+  const validation = useTranslations("findings.validation");
+  const errorMessage = useErrorMessage();
   const router = useRouter();
   const projectOptions = useProjectOptions();
   const createFinding = useCreateFinding();
+  const schema = useMemo(() => createFindingSchema(validation), [validation]);
   const form = useForm<CreateFindingForm>({
-    resolver: zodResolver(createFindingSchema),
+    resolver: zodResolver(schema),
     defaultValues: {
       projectId: defaultProjectId ?? "",
       title: "",
@@ -91,16 +94,16 @@ export function CreateFindingForm({
   const onSubmit = form.handleSubmit((values) =>
     createFinding.mutate(values, {
       onSuccess: (finding) => {
-        toast.success("Finding reported");
+        toast.success(t("findings.form.created"));
         router.push(routes.finding(finding.id));
       },
       onError: (error) => {
-        const formError = applyServerErrors<CreateFindingForm>(
+        const placed = placeServerErrors<CreateFindingForm>(
           error,
           ["projectId", "title", "description", "severity"],
           (field, message) => form.setError(field, { message }),
         );
-        if (formError) form.setError("root", { message: formError });
+        if (!placed) form.setError("root", { message: errorMessage(error) });
       },
     }),
   );
@@ -110,7 +113,7 @@ export function CreateFindingForm({
       <FormErrorAlert message={errors.root?.message} />
       <FormField
         id="projectId"
-        label="Project"
+        label={t("findings.form.project")}
         error={errors.projectId?.message}
       >
         {(control) => (
@@ -128,8 +131,8 @@ export function CreateFindingForm({
                   <SelectValue
                     placeholder={
                       projectOptions.isPending
-                        ? "Loading Projects…"
-                        : "Select a Project"
+                        ? t("findings.form.loadingProjects")
+                        : t("findings.form.selectProject")
                     }
                   />
                 </SelectTrigger>
@@ -153,7 +156,7 @@ export function CreateFindingForm({
       />
       <FormField
         id="severity"
-        label="Severity"
+        label={t("findings.form.severity")}
         error={errors.severity?.message}
       >
         {(control) => (
@@ -167,16 +170,16 @@ export function CreateFindingForm({
                 value={field.value}
                 onChange={field.onChange}
                 onBlur={field.onBlur}
-                placeholder="Select a Severity"
+                placeholder={t("findings.form.selectSeverity")}
                 options={SEVERITIES}
-                labels={SEVERITY_LABELS}
+                label={(severity) => t(`severity.${severity}`)}
               />
             )}
           />
         )}
       </FormField>
       <FormActions
-        submitLabel="Report Finding"
+        submitLabel={t("findings.form.submitCreate")}
         pending={createFinding.isPending}
         cancelHref={
           defaultProjectId
@@ -189,10 +192,14 @@ export function CreateFindingForm({
 }
 
 export function EditFindingForm({ finding }: { finding: Finding }) {
+  const t = useTranslations();
+  const validation = useTranslations("findings.validation");
+  const errorMessage = useErrorMessage();
   const router = useRouter();
   const updateFinding = useUpdateFinding(finding.id);
+  const schema = useMemo(() => editFindingSchema(validation), [validation]);
   const form = useForm<EditFindingForm>({
-    resolver: zodResolver(editFindingSchema),
+    resolver: zodResolver(schema),
     defaultValues: {
       title: finding.title,
       description: finding.description ?? "",
@@ -205,16 +212,16 @@ export function EditFindingForm({ finding }: { finding: Finding }) {
   const onSubmit = form.handleSubmit((values) =>
     updateFinding.mutate(values, {
       onSuccess: () => {
-        toast.success("Finding updated");
+        toast.success(t("findings.form.updated"));
         router.push(routes.finding(finding.id));
       },
       onError: (error) => {
-        const formError = applyServerErrors<EditFindingForm>(
+        const placed = placeServerErrors<EditFindingForm>(
           error,
           ["title", "description", "severity", "status"],
           (field, message) => form.setError(field, { message }),
         );
-        if (formError) form.setError("root", { message: formError });
+        if (!placed) form.setError("root", { message: errorMessage(error) });
       },
     }),
   );
@@ -223,7 +230,7 @@ export function EditFindingForm({ finding }: { finding: Finding }) {
     <form noValidate onSubmit={onSubmit} className="max-w-2xl space-y-5">
       <FormErrorAlert message={errors.root?.message} />
       <div className="space-y-2">
-        <p className="text-sm font-medium">Project</p>
+        <p className="text-sm font-medium">{t("findings.form.project")}</p>
         <p className="text-sm text-muted-foreground">{finding.project.name}</p>
       </div>
       <TitleAndDescription
@@ -235,7 +242,7 @@ export function EditFindingForm({ finding }: { finding: Finding }) {
       <div className="grid gap-5 sm:grid-cols-2">
         <FormField
           id="severity"
-          label="Severity"
+          label={t("findings.form.severity")}
           error={errors.severity?.message}
         >
           {(control) => (
@@ -249,9 +256,9 @@ export function EditFindingForm({ finding }: { finding: Finding }) {
                   value={field.value}
                   onChange={field.onChange}
                   onBlur={field.onBlur}
-                  placeholder="Select a Severity"
+                  placeholder={t("findings.form.selectSeverity")}
                   options={SEVERITIES}
-                  labels={SEVERITY_LABELS}
+                  label={(severity) => t(`severity.${severity}`)}
                 />
               )}
             />
@@ -259,7 +266,7 @@ export function EditFindingForm({ finding }: { finding: Finding }) {
         </FormField>
         <FormField
           id="status"
-          label="Finding Status"
+          label={t("findings.form.status")}
           error={errors.status?.message}
         >
           {(control) => (
@@ -273,9 +280,9 @@ export function EditFindingForm({ finding }: { finding: Finding }) {
                   value={field.value}
                   onChange={field.onChange}
                   onBlur={field.onBlur}
-                  placeholder="Select a Finding Status"
+                  placeholder={t("findings.form.selectStatus")}
                   options={FINDING_STATUSES}
-                  labels={FINDING_STATUS_LABELS}
+                  label={(status) => t(`findingStatus.${status}`)}
                 />
               )}
             />
@@ -283,7 +290,7 @@ export function EditFindingForm({ finding }: { finding: Finding }) {
         </FormField>
       </div>
       <FormActions
-        submitLabel="Save changes"
+        submitLabel={t("findings.form.submitEdit")}
         pending={updateFinding.isPending}
         cancelHref={routes.finding(finding.id)}
       />
@@ -311,20 +318,21 @@ function TitleAndDescription({
   titleError: string | undefined;
   descriptionError: string | undefined;
 }) {
+  const t = useTranslations("findings.form");
   return (
     <>
       <FormField
         id="title"
-        label="Title"
-        hint="3 to 200 characters"
+        label={t("title")}
+        hint={t("titleHint")}
         error={titleError}
       >
         {(control) => <Input {...control} {...titleProps} />}
       </FormField>
       <FormField
         id="description"
-        label="Description"
-        hint="Optional. What is affected, how to reproduce it, and its impact."
+        label={t("description")}
+        hint={t("descriptionHint")}
         error={descriptionError}
       >
         {(control) => <Textarea rows={8} {...control} {...descriptionProps} />}
@@ -341,7 +349,7 @@ function EnumSelect<Value extends string>({
   onBlur,
   placeholder,
   options,
-  labels,
+  label,
 }: {
   ref: Ref<HTMLButtonElement>;
   control: FieldControlProps;
@@ -350,7 +358,7 @@ function EnumSelect<Value extends string>({
   onBlur: () => void;
   placeholder: string;
   options: readonly Value[];
-  labels: Record<Value, string>;
+  label: (option: Value) => string;
 }) {
   return (
     <Select
@@ -366,7 +374,7 @@ function EnumSelect<Value extends string>({
       <SelectContent>
         {options.map((option) => (
           <SelectItem key={option} value={option}>
-            {labels[option]}
+            {label(option)}
           </SelectItem>
         ))}
       </SelectContent>
@@ -383,6 +391,7 @@ function FormActions({
   pending: boolean;
   cancelHref: string;
 }) {
+  const t = useTranslations("common");
   return (
     <div className="flex gap-3">
       <Button type="submit" disabled={pending}>
@@ -390,7 +399,7 @@ function FormActions({
         {submitLabel}
       </Button>
       <Button variant="outline" asChild>
-        <Link href={cancelHref}>Cancel</Link>
+        <Link href={cancelHref}>{t("cancel")}</Link>
       </Button>
     </div>
   );

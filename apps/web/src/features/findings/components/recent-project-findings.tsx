@@ -1,11 +1,11 @@
 import { ShieldCheck } from "lucide-react";
+import { useFormatter, useTranslations } from "next-intl";
 import Link from "next/link";
 import { EmptyState } from "@/components/shared/empty-state";
 import { Panel } from "@/components/shared/panel";
 import { SeverityBadge } from "@/components/shared/severity-badge";
 import { Button } from "@/components/ui/button";
 import type { FindingList } from "@/lib/api/types";
-import { formatDate } from "@/lib/format";
 import { routes } from "@/lib/routes";
 import { FindingStatusBadge } from "./finding-status-badge";
 
@@ -19,24 +19,31 @@ export function RecentProjectFindings({
   projectId,
   findings: { data, meta },
 }: RecentProjectFindingsProps) {
+  const t = useTranslations();
+  const format = useFormatter();
   return (
     <Panel
-      title="Latest Findings"
+      title={t("findings.latest.title")}
       description={
         meta.totalItems > data.length
-          ? `The ${data.length} most recent of ${meta.totalItems}`
+          ? t("findings.latest.description", {
+              shown: data.length,
+              total: meta.totalItems,
+            })
           : undefined
       }
       action={
         meta.totalItems > 0 && (
           <Button variant="outline" size="sm" asChild>
-            <Link href={routes.findings({ projectId })}>View all</Link>
+            <Link href={routes.findings({ projectId })}>
+              {t("common.viewAll")}
+            </Link>
           </Button>
         )
       }
     >
       {data.length === 0 ? (
-        <EmptyState icon={ShieldCheck} title="No Findings reported yet" />
+        <EmptyState icon={ShieldCheck} title={t("findings.latest.empty")} />
       ) : (
         <ul className="divide-y">
           {data.map((finding) => (
@@ -52,7 +59,9 @@ export function RecentProjectFindings({
                   {finding.title}
                 </Link>
                 <p className="text-xs text-muted-foreground">
-                  Reported {formatDate(finding.createdAt)}
+                  {t("findings.latest.reported", {
+                    date: format.dateTime(new Date(finding.createdAt), "date"),
+                  })}
                 </p>
               </div>
               <div className="flex shrink-0 gap-2">

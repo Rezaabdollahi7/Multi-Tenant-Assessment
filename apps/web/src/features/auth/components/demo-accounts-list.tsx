@@ -1,5 +1,5 @@
-import { ROLE_LABELS } from "@/lib/roles";
-import { DEMO_ACCOUNTS } from "../demo-accounts";
+import { useTranslations } from "next-intl";
+import { DEMO_ACCOUNTS, DEMO_CODE } from "../demo-accounts";
 
 type DemoAccountsListProps = {
   onSelect: (phone: string) => void;
@@ -7,13 +7,14 @@ type DemoAccountsListProps = {
 
 /** Seeded Users for evaluators: choosing one fills in the phone number. */
 export function DemoAccountsList({ onSelect }: DemoAccountsListProps) {
+  const t = useTranslations();
   return (
     <section aria-labelledby="demo-accounts-heading" className="space-y-2">
       <h2
         id="demo-accounts-heading"
         className="text-muted-foreground text-xs font-medium tracking-wide uppercase"
       >
-        Demo accounts · code 00000
+        {t("auth.demoAccounts", { code: DEMO_CODE })}
       </h2>
       <ul className="divide-border border-border divide-y rounded-md border text-sm">
         {DEMO_ACCOUNTS.map((account) => (
@@ -21,16 +22,19 @@ export function DemoAccountsList({ onSelect }: DemoAccountsListProps) {
             <button
               type="button"
               onClick={() => onSelect(account.phone)}
-              className="hover:bg-accent focus-visible:bg-accent flex w-full cursor-pointer items-center justify-between gap-3 px-3 py-2 text-left transition-colors outline-none"
+              className="hover:bg-accent focus-visible:bg-accent flex w-full cursor-pointer items-center justify-between gap-3 px-3 py-2 text-start transition-colors outline-none"
             >
               <span>
                 <span className="font-medium">{account.name}</span>
                 <span className="text-muted-foreground">
                   {" "}
-                  · {account.organization} {ROLE_LABELS[account.role]}
+                  · {account.organization} {t(`roles.${account.role}`)}
                 </span>
               </span>
-              <span className="text-muted-foreground font-mono text-xs">
+              <span
+                dir="ltr"
+                className="text-muted-foreground text-xs tabular-nums"
+              >
                 {account.phone}
               </span>
             </button>

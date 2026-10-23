@@ -1,8 +1,8 @@
 import { ChevronRight } from "lucide-react";
+import { useFormatter, useTranslations } from "next-intl";
 import Link from "next/link";
 import type { ReactNode } from "react";
 import type { ProjectDetail } from "@/lib/api/types";
-import { formatCount, formatDate } from "@/lib/format";
 import { routes } from "@/lib/routes";
 import { ProjectStatusBadge } from "./project-status-badge";
 
@@ -13,20 +13,22 @@ type ProjectHeaderProps = {
 };
 
 export function ProjectHeader({ project, action }: ProjectHeaderProps) {
+  const t = useTranslations();
+  const format = useFormatter();
   return (
     <header className="space-y-3">
-      <nav aria-label="Breadcrumb">
+      <nav aria-label={t("common.breadcrumb")}>
         <ol className="flex items-center gap-1 text-sm text-muted-foreground">
           <li>
             <Link
               href={routes.projects()}
               className="rounded-sm hover:text-foreground hover:underline focus-visible:ring-2 focus-visible:ring-ring focus-visible:outline-none"
             >
-              Projects
+              {t("nav.projects")}
             </Link>
           </li>
           <li aria-hidden>
-            <ChevronRight className="size-3.5" />
+            <ChevronRight className="size-3.5 rtl:rotate-180" />
           </li>
           <li aria-current="page" className="truncate text-foreground">
             {project.name}
@@ -46,9 +48,11 @@ export function ProjectHeader({ project, action }: ProjectHeaderProps) {
         </p>
       )}
       <p className="text-sm text-muted-foreground">
-        {formatCount(project.findingsCount, "Finding")} ·{" "}
-        {formatCount(project.membersCount, "Member")} · Created{" "}
-        {formatDate(project.createdAt)}
+        {t("projects.details.summary", {
+          findings: project.findingsCount,
+          members: project.membersCount,
+          created: format.dateTime(new Date(project.createdAt), "date"),
+        })}
       </p>
     </header>
   );

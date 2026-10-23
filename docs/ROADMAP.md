@@ -38,9 +38,13 @@ Each milestone is delivered as one or more pull requests into `main`. Tick items
 - [x] TanStack Query provider
 - [x] Query-key factories (per feature, with the feature); no client state library needed (ADR 0006)
 - [x] `Can` / `useCan` from `/auth/me` Permissions
-- [x] Design system: tokens, Severity palette, Fira fonts, clean shadcn new-york primitives, light/dark/system themes (`docs/design-system.md`)
+- [x] Design system: tokens, Severity palette, Dana typeface, clean shadcn new-york primitives, light/dark/system themes (`docs/design-system.md`)
 - [x] App shell: responsive sidebar (collapsible, drawer on mobile, Permission-filtered navigation), header with theme toggle (light / dark / system), User menu with sign-out, skip link
 - [x] MSW test server and render helpers (Storybook wiring in M5)
+
+## M2.5 · Persian interface
+
+- [x] Persian (default, right to left) and English through `next-intl`, language chosen in the header and kept in a cookie (ADR 0007); Dana typeface; glossary terms in Persian
 
 ## M3 · Authentication UI and Dashboard: 1405/08/02 (Oct 24)
 

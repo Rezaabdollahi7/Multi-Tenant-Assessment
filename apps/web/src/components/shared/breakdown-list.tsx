@@ -1,3 +1,4 @@
+import { useFormatter } from "next-intl";
 import { cn } from "@/lib/utils";
 
 export type BreakdownItem = {
@@ -13,13 +14,9 @@ type BreakdownListProps = {
   className?: string;
 };
 
-const percentFormat = new Intl.NumberFormat("en", {
-  style: "percent",
-  maximumFractionDigits: 0,
-});
-
 /** Each part of a whole as a labelled row with its count, share and a bar. */
 export function BreakdownList({ items, className }: BreakdownListProps) {
+  const format = useFormatter();
   const total = items.reduce((sum, item) => sum + item.value, 0);
   return (
     <ul className={cn("space-y-3", className)}>
@@ -30,9 +27,9 @@ export function BreakdownList({ items, className }: BreakdownListProps) {
             <div className="flex items-baseline justify-between gap-3 text-sm">
               <span>{item.label}</span>
               <span className="tabular-nums">
-                <span className="font-medium">{item.value}</span>
-                <span className="ml-2 inline-block w-10 text-right text-muted-foreground">
-                  {percentFormat.format(share)}
+                <span className="font-medium">{format.number(item.value)}</span>
+                <span className="ms-2 inline-block w-10 text-end text-muted-foreground">
+                  {format.number(share, "percent")}
                 </span>
               </span>
             </div>

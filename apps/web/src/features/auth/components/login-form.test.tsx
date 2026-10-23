@@ -61,7 +61,7 @@ describe("LoginForm", () => {
     expect(screen.getByText(/Demo code:/)).toHaveTextContent("00000");
   });
 
-  it("shows the API's reason when the code is wrong", async () => {
+  it("says on the code field when the code is wrong", async () => {
     codeSent();
     server.use(
       http.post(apiUrl("/auth/verify-otp"), () =>
@@ -77,7 +77,7 @@ describe("LoginForm", () => {
     await user.keyboard("11111");
 
     expect(
-      await screen.findByText("Invalid code. 4 attempts remaining."),
+      await screen.findByText("That code is wrong or has expired."),
     ).toBeInTheDocument();
     expect(router.replace).not.toHaveBeenCalled();
   });
@@ -101,7 +101,7 @@ describe("LoginForm", () => {
     await user.click(screen.getByRole("button", { name: "Send code" }));
 
     expect(await screen.findByRole("alert")).toHaveTextContent(
-      "Too many requests. Please try again later.",
+      "Too many attempts. Wait a few minutes and try again.",
     );
   });
 

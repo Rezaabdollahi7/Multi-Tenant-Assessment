@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import { getTranslations } from "next-intl/server";
 import { notFound } from "next/navigation";
 import { PermissionDenied } from "@/components/shared/permission-denied";
 import { Button } from "@/components/ui/button";
@@ -14,8 +15,15 @@ type EditFindingPageProps = { params: Promise<{ id: string }> };
 export async function generateMetadata({
   params,
 }: EditFindingPageProps): Promise<Metadata> {
-  const finding = await getFinding((await params).id);
-  return { title: finding ? `Edit ${finding.title}` : "Finding not found" };
+  const [finding, t] = await Promise.all([
+    getFinding((await params).id),
+    getTranslations("metadata"),
+  ]);
+  return {
+    title: finding
+      ? t("editFinding", { title: finding.title })
+      : t("findingNotFound"),
+  };
 }
 
 export default async function EditFindingPage({
@@ -24,14 +32,15 @@ export default async function EditFindingPage({
   const { id } = await params;
   const [finding, user] = await Promise.all([getFinding(id), getCurrentUser()]);
   if (!finding) notFound();
+  const t = await getTranslations("findings");
 
   if (!hasPermissions(user, "finding:update")) {
     return (
       <PermissionDenied
-        title="You cannot edit Findings"
+        title={t("form.cannotEdit")}
         action={
           <Button variant="outline" size="sm" asChild>
-            <Link href={routes.finding(id)}>Back to the Finding</Link>
+            <Link href={routes.finding(id)}>{t("details.backToFinding")}</Link>
           </Button>
         }
       />
@@ -41,7 +50,7 @@ export default async function EditFindingPage({
   return (
     <div className="space-y-6">
       <header className="space-y-1">
-        <h1 className="text-xl font-semibold">Edit Finding</h1>
+        <h1 className="text-xl font-semibold">{t("form.editTitle")}</h1>
         <p className="truncate text-sm text-muted-foreground">
           {finding.title}
         </p>

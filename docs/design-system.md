@@ -36,12 +36,12 @@ Tailwind utilities: `text-severity-high-foreground bg-severity-high-surface`, `f
 
 ## Typography
 
-- **Fira Sans** (400/500/600/700) for all UI text; **Fira Code** (400/500) for identifiers and codes. Both self-hosted at build time by `next/font`.
+- **Dana** (200–700) for all UI text in Persian and English, self-hosted with `next/font/local` from `src/app/fonts/dana`. Commercial typeface by fontiran.com, used under the project owner's licence. Figures use tabular numerals; Persian text gets Persian digits from the formatter.
 - Base size 14px in data views, 16px in forms; line height 1.5 for prose, 1.25 for table cells.
 
 ## Components
 
-- Primitives are the official shadcn/ui **new-york** components (Radix), copied unmodified into `src/components/ui` except for import paths. Customise through tokens, not by editing them.
+- Primitives are the official shadcn/ui **new-york** components (Radix) in `src/components/ui`, changed only in import paths and in using logical inline properties (`ps-*`, `start-*`, `text-start`) so they mirror in right-to-left. Customise through tokens, not by editing them.
 - Our reusable components live in `src/components/shared`, each with a Storybook story.
 - Icons: `lucide-react` only, `aria-hidden` when decorative; icon-only buttons carry an `aria-label`.
 

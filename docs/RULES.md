@@ -72,6 +72,8 @@ A feature may import from `components/`, `hooks/`, `lib/` and its own folder. Fe
 - Every route segment that fetches has `loading.tsx` and `error.tsx`, and every list has an empty state.
 - Forms use **react-hook-form + zod**. Schema limits mirror the API DTOs. Server validation errors are mapped back onto their fields.
 - Styling uses Tailwind and the design tokens in `docs/design-system.md`. No hard-coded colours; both light and dark themes must work.
+- **No hard-coded UI text.** Every string the User reads comes from `src/i18n/messages/{fa,en}.json` through `next-intl` (`useTranslations`, `getTranslations`), and every date and number through its formatter with a named format from `src/i18n/formats.ts`. A test fails when the two message files have different keys.
+- **Layout works in both directions.** Use logical utilities (`ms-*`, `pe-*`, `start-*`, `text-start`, `text-end`); directional icons get `rtl:rotate-180`. Phone numbers and codes are wrapped in `dir="ltr"`.
 - `components/ui` holds unmodified shadcn primitives; change their look through tokens, and build variations in `components/shared`.
 
 ### Accessibility and responsiveness
@@ -94,4 +96,4 @@ A feature may import from `components/`, `hooks/`, `lib/` and its own folder. Fe
 
 - Domain terms: `GLOSSARY.md`. Decisions: `docs/adr/`. Component props: `docs/components.md`.
 - At the end of every work session, update `docs/HANDOFF.md`, add a row to `docs/time-report.md`, and record AI involvement in `AI_USAGE.md`.
-- Docs, code, comments and commits are written in English.
+- Docs, code, comments and commits are written in English. The UI is Persian by default and also English (ADR 0007); domain terms in both are in `GLOSSARY.md`.

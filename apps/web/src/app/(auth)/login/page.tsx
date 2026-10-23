@@ -1,5 +1,6 @@
 import { ShieldCheckIcon } from "lucide-react";
 import type { Metadata } from "next";
+import { getTranslations } from "next-intl/server";
 import { redirect } from "next/navigation";
 import {
   Card,
@@ -16,7 +17,10 @@ import {
 } from "@/features/auth/components/sign-in-notice";
 import { safeNextPath } from "@/lib/routes";
 
-export const metadata: Metadata = { title: "Sign in" };
+export async function generateMetadata(): Promise<Metadata> {
+  const t = await getTranslations("metadata");
+  return { title: t("signIn") };
+}
 
 type LoginPageProps = {
   searchParams: Promise<{ next?: string; reason?: string }>;
@@ -25,6 +29,7 @@ type LoginPageProps = {
 export default async function LoginPage({ searchParams }: LoginPageProps) {
   const { next, reason } = await searchParams;
   if (await getCurrentUser()) redirect(safeNextPath(next));
+  const t = await getTranslations();
 
   // Seeded demo accounts are listed only in development or when asked for.
   const showDemoAccounts =
@@ -36,18 +41,16 @@ export default async function LoginPage({ searchParams }: LoginPageProps) {
         <div className="text-primary flex items-center justify-center gap-2">
           <ShieldCheckIcon className="size-6" aria-hidden />
           <span className="text-foreground font-semibold">
-            Secure Assessment Dashboard
+            {t("common.appName")}
           </span>
         </div>
         {isSignInReason(reason) && <SignInNotice reason={reason} />}
         <Card>
           <CardHeader>
             <CardTitle>
-              <h1>Sign in</h1>
+              <h1>{t("auth.title")}</h1>
             </CardTitle>
-            <CardDescription>
-              We will text a one-time code to your mobile number.
-            </CardDescription>
+            <CardDescription>{t("auth.intro")}</CardDescription>
           </CardHeader>
           <CardContent>
             <LoginForm next={next} showDemoAccounts={showDemoAccounts} />

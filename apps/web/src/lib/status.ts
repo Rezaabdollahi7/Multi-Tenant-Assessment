@@ -10,13 +10,6 @@ export const PROJECT_STATUSES = [
   "ARCHIVED",
 ] as const satisfies readonly ProjectStatus[];
 
-export const PROJECT_STATUS_LABELS: Record<ProjectStatus, string> = {
-  PLANNED: "Planned",
-  IN_PROGRESS: "In Progress",
-  COMPLETED: "Completed",
-  ARCHIVED: "Archived",
-};
-
 export const PROJECT_STATUS_TONES: Record<ProjectStatus, StatusTone> = {
   PLANNED: "neutral",
   IN_PROGRESS: "active",
@@ -30,14 +23,6 @@ export const FINDING_STATUSES = [
   "RESOLVED",
   "ACCEPTED",
 ] as const satisfies readonly FindingStatus[];
-
-/** `ACCEPTED` is shown as Risk Accepted (see GLOSSARY.md). */
-export const FINDING_STATUS_LABELS: Record<FindingStatus, string> = {
-  OPEN: "Open",
-  IN_REVIEW: "In Review",
-  RESOLVED: "Resolved",
-  ACCEPTED: "Risk Accepted",
-};
 
 export const FINDING_STATUS_TONES: Record<FindingStatus, StatusTone> = {
   OPEN: "neutral",

@@ -1,12 +1,11 @@
 import { ChevronRight } from "lucide-react";
+import { useFormatter, useTranslations } from "next-intl";
 import Link from "next/link";
 import type { ReactNode } from "react";
 import { SeverityBadge } from "@/components/shared/severity-badge";
 import { Card } from "@/components/ui/card";
 import type { Finding } from "@/lib/api/types";
-import { formatDateTime } from "@/lib/format";
 import { routes } from "@/lib/routes";
-import { displayName } from "@/lib/users";
 import { FindingStatusBadge } from "./finding-status-badge";
 
 const LINK_CLASSES =
@@ -19,21 +18,23 @@ type FindingDetailsProps = {
 };
 
 export function FindingDetails({ finding, actions }: FindingDetailsProps) {
+  const t = useTranslations();
+  const format = useFormatter();
   return (
     <article className="space-y-6">
       <header className="space-y-3">
-        <nav aria-label="Breadcrumb">
+        <nav aria-label={t("common.breadcrumb")}>
           <ol className="flex items-center gap-1 text-sm text-muted-foreground">
             <li>
               <Link
                 href={routes.findings()}
                 className={`hover:text-foreground ${LINK_CLASSES}`}
               >
-                Findings
+                {t("nav.findings")}
               </Link>
             </li>
             <li aria-hidden>
-              <ChevronRight className="size-3.5" />
+              <ChevronRight className="size-3.5 rtl:rotate-180" />
             </li>
             <li aria-current="page" className="truncate text-foreground">
               {finding.title}
@@ -54,7 +55,7 @@ export function FindingDetails({ finding, actions }: FindingDetailsProps) {
         <Card className="px-5 py-5 lg:col-span-2">
           <section aria-labelledby="finding-description" className="space-y-2">
             <h2 id="finding-description" className="font-semibold">
-              Description
+              {t("findings.details.description")}
             </h2>
             {finding.description ? (
               <p className="text-sm leading-relaxed whitespace-pre-wrap">
@@ -62,14 +63,14 @@ export function FindingDetails({ finding, actions }: FindingDetailsProps) {
               </p>
             ) : (
               <p className="text-sm text-muted-foreground">
-                No description yet.
+                {t("findings.details.noDescription")}
               </p>
             )}
           </section>
         </Card>
         <Card className="px-5 py-5">
           <dl className="grid gap-4 text-sm">
-            <Detail label="Project">
+            <Detail label={t("findings.details.project")}>
               <Link
                 href={routes.project(finding.project.id)}
                 className={`text-primary ${LINK_CLASSES}`}
@@ -77,17 +78,17 @@ export function FindingDetails({ finding, actions }: FindingDetailsProps) {
                 {finding.project.name}
               </Link>
             </Detail>
-            <Detail label="Reported by">
-              {displayName(finding.createdBy.name)}
+            <Detail label={t("findings.details.reportedBy")}>
+              {finding.createdBy.name ?? t("common.unnamedUser")}
             </Detail>
-            <Detail label="Reported">
+            <Detail label={t("findings.details.reported")}>
               <time dateTime={finding.createdAt}>
-                {formatDateTime(finding.createdAt)}
+                {format.dateTime(new Date(finding.createdAt), "dateTime")}
               </time>
             </Detail>
-            <Detail label="Last updated">
+            <Detail label={t("findings.details.lastUpdated")}>
               <time dateTime={finding.updatedAt}>
-                {formatDateTime(finding.updatedAt)}
+                {format.dateTime(new Date(finding.updatedAt), "dateTime")}
               </time>
             </Detail>
           </dl>

@@ -85,7 +85,7 @@ describe("AppShell", () => {
 
     await user.click(
       screen.getByRole("button", {
-        name: "Account menu for Sara Mohammadi",
+        name: "User menu for Sara Mohammadi",
       }),
     );
     await user.click(await screen.findByRole("menuitem", { name: "Sign out" }));
