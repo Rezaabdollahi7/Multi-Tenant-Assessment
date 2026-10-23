@@ -3,7 +3,7 @@
 The current state of the work, written for whoever picks it up next: a teammate, a reviewer, or a new AI session. Update it at the end of every work session; replace stale content rather than appending.
 
 **Last updated:** 1405/08/01 (2026-10-23)
-**Current milestone:** M5 · Quality next; M0–M4 done (see `docs/ROADMAP.md`)
+**Current milestone:** M6 · Delivery next; M0–M5 done (see `docs/ROADMAP.md`)
 
 ## Where things stand
 
@@ -29,9 +29,8 @@ All recorded in `docs/adr/` and `GLOSSARY.md`. In short:
 
 ## Next steps
 
-1. Merge the Storybook PR (`feat/web-storybook`).
-2. M5 · Quality: accessibility and keyboard pass over the pages (ROADMAP H), then tick G.
-3. M6 · Delivery: `docs/components.md`, screenshots, `docs/limitations.md`, `AI_USAGE.md` in English, a fresh-clone run-through.
+1. Merge the accessibility PR (`fix/web-accessibility`); M5 is then done.
+2. M6 · Delivery: `docs/components.md`, screenshots, `docs/limitations.md`, `AI_USAGE.md` in English, a fresh-clone run-through.
 
 ## Open issues and risks
 

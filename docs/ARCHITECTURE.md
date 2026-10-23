@@ -217,7 +217,7 @@ The UI speaks Persian (default, right to left) and English. `src/i18n/request.ts
 - **Testing:** Vitest + React Testing Library + MSW for the web app; Jest for the API, with e2e tests for tenant isolation and Permission enforcement. See `docs/RULES.md` §5.
 - **Storybook:** every shared component has stories for its states, in both languages and themes from the toolbar; props are documented from their JSDoc on each docs page and in `docs/components.md`. Vitest runs every story as a test in headless Chromium (the `storybook` project in `vitest.config.mts`): it must render, pass its `play` function and have no axe accessibility violations.
 - **CI:** GitHub Actions runs lint, typecheck, tests and build on every pull request.
-- **Accessibility:** semantic HTML, full keyboard support, visible focus, labelled controls, never colour alone.
+- **Accessibility:** semantic HTML, full keyboard support, visible focus, labelled controls, never colour alone. Every page has one `main` and one `h1`, including the Permission-denied, not-found and error states that stand in for a page. Stories are checked by axe in CI; the pages were audited with axe (WCAG 2.2 AA and best practices) in both languages and themes at 360px and desktop, with no violations.
 
 ## 8. Runtime
 
