@@ -25,7 +25,11 @@ export function SeverityBadge({ severity, className }: SeverityBadgeProps) {
   return (
     <Badge
       variant="outline"
-      className={cn(SEVERITY_BADGE_CLASSES[severity], className)}
+      className={cn(
+        "px-2.5 py-1 font-normal",
+        SEVERITY_BADGE_CLASSES[severity],
+        className,
+      )}
     >
       {t(severity)}
     </Badge>

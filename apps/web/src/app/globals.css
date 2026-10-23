@@ -4,9 +4,12 @@
 @custom-variant dark (&:is(.dark *));
 
 /*
- * Design tokens. Swiss-minimal, dense dashboard: navy primary, slate neutrals,
- * and a Severity scale with a text/background pair (badges) and a solid colour
- * (charts) per level. Every text pairing meets WCAG AA in both themes.
+ * Design tokens (docs/design-system.md). Warm and quiet, after the project
+ * owner's reference boards: a cool grey page warming to cream, translucent
+ * white cards, ink for primary actions and the one dark feature card, and a
+ * single yellow highlight. Severity keeps its own validated scale.
+ *
+ * Components use these semantic tokens through Tailwind, never raw colours.
  */
 
 @theme inline {
@@ -17,6 +20,8 @@
   --color-foreground: var(--foreground);
   --color-card: var(--card);
   --color-card-foreground: var(--card-foreground);
+  --color-card-solid: var(--card-solid);
+  --color-card-edge: var(--card-edge);
   --color-popover: var(--popover);
   --color-popover-foreground: var(--popover-foreground);
   --color-primary: var(--primary);
@@ -29,21 +34,20 @@
   --color-accent-foreground: var(--accent-foreground);
   --color-destructive: var(--destructive);
   --color-border: var(--border);
+  --color-border-strong: var(--border-strong);
   --color-input: var(--input);
   --color-ring: var(--ring);
+
+  --color-highlight: var(--highlight);
+  --color-highlight-foreground: var(--highlight-foreground);
+  --color-highlight-subtle: var(--highlight-subtle);
+  --color-ink: var(--ink);
+  --color-ink-foreground: var(--ink-foreground);
+  --color-ink-muted: var(--ink-muted);
+  --color-ink-subtle: var(--ink-subtle);
+  --color-success: var(--success);
+  --color-success-surface: var(--success-surface);
   --color-chart-1: var(--chart-1);
-  --color-chart-2: var(--chart-2);
-  --color-chart-3: var(--chart-3);
-  --color-chart-4: var(--chart-4);
-  --color-chart-5: var(--chart-5);
-  --color-sidebar: var(--sidebar);
-  --color-sidebar-foreground: var(--sidebar-foreground);
-  --color-sidebar-primary: var(--sidebar-primary);
-  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
-  --color-sidebar-accent: var(--sidebar-accent);
-  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
-  --color-sidebar-border: var(--sidebar-border);
-  --color-sidebar-ring: var(--sidebar-ring);
 
   --color-severity-critical: var(--severity-critical);
   --color-severity-critical-foreground: var(--severity-critical-foreground);
@@ -61,48 +65,69 @@
   --color-severity-info-foreground: var(--severity-info-foreground);
   --color-severity-info-surface: var(--severity-info-surface);
 
-  --radius-sm: calc(var(--radius) - 4px);
-  --radius-md: calc(var(--radius) - 2px);
-  --radius-lg: var(--radius);
-  --radius-xl: calc(var(--radius) + 4px);
+  /* Controls are pills; inputs and tiles are soft; cards are generous. */
+  --radius-sm: 10px;
+  --radius-md: 14px;
+  --radius-lg: 18px;
+  --radius-xl: 22px;
+  --radius-2xl: 28px;
+  --radius-3xl: 36px;
+
+  --shadow-card:
+    0 1px 2px rgb(0 0 0 / 0.03), 0 16px 40px -24px rgb(0 0 0 / 0.18);
+  --shadow-float:
+    0 2px 6px rgb(0 0 0 / 0.05), 0 24px 56px -20px rgb(0 0 0 / 0.28);
+
+  /* One headline figure per view, then page titles: light, large, calm. */
+  --text-hero: 3.5rem;
+  --text-hero--line-height: 1;
+  --text-display: 2.5rem;
+  --text-display--line-height: 1.15;
 }
 
 :root {
-  --radius: 0.5rem;
-
-  --background: #f8fafc;
-  --foreground: #0f172a;
-  --card: #ffffff;
-  --card-foreground: #0f172a;
+  --background: #e9eaec;
+  --foreground: #1c1c1b;
+  /* Translucent over the ambient background, so cards read as frosted. */
+  --card: rgb(255 255 255 / 0.66);
+  --card-foreground: #1c1c1b;
+  --card-solid: #fbfbfa;
+  --card-edge: rgb(255 255 255 / 0.9);
   --popover: #ffffff;
-  --popover-foreground: #0f172a;
-  --primary: #1e40af;
-  --primary-foreground: #ffffff;
-  --secondary: #f1f5f9;
-  --secondary-foreground: #0f172a;
-  --muted: #f1f5f9;
-  --muted-foreground: #475569;
-  --accent: #eff6ff;
-  --accent-foreground: #1e3a8a;
-  --destructive: #dc2626;
-  --border: #e2e8f0;
-  --input: #cbd5e1;
-  --ring: #1e40af;
+  --popover-foreground: #1c1c1b;
 
-  --chart-1: #1e40af;
-  --chart-2: #3b82f6;
-  --chart-3: #d97706;
-  --chart-4: #0f766e;
-  --chart-5: #64748b;
+  --primary: #2b2b2a;
+  --primary-foreground: #fafaf9;
+  --secondary: rgb(255 255 255 / 0.8);
+  --secondary-foreground: #1c1c1b;
+  --muted: rgb(28 28 27 / 0.05);
+  --muted-foreground: #5f5f5c;
+  --accent: rgb(28 28 27 / 0.06);
+  --accent-foreground: #1c1c1b;
+  --destructive: #d92d20;
+  --border: rgb(28 28 27 / 0.08);
+  --border-strong: rgb(28 28 27 / 0.16);
+  --input: rgb(28 28 27 / 0.12);
+  --ring: #1c1c1b;
 
-  --sidebar: #ffffff;
-  --sidebar-foreground: #0f172a;
-  --sidebar-primary: #1e40af;
-  --sidebar-primary-foreground: #ffffff;
-  --sidebar-accent: #eff6ff;
-  --sidebar-accent-foreground: #1e3a8a;
-  --sidebar-border: #e2e8f0;
-  --sidebar-ring: #1e40af;
+  /* The warm highlight: active marks and the busiest bar, always beside text. */
+  --highlight: #ffd861;
+  --highlight-foreground: #1c1c1b;
+  --highlight-subtle: rgb(255 216 97 / 0.35);
+
+  /* The dark feature card. */
+  --ink: #2b2b2a;
+  --ink-foreground: #f5f5f4;
+  --ink-muted: rgb(245 245 244 / 0.62);
+  --ink-subtle: rgb(245 245 244 / 0.1);
+
+  --success: #36690f;
+  --success-surface: #e4f2cf;
+  --chart-1: #2b2b2a;
+
+  --ambient-sun: rgb(255 216 97 / 0.42);
+  --ambient-cream: rgb(250 236 184 / 0.7);
+  --ambient-light: rgb(255 255 255 / 0.85);
 
   --severity-critical: #dc2626;
   --severity-critical-foreground: #991b1b;
@@ -122,39 +147,45 @@
 }
 
 .dark {
-  --background: #0b1220;
-  --foreground: #e2e8f0;
-  --card: #111a2e;
-  --card-foreground: #e2e8f0;
-  --popover: #111a2e;
-  --popover-foreground: #e2e8f0;
-  --primary: #60a5fa;
-  --primary-foreground: #0b1220;
-  --secondary: #1e293b;
-  --secondary-foreground: #e2e8f0;
-  --muted: #1e293b;
-  --muted-foreground: #94a3b8;
-  --accent: #1e293b;
-  --accent-foreground: #f1f5f9;
-  --destructive: #f87171;
-  --border: #233047;
-  --input: #334155;
-  --ring: #60a5fa;
+  --background: #141414;
+  --foreground: #f2f2f0;
+  --card: rgb(36 36 35 / 0.7);
+  --card-foreground: #f2f2f0;
+  --card-solid: #1e1e1d;
+  --card-edge: rgb(255 255 255 / 0.06);
+  --popover: #1e1e1d;
+  --popover-foreground: #f2f2f0;
 
-  --chart-1: #60a5fa;
-  --chart-2: #93c5fd;
-  --chart-3: #fbbf24;
-  --chart-4: #2dd4bf;
-  --chart-5: #94a3b8;
+  --primary: #f2f2f0;
+  --primary-foreground: #161616;
+  --secondary: rgb(255 255 255 / 0.06);
+  --secondary-foreground: #f2f2f0;
+  --muted: rgb(242 242 240 / 0.06);
+  --muted-foreground: #a8a8a3;
+  --accent: rgb(242 242 240 / 0.08);
+  --accent-foreground: #f2f2f0;
+  --destructive: #ff6b6b;
+  --border: rgb(242 242 240 / 0.09);
+  --border-strong: rgb(242 242 240 / 0.18);
+  --input: rgb(242 242 240 / 0.14);
+  --ring: #ffd861;
 
-  --sidebar: #0e1628;
-  --sidebar-foreground: #e2e8f0;
-  --sidebar-primary: #60a5fa;
-  --sidebar-primary-foreground: #0b1220;
-  --sidebar-accent: #1e293b;
-  --sidebar-accent-foreground: #f1f5f9;
-  --sidebar-border: #233047;
-  --sidebar-ring: #60a5fa;
+  --highlight: #ffd861;
+  --highlight-foreground: #1c1c1b;
+  --highlight-subtle: rgb(255 216 97 / 0.16);
+
+  --ink: #0b0b0b;
+  --ink-foreground: #f2f2f0;
+  --ink-muted: rgb(242 242 240 / 0.6);
+  --ink-subtle: rgb(242 242 240 / 0.08);
+
+  --success: #a3d977;
+  --success-surface: rgb(163 217 119 / 0.12);
+  --chart-1: #f2f2f0;
+
+  --ambient-sun: rgb(255 216 97 / 0.1);
+  --ambient-cream: rgb(255 216 97 / 0.04);
+  --ambient-light: rgb(255 255 255 / 0.03);
 
   --severity-critical: #ef4444;
   --severity-critical-foreground: #fca5a5;
@@ -173,14 +204,69 @@
   --severity-info-surface: #1e293b;
 }
 
+/*
+ * Hatched fill for "the rest" of a bar, as in the reference boards: a
+ * texture rather than a colour, so it never competes with a value and still
+ * reads in print and forced colours.
+ */
+@utility bg-hatch {
+  background-image: repeating-linear-gradient(
+    -45deg,
+    var(--border-strong) 0 1.5px,
+    transparent 1.5px 7px
+  );
+}
+
+/* A frosted surface: translucent fill, a light top edge and a soft shadow. */
+@utility glass {
+  background-color: var(--card);
+  backdrop-filter: blur(18px) saturate(1.2);
+  box-shadow:
+    inset 0 1px 0 var(--card-edge),
+    var(--shadow-card);
+}
+
 @layer base {
   * {
     @apply border-border outline-ring/50;
   }
 
   body {
-    @apply bg-background text-foreground font-sans;
+    @apply text-foreground font-sans;
     font-feature-settings: "tnum" 1;
+    /* Light from the top start, warmth gathering at the bottom end. */
+    background:
+      radial-gradient(
+        55vw 55vh at 0% 0%,
+        var(--ambient-light),
+        transparent 70%
+      ),
+      radial-gradient(
+        45vw 60vh at 100% 20%,
+        var(--ambient-cream),
+        transparent 70%
+      ),
+      radial-gradient(
+        60vw 60vh at 95% 100%,
+        var(--ambient-sun),
+        transparent 70%
+      ),
+      var(--background);
+    background-attachment: fixed;
+    min-height: 100svh;
+  }
+
+  :focus-visible {
+    outline: 2px solid var(--ring);
+    outline-offset: 2px;
+  }
+
+  /* Without transparency, glass must still be a solid, readable surface. */
+  @media (prefers-reduced-transparency: reduce) {
+    :root,
+    .dark {
+      --card: var(--card-solid);
+    }
   }
 
   @media (prefers-reduced-motion: reduce) {

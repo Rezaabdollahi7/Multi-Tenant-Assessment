@@ -28,7 +28,7 @@ function renderShell(user: CurrentUser = analyst) {
   return renderWithProviders(
     <ThemeProvider attribute="class">
       <SessionProvider user={user}>
-        <AppShell sidebarOpen>
+        <AppShell>
           <p>Page content</p>
         </AppShell>
       </SessionProvider>

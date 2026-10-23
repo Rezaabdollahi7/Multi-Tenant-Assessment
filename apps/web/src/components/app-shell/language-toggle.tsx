@@ -4,7 +4,6 @@ import { LanguagesIcon } from "lucide-react";
 import { useLocale, useTranslations } from "next-intl";
 import { useRouter } from "next/navigation";
 import { useTransition } from "react";
-import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -15,6 +14,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { setLocale } from "@/i18n/actions";
 import { isLocale, LOCALES } from "@/i18n/config";
+import { ShellButton } from "./shell-button";
 
 export function LanguageToggle() {
   const locale = useLocale();
@@ -34,14 +34,9 @@ export function LanguageToggle() {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <Button
-          variant="ghost"
-          size="icon"
-          aria-label={t("change")}
-          disabled={pending}
-        >
+        <ShellButton aria-label={t("change")} disabled={pending}>
           <LanguagesIcon aria-hidden />
-        </Button>
+        </ShellButton>
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end">
         <DropdownMenuLabel>{t("title")}</DropdownMenuLabel>

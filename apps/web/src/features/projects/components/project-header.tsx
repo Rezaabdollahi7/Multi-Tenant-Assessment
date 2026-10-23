@@ -1,5 +1,5 @@
 import { ChevronRight } from "lucide-react";
-import { useFormatter, useTranslations } from "next-intl";
+import { useTranslations } from "next-intl";
 import Link from "next/link";
 import type { ReactNode } from "react";
 import type { ProjectDetail } from "@/lib/api/types";
@@ -14,15 +14,14 @@ type ProjectHeaderProps = {
 
 export function ProjectHeader({ project, action }: ProjectHeaderProps) {
   const t = useTranslations();
-  const format = useFormatter();
   return (
-    <header className="space-y-3">
+    <header className="space-y-4">
       <nav aria-label={t("common.breadcrumb")}>
         <ol className="flex items-center gap-1 text-sm text-muted-foreground">
           <li>
             <Link
               href={routes.projects()}
-              className="rounded-sm hover:text-foreground hover:underline focus-visible:ring-2 focus-visible:ring-ring focus-visible:outline-none"
+              className="rounded-sm hover:text-foreground hover:underline"
             >
               {t("nav.projects")}
             </Link>
@@ -31,29 +30,26 @@ export function ProjectHeader({ project, action }: ProjectHeaderProps) {
             <ChevronRight className="size-3.5 rtl:rotate-180" />
           </li>
           <li aria-current="page" className="truncate text-foreground">
-            {project.name}
+            <bdi>{project.name}</bdi>
           </li>
         </ol>
       </nav>
-      <div className="flex flex-wrap items-center justify-between gap-3">
-        <div className="flex flex-wrap items-center gap-3">
-          <h1 className="text-xl font-semibold">{project.name}</h1>
-          <ProjectStatusBadge status={project.status} />
+      <div className="flex flex-wrap items-end justify-between gap-4">
+        <div className="space-y-3">
+          <div className="flex flex-wrap items-center gap-3">
+            <h1 className="text-display font-light">
+              <bdi>{project.name}</bdi>
+            </h1>
+            <ProjectStatusBadge status={project.status} />
+          </div>
+          {project.description && (
+            <p dir="auto" className="max-w-prose text-muted-foreground">
+              {project.description}
+            </p>
+          )}
         </div>
         {action}
       </div>
-      {project.description && (
-        <p className="max-w-prose text-sm text-muted-foreground">
-          {project.description}
-        </p>
-      )}
-      <p className="text-sm text-muted-foreground">
-        {t("projects.details.summary", {
-          findings: project.findingsCount,
-          members: project.membersCount,
-          created: format.dateTime(new Date(project.createdAt), "date"),
-        })}
-      </p>
     </header>
   );
 }

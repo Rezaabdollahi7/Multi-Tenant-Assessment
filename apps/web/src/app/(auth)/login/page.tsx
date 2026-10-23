@@ -37,18 +37,18 @@ export default async function LoginPage({ searchParams }: LoginPageProps) {
 
   return (
     <main className="flex min-h-svh items-center justify-center p-4">
-      <div className="w-full max-w-sm space-y-4">
-        <div className="text-primary flex items-center justify-center gap-2">
-          <ShieldCheckIcon className="size-6" aria-hidden />
-          <span className="text-foreground font-semibold">
+      <div className="w-full max-w-md space-y-6">
+        <div className="flex justify-center">
+          <span className="flex h-11 items-center gap-2 rounded-full border border-border-strong px-4 text-base font-medium">
+            <ShieldCheckIcon className="size-5" aria-hidden />
             {t("common.appName")}
           </span>
         </div>
         {isSignInReason(reason) && <SignInNotice reason={reason} />}
-        <Card>
-          <CardHeader>
+        <Card className="gap-8 rounded-3xl px-2 py-8 sm:px-4">
+          <CardHeader className="gap-3">
             <CardTitle>
-              <h1>{t("auth.title")}</h1>
+              <h1 className="text-display font-light">{t("auth.title")}</h1>
             </CardTitle>
             <CardDescription>{t("auth.intro")}</CardDescription>
           </CardHeader>

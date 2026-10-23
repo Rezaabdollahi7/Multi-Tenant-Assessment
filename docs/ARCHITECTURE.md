@@ -176,8 +176,9 @@ src/
 │   │   └── api/ components/ hooks/ schemas/
 ├── components/
 │   ├── ui/               # shadcn primitives
-│   └── shared/           # SeverityBadge, StatusBadge, DataTable, SearchInput,
-│                         # FilterSelect, StatCard, BreakdownList, EmptyState, ErrorState
+│   ├── app-shell/        # top bar: brand, section pills, language, theme, User menu
+│   └── shared/           # Panel, HeadlineStat, SegmentedBar, DataTable, DetailList,
+│                         # Pagination, SeverityBadge, StatusBadge, FormField, …
 ├── hooks/                # app-wide React hooks
 ├── i18n/                 # next-intl config, request config, fa/en messages, formats
 └── lib/                  # api client, session, query client, utils
@@ -189,7 +190,7 @@ src/
 | --------------------------- | ----------------- | -------------------------------- |
 | Server data                 | TanStack Query    | findings list, current User      |
 | Search, filters, pagination | URL search params | `/findings?severity=HIGH&page=2` |
-| Client-only UI              | its own component | sidebar (cookie), theme          |
+| Client-only UI              | its own component | theme, an open dialog            |
 
 ### 6.4 Data flow for a list page
 

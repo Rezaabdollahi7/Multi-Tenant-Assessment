@@ -12,6 +12,7 @@ import {
   getProjectMembers,
 } from "@/features/projects/api/get-project";
 import { ProjectHeader } from "@/features/projects/components/project-header";
+import { ProjectInfo } from "@/features/projects/components/project-info";
 import { ProjectMembers } from "@/features/projects/components/project-members";
 import { ProjectSeverityPanel } from "@/features/projects/components/project-severity-panel";
 import { routes } from "@/lib/routes";
@@ -41,12 +42,12 @@ export default async function ProjectPage({ params }: ProjectPageProps) {
   ]);
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-8">
       <ProjectHeader
         project={project}
         action={
           hasPermissions(user, "finding:create") && (
-            <Button size="sm" asChild>
+            <Button asChild>
               <Link href={routes.newFinding({ projectId: id })}>
                 <PlusIcon aria-hidden />
                 {t("report")}
@@ -55,11 +56,16 @@ export default async function ProjectPage({ params }: ProjectPageProps) {
           )
         }
       />
-      <div className="grid items-start gap-6 lg:grid-cols-2">
-        <ProjectSeverityPanel project={project} />
-        {members && <ProjectMembers members={members} />}
+      <div className="grid items-start gap-6 lg:grid-cols-3">
+        <div className="grid gap-6 lg:col-span-2">
+          <ProjectSeverityPanel project={project} />
+          <RecentProjectFindings projectId={id} findings={findings} />
+        </div>
+        <div className="grid gap-6">
+          <ProjectInfo project={project} />
+          {members && <ProjectMembers members={members} />}
+        </div>
       </div>
-      <RecentProjectFindings projectId={id} findings={findings} />
     </div>
   );
 }

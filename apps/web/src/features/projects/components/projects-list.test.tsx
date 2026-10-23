@@ -71,8 +71,15 @@ describe("ProjectsList", () => {
       within(pagination).getByRole("link", { name: "Next page" }),
     ).toHaveAttribute("href", "/projects?page=2");
     expect(
-      within(pagination).getByRole("button", { name: "Previous page" }),
-    ).toBeDisabled();
+      within(pagination).getByRole("link", { name: "Page 3 of 3" }),
+    ).toHaveAttribute("href", "/projects?page=3");
+    expect(
+      within(pagination).getByRole("link", { name: "Page 1 of 3" }),
+    ).toHaveAttribute("aria-current", "page");
+    // There is no page before the first.
+    expect(
+      within(pagination).queryByRole("link", { name: "Previous page" }),
+    ).not.toBeInTheDocument();
   });
 
   it("applies the search, filter and page from the URL", async () => {

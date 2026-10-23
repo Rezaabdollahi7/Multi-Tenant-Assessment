@@ -42,9 +42,9 @@ export function ProjectsList() {
       cell: (project) => (
         <Link
           href={routes.project(project.id)}
-          className="rounded-sm font-medium text-primary underline-offset-4 hover:underline focus-visible:ring-2 focus-visible:ring-ring focus-visible:outline-none"
+          className="rounded-sm font-medium underline-offset-4 hover:underline"
         >
-          {project.name}
+          <bdi>{project.name}</bdi>
         </Link>
       ),
     },
@@ -75,7 +75,7 @@ export function ProjectsList() {
   const filtered = params.search !== undefined || params.status !== undefined;
 
   return (
-    <div className="space-y-4">
+    <Card className="gap-4 rounded-3xl p-4 sm:p-6">
       <div role="search" className="flex flex-col gap-3 sm:flex-row">
         <SearchInput
           label={t("projects.search")}
@@ -92,7 +92,7 @@ export function ProjectsList() {
         />
       </div>
 
-      <Card className="py-0">
+      <div>
         {error ? (
           <ErrorState
             title={t("projects.error")}
@@ -125,7 +125,7 @@ export function ProjectsList() {
             getRowId={(project) => project.id}
           />
         )}
-      </Card>
+      </div>
 
       {data && data.meta.totalItems > 0 && (
         <Pagination
@@ -134,6 +134,6 @@ export function ProjectsList() {
           hrefForPage={(page) => hrefWith({ page })}
         />
       )}
-    </div>
+    </Card>
   );
 }
