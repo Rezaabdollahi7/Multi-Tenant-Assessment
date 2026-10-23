@@ -59,7 +59,7 @@ Radius scale: 10 / 14 / 18 / 22 / **28 (cards)** / 36 (large containers, dialogs
 ## Components
 
 - Primitives are the official shadcn/ui **new-york** components (Radix) in `src/components/ui`. They differ from upstream only in import paths, logical inline properties (so they mirror in right-to-left), and the shapes above (pill controls, glass cards).
-- Our reusable components live in `src/components/shared`, each with a Storybook story: `Panel` (glass or ink), `HeadlineStat`, `SegmentedBar`, `BreakdownList`, `DataTable`, `DetailList`, `Pagination`, `SearchInput`, `FilterSelect`, `StatusBadge`, `SeverityBadge`, `UserAvatar`, `FormField`, `EmptyState`, `ErrorState`, `PermissionDenied`.
+- Our reusable components live in `src/components/shared`, each with Storybook stories (`pnpm --filter frontend storybook`; the toolbar switches language and theme): `Panel` (glass or ink), `HeadlineStat`, `SegmentedBar`, `BreakdownList`, `DataTable`, `DetailList`, `Pagination`, `SearchInput`, `FilterSelect`, `StatusBadge`, `SeverityBadge`, `UserAvatar`, `FormField`, `EmptyState`, `ErrorState`, `PermissionDenied`.
 - Icons: `lucide-react` only, `aria-hidden` when decorative; icon-only buttons carry an `aria-label`; directional icons mirror with `rtl:rotate-180`.
 
 ## Layout
