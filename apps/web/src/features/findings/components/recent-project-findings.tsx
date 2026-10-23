@@ -45,18 +45,18 @@ export function RecentProjectFindings({
       {data.length === 0 ? (
         <EmptyState icon={ShieldCheck} title={t("findings.latest.empty")} />
       ) : (
-        <ul className="divide-y">
+        <ul className="-mx-3 space-y-1">
           {data.map((finding) => (
             <li
               key={finding.id}
-              className="flex flex-col gap-2 py-3 first:pt-0 last:pb-0 sm:flex-row sm:items-center sm:justify-between"
+              className="flex flex-col gap-2 rounded-3xl px-3 py-2.5 transition-colors hover:bg-highlight-subtle sm:flex-row sm:items-center sm:justify-between"
             >
               <div className="min-w-0 space-y-1">
                 <Link
                   href={routes.finding(finding.id)}
-                  className="rounded-sm text-sm font-medium text-primary underline-offset-4 hover:underline focus-visible:ring-2 focus-visible:ring-ring focus-visible:outline-none"
+                  className="rounded-sm text-sm font-medium underline-offset-4 hover:underline"
                 >
-                  {finding.title}
+                  <bdi>{finding.title}</bdi>
                 </Link>
                 <p className="text-xs text-muted-foreground">
                   {t("findings.latest.reported", {

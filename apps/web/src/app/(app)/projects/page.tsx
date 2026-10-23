@@ -10,10 +10,10 @@ export async function generateMetadata(): Promise<Metadata> {
 export default async function ProjectsPage() {
   const t = await getTranslations("projects");
   return (
-    <div className="space-y-6">
+    <div className="space-y-8">
       <header className="space-y-1">
-        <h1 className="text-xl font-semibold">{t("title")}</h1>
-        <p className="text-sm text-muted-foreground">{t("intro")}</p>
+        <h1 className="text-display font-light">{t("title")}</h1>
+        <p className="text-muted-foreground">{t("intro")}</p>
       </header>
       <ProjectsList />
     </div>

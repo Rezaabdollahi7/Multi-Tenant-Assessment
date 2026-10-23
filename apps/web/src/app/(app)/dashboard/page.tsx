@@ -1,8 +1,8 @@
 import type { Metadata } from "next";
 import { getTranslations } from "next-intl/server";
-import { DashboardStats } from "@/features/dashboard/components/dashboard-stats";
+import { getCurrentUser } from "@/features/auth/api/get-current-user";
+import { DashboardOverview } from "@/features/dashboard/components/dashboard-overview";
 import { FindingTrendChart } from "@/features/dashboard/components/finding-trend-chart";
-import { ProjectStatusBreakdown } from "@/features/dashboard/components/project-status-breakdown";
 import { RecentActivity } from "@/features/dashboard/components/recent-activity";
 import { SeverityBreakdown } from "@/features/dashboard/components/severity-breakdown";
 import { Can } from "@/lib/session/session-provider";
@@ -13,25 +13,30 @@ export async function generateMetadata(): Promise<Metadata> {
 }
 
 export default async function DashboardPage() {
-  const t = await getTranslations("dashboard");
+  const [t, user] = await Promise.all([getTranslations(), getCurrentUser()]);
+  const firstName = user?.name?.split(/\s+/)[0] ?? t("common.unnamedUser");
+
   return (
-    <div className="space-y-6">
-      <header className="space-y-1">
-        <h1 className="text-xl font-semibold">{t("title")}</h1>
-        <p className="text-sm text-muted-foreground">{t("intro")}</p>
+    <div className="space-y-8">
+      <header className="space-y-2">
+        <h1 className="text-display font-light">
+          {t("dashboard.welcome", { name: firstName })}
+        </h1>
+        <p className="text-muted-foreground">
+          {t("dashboard.intro", {
+            organization: user?.organization.name ?? "",
+          })}
+        </p>
       </header>
-      <DashboardStats />
+      <DashboardOverview />
       <div className="grid items-start gap-6 lg:grid-cols-3">
         <div className="grid gap-6 lg:col-span-2">
           <FindingTrendChart />
-          <Can permission="activity:read">
-            <RecentActivity />
-          </Can>
-        </div>
-        <div className="grid gap-6">
           <SeverityBreakdown />
-          <ProjectStatusBreakdown />
         </div>
+        <Can permission="activity:read">
+          <RecentActivity />
+        </Can>
       </div>
     </div>
   );

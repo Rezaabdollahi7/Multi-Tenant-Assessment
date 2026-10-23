@@ -3,7 +3,6 @@
 import { MonitorIcon, MoonIcon, SunIcon } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { useTheme } from "next-themes";
-import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -12,6 +11,7 @@ import {
   DropdownMenuRadioItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { ShellButton } from "./shell-button";
 
 const THEMES = [
   { value: "light", icon: SunIcon },
@@ -26,10 +26,10 @@ export function ThemeToggle() {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <Button variant="ghost" size="icon" aria-label={t("change")}>
+        <ShellButton aria-label={t("change")}>
           <SunIcon className="dark:hidden" aria-hidden />
           <MoonIcon className="hidden dark:block" aria-hidden />
-        </Button>
+        </ShellButton>
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end">
         <DropdownMenuLabel>{t("title")}</DropdownMenuLabel>

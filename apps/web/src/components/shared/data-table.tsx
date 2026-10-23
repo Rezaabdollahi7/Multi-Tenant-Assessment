@@ -11,6 +11,10 @@ import {
 } from "@/components/ui/table";
 import { cn } from "@/lib/utils";
 
+/** Rows have no rules; the hovered one lights up as a yellow pill. */
+const ROW_CLASSES =
+  "border-0 transition-colors hover:bg-highlight-subtle [&>td:first-child]:rounded-s-full [&>td:last-child]:rounded-e-full";
+
 export type DataTableColumn<Row> = {
   id: string;
   header: string;
@@ -42,9 +46,16 @@ export function DataTable<Row>({
     <Table aria-busy={rows === undefined}>
       <TableCaption className="sr-only">{caption}</TableCaption>
       <TableHeader>
-        <TableRow>
+        <TableRow className="border-b border-dashed border-border-strong hover:bg-transparent">
           {columns.map((column) => (
-            <TableHead key={column.id} scope="col" className={column.className}>
+            <TableHead
+              key={column.id}
+              scope="col"
+              className={cn(
+                "h-12 font-normal text-muted-foreground",
+                column.className,
+              )}
+            >
               {column.header}
             </TableHead>
           ))}
@@ -53,7 +64,7 @@ export function DataTable<Row>({
       <TableBody>
         {rows === undefined
           ? Array.from({ length: loadingRows }, (_, index) => (
-              <TableRow key={index}>
+              <TableRow key={index} className="border-0">
                 {columns.map((column) => (
                   <TableCell key={column.id} className={column.className}>
                     <Skeleton className="h-4 w-full max-w-40" />
@@ -62,11 +73,11 @@ export function DataTable<Row>({
               </TableRow>
             ))
           : rows.map((row) => (
-              <TableRow key={getRowId(row)}>
+              <TableRow key={getRowId(row)} className={ROW_CLASSES}>
                 {columns.map((column) => (
                   <TableCell
                     key={column.id}
-                    className={cn("py-3", column.className)}
+                    className={cn("py-3.5", column.className)}
                   >
                     {column.cell(row)}
                   </TableCell>

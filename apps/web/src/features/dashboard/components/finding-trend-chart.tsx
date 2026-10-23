@@ -1,31 +1,21 @@
 "use client";
 
-import { ChartColumn } from "lucide-react";
-import { useFormatter, useLocale, useTranslations } from "next-intl";
-import { Bar, BarChart, CartesianGrid, XAxis, YAxis } from "recharts";
+import { ArrowUpRight, ChartColumn } from "lucide-react";
+import { useFormatter, useTranslations } from "next-intl";
+import Link from "next/link";
 import { EmptyState } from "@/components/shared/empty-state";
 import { ErrorState } from "@/components/shared/error-state";
 import { Panel } from "@/components/shared/panel";
-import {
-  ChartContainer,
-  ChartTooltip,
-  type ChartConfig,
-} from "@/components/ui/chart";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useErrorMessage } from "@/hooks/use-error-message";
-import { LOCALE_DIRECTIONS } from "@/i18n/config";
 import type { TrendPoint } from "@/lib/api/types";
+import { routes } from "@/lib/routes";
 import { SEVERITIES } from "@/lib/severity";
+import { cn } from "@/lib/utils";
 import { useFindingTrend } from "../hooks/use-dashboard";
 
-/*
- * One series, not a bar stacked by Severity: the five Severity colours are too
- * close for colour-blind readers at segment size. The breakdown per day is in
- * the tooltip and the table, as text.
- */
-const chartConfig = {
-  total: { color: "var(--chart-1)" },
-} satisfies ChartConfig;
+/** Every seventh day is labelled under the bars. */
+const LABEL_EVERY_DAYS = 7;
 
 /** A trend point's date is a UTC calendar day ("2026-10-22"). */
 function utcDay(isoDay: string) {
@@ -42,6 +32,15 @@ export function FindingTrendChart({ className }: { className?: string }) {
       title={t("title")}
       description={t("description")}
       className={className}
+      action={
+        <Link
+          href={routes.findings()}
+          aria-label={t("viewFindings")}
+          className="flex size-10 shrink-0 items-center justify-center rounded-full border border-border-strong transition-colors hover:bg-card-solid"
+        >
+          <ArrowUpRight aria-hidden className="size-4 rtl:-scale-x-100" />
+        </Link>
+      }
     >
       {error ? (
         <ErrorState
@@ -50,7 +49,7 @@ export function FindingTrendChart({ className }: { className?: string }) {
           onRetry={() => void refetch()}
         />
       ) : !data ? (
-        <Skeleton aria-busy className="h-60 w-full" />
+        <Skeleton aria-busy className="h-72 w-full rounded-2xl" />
       ) : data.every((point) => point.total === 0) ? (
         <EmptyState icon={ChartColumn} title={t("empty")} />
       ) : (
@@ -60,61 +59,54 @@ export function FindingTrendChart({ className }: { className?: string }) {
   );
 }
 
+/**
+ * One thin pill per day in the reading direction, so time runs right to left
+ * in Persian. One series on purpose: the five Severity colours are too close
+ * for colour-blind readers at bar size, so the split per day is in the
+ * tooltip and the table, as text.
+ */
 function TrendBars({ points }: { points: TrendPoint[] }) {
   const t = useTranslations("dashboard.trend");
   const format = useFormatter();
   const formatDay = (isoDay: string) => format.dateTime(utcDay(isoDay), "day");
-  // Time runs in the reading direction: right to left in Persian.
-  const rtl = LOCALE_DIRECTIONS[useLocale()] === "rtl";
   const total = points.reduce((sum, point) => sum + point.total, 0);
   const busiest = points.reduce((max, point) =>
     point.total > max.total ? point : max,
   );
 
   return (
-    <figure>
-      <ChartContainer
-        config={chartConfig}
-        className="aspect-auto h-60 w-full"
-        aria-hidden
-      >
-        <BarChart data={points} margin={{ top: 4, right: 4, left: 4 }}>
-          <CartesianGrid vertical={false} />
-          <XAxis
-            dataKey="date"
-            tickFormatter={formatDay}
-            tickLine={false}
-            axisLine={false}
-            minTickGap={24}
-            reversed={rtl}
+    <figure className="space-y-5">
+      <p className="flex items-baseline gap-3">
+        <span className="text-hero font-extralight tabular-nums">
+          {format.number(total)}
+        </span>
+        <span className="text-sm text-muted-foreground">
+          {t("totalLabel", { count: total })}
+        </span>
+      </p>
+
+      <div aria-hidden className="flex h-44 items-end gap-1 pt-8 sm:gap-1.5">
+        {points.map((point) => (
+          <DayBar
+            key={point.date}
+            point={point}
+            height={point.total / busiest.total}
+            busiest={point === busiest}
           />
-          <YAxis
-            allowDecimals={false}
-            tickLine={false}
-            axisLine={false}
-            width={28}
-            orientation={rtl ? "right" : "left"}
-            tickFormatter={(value: number) => format.number(value)}
-          />
-          <ChartTooltip
-            cursor={{ fill: "var(--muted)" }}
-            content={({ active, label }) => {
-              const point = points.find(
-                (candidate) => candidate.date === label,
-              );
-              return active && point ? <TrendTooltip point={point} /> : null;
-            }}
-          />
-          {/* No entry animation: the design system keeps motion to hover and focus. */}
-          <Bar
-            dataKey="total"
-            fill="var(--color-total)"
-            radius={[4, 4, 0, 0]}
-            isAnimationActive={false}
-          />
-        </BarChart>
-      </ChartContainer>
-      <figcaption className="mt-2 text-sm text-muted-foreground">
+        ))}
+      </div>
+      <div aria-hidden className="flex gap-1 sm:gap-1.5">
+        {points.map((point, index) => (
+          <span
+            key={point.date}
+            className="flex-1 text-center text-[11px] whitespace-nowrap text-muted-foreground"
+          >
+            {index % LABEL_EVERY_DAYS === 0 ? formatDay(point.date) : ""}
+          </span>
+        ))}
+      </div>
+
+      <figcaption className="text-sm text-muted-foreground">
         {t("summary", {
           total,
           day: formatDay(busiest.date),
@@ -126,12 +118,52 @@ function TrendBars({ points }: { points: TrendPoint[] }) {
   );
 }
 
+function DayBar({
+  point,
+  height,
+  busiest,
+}: {
+  point: TrendPoint;
+  /** Share of the busiest day, 0 to 1. */
+  height: number;
+  busiest: boolean;
+}) {
+  const format = useFormatter();
+  return (
+    <div className="group relative flex h-full flex-1 flex-col items-center justify-end gap-2">
+      <div
+        className={cn(
+          "relative w-full max-w-2.5 rounded-full transition-colors",
+          busiest
+            ? "bg-highlight"
+            : point.total > 0
+              ? "bg-foreground group-hover:bg-highlight"
+              : "bg-border-strong",
+        )}
+        // Empty days keep a stub so the rhythm of the month stays visible.
+        style={{ height: `${Math.max(height * 100, 4)}%` }}
+      >
+        {busiest && (
+          <span className="absolute bottom-full left-1/2 mb-2 -translate-x-1/2 rounded-full bg-highlight px-2 py-0.5 text-xs font-medium text-highlight-foreground tabular-nums">
+            {format.number(point.total)}
+          </span>
+        )}
+      </div>
+      <span className="size-1 rounded-full bg-foreground/30" />
+      {/* Shown only on hover, so it never widens the page. */}
+      <div className="pointer-events-none absolute bottom-full left-1/2 z-10 mb-2 hidden -translate-x-1/2 group-hover:block">
+        <TrendTooltip point={point} />
+      </div>
+    </div>
+  );
+}
+
 function TrendTooltip({ point }: { point: TrendPoint }) {
   const t = useTranslations();
   const format = useFormatter();
   return (
-    <div className="grid min-w-36 gap-1.5 rounded-lg border bg-background px-2.5 py-1.5 text-xs shadow-xl">
-      <p className="font-medium">
+    <div className="grid min-w-36 gap-1.5 rounded-2xl bg-ink px-3 py-2 text-xs text-ink-foreground shadow-float">
+      <p className="font-medium whitespace-nowrap">
         {t("dashboard.trend.tooltip", {
           day: format.dateTime(utcDay(point.date), "day"),
           count: point.total,
@@ -142,9 +174,7 @@ function TrendTooltip({ point }: { point: TrendPoint }) {
           {SEVERITIES.filter((severity) => point.bySeverity[severity] > 0).map(
             (severity) => (
               <div key={severity} className="contents">
-                <dt className="text-muted-foreground">
-                  {t(`severity.${severity}`)}
-                </dt>
+                <dt className="text-ink-muted">{t(`severity.${severity}`)}</dt>
                 <dd className="text-end tabular-nums">
                   {format.number(point.bySeverity[severity])}
                 </dd>

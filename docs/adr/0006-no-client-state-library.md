@@ -1,5 +1,7 @@
 # No client state library: UI state stays with the component that owns it
 
+> **Update:** the redesign replaced the sidebar with a top navigation bar that holds no state. The decision stands.
+
 ADR 0003 gave client-only UI state to Zustand. With the app built, none is left for it: the sidebar's open state belongs to the shadcn `SidebarProvider` and is stored in a cookie, so the server renders it correctly with no flash; the theme belongs to `next-themes`; the signed-in User comes from the server through `SessionProvider`; and search, filters and pagination are in the URL. The remaining state (an open dialog, a form's draft) is local to one component. So Zustand is removed; ADR 0003 stands for the URL and TanStack Query, and this record replaces its Zustand part.
 
 ## Considered Options

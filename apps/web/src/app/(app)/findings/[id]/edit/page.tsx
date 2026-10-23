@@ -4,6 +4,7 @@ import { getTranslations } from "next-intl/server";
 import { notFound } from "next/navigation";
 import { PermissionDenied } from "@/components/shared/permission-denied";
 import { Button } from "@/components/ui/button";
+import { Card } from "@/components/ui/card";
 import { getCurrentUser } from "@/features/auth/api/get-current-user";
 import { getFinding } from "@/features/findings/api/get-finding";
 import { EditFindingForm } from "@/features/findings/components/finding-form";
@@ -48,14 +49,16 @@ export default async function EditFindingPage({
   }
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-8">
       <header className="space-y-1">
-        <h1 className="text-xl font-semibold">{t("form.editTitle")}</h1>
+        <h1 className="text-display font-light">{t("form.editTitle")}</h1>
         <p className="truncate text-sm text-muted-foreground">
           {finding.title}
         </p>
       </header>
-      <EditFindingForm finding={finding} />
+      <Card className="max-w-3xl rounded-3xl p-6 sm:p-8">
+        <EditFindingForm finding={finding} />
+      </Card>
     </div>
   );
 }
