@@ -4,16 +4,16 @@ import { ShieldCheck } from "lucide-react";
 import { BreakdownList } from "@/components/shared/breakdown-list";
 import { EmptyState } from "@/components/shared/empty-state";
 import { ErrorState } from "@/components/shared/error-state";
+import { Panel } from "@/components/shared/panel";
 import { SEVERITIES, SEVERITY_LABELS, SEVERITY_COLORS } from "@/lib/severity";
 import { useDashboardSummary } from "../hooks/use-dashboard";
 import { BreakdownSkeleton } from "./breakdown-skeleton";
-import { DashboardPanel } from "./dashboard-panel";
 
 export function SeverityBreakdown({ className }: { className?: string }) {
   const { data, error, refetch } = useDashboardSummary();
 
   return (
-    <DashboardPanel
+    <Panel
       title="Findings by Severity"
       description="Every Finding in the Organization"
       className={className}
@@ -38,6 +38,6 @@ export function SeverityBreakdown({ className }: { className?: string }) {
           }))}
         />
       )}
-    </DashboardPanel>
+    </Panel>
   );
 }

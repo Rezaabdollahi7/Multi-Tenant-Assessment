@@ -4,6 +4,7 @@ import { ChartColumn } from "lucide-react";
 import { Bar, BarChart, CartesianGrid, XAxis, YAxis } from "recharts";
 import { EmptyState } from "@/components/shared/empty-state";
 import { ErrorState } from "@/components/shared/error-state";
+import { Panel } from "@/components/shared/panel";
 import {
   ChartContainer,
   ChartTooltip,
@@ -14,7 +15,6 @@ import type { TrendPoint } from "@/lib/api/types";
 import { formatCount, formatDay } from "@/lib/format";
 import { SEVERITIES, SEVERITY_LABELS } from "@/lib/severity";
 import { useFindingTrend } from "../hooks/use-dashboard";
-import { DashboardPanel } from "./dashboard-panel";
 
 /*
  * One series, not a bar stacked by Severity: the five Severity colours are too
@@ -29,7 +29,7 @@ export function FindingTrendChart({ className }: { className?: string }) {
   const { data, error, refetch } = useFindingTrend();
 
   return (
-    <DashboardPanel
+    <Panel
       title="Finding trend"
       description="Findings reported per day, last 30 days"
       className={className}
@@ -50,7 +50,7 @@ export function FindingTrendChart({ className }: { className?: string }) {
       ) : (
         <TrendBars points={data} />
       )}
-    </DashboardPanel>
+    </Panel>
   );
 }
 

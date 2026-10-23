@@ -1,4 +1,5 @@
-import { DEMO_ACCOUNTS, ROLE_LABELS } from "../demo-accounts";
+import { ROLE_LABELS } from "@/lib/roles";
+import { DEMO_ACCOUNTS } from "../demo-accounts";
 
 type DemoAccountsListProps = {
   onSelect: (phone: string) => void;

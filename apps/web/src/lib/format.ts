@@ -52,3 +52,10 @@ export function formatCount(
 ) {
   return `${count} ${pluralRules.select(count) === "one" ? singular : plural}`;
 }
+
+const dateFormat = new Intl.DateTimeFormat("en", { dateStyle: "medium" });
+
+/** "Oct 22, 2026". */
+export function formatDate(date: Date | string) {
+  return dateFormat.format(new Date(date));
+}
