@@ -11,7 +11,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { SidebarMenuButton } from "@/components/ui/sidebar";
-import { useCurrentUser } from "@/features/auth/components/session-provider";
+import { useCurrentUser } from "@/lib/session/session-provider";
 import { useSignOut } from "@/features/auth/hooks/use-sign-out";
 import { ROLE_LABELS } from "@/lib/roles";
 

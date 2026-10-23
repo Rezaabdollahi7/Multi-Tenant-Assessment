@@ -50,8 +50,8 @@ Each milestone is delivered as one or more pull requests into `main`. Tick items
 ## M4 · Projects and Findings: 1405/08/03 (Oct 25)
 
 - [x] **C.** Projects list with search, Project Status filter, pagination; Project details with Members and its Findings; loading, empty, error states
-- [ ] **D.** Findings list with search and Severity / Finding Status / Project filters; Severity badge; Finding details; create and edit pages (title, description, Severity, Finding Status) with validation errors; delete with confirmation (Admin)
-- [ ] **E.** Every action gated by Permission in the UI and rejected by the API
+- [x] **D.** Findings list with search and Severity / Finding Status / Project filters; Severity badge; Finding details; create and edit pages (title, description, Severity, Finding Status) with validation errors; delete with confirmation (Admin)
+- [x] **E.** Every action gated by Permission in the UI and rejected by the API
 
 ## M5 · Quality: 1405/08/04 (Oct 26)
 

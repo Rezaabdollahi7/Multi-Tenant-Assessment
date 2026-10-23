@@ -107,7 +107,7 @@ sequenceDiagram
    - otherwise, with a refresh cookie → call `/api/auth/refresh`, forward the rotated cookies to the browser **and** to the page being rendered, continue;
    - renewal refused, or no session at all → redirect to `/login?next=…` (with `reason=session_expired` when a session existed).
 2. The protected layout (a Server Component) loads `/auth/me` with the request's cookies. An invalid session redirects to sign-in before any page renders. `/login` itself redirects a signed-in User to `next`.
-3. The User and their Permissions are passed to `SessionProvider`, so client components use `useCurrentUser()`, `useCan('finding:create')` or `<Can permission="finding:create">`.
+3. The User and their Permissions are passed to `SessionProvider` (`lib/session`), so client components use `useCurrentUser()`, `useCan('finding:create')` or `<Can permission="finding:create">`, and Server Components use `hasPermissions(user, 'finding:create')`.
 4. In the browser, the API client renews the same way on a `401` (one shared refresh for concurrent requests) and otherwise sends the User to `/login?reason=session_expired&next=…`.
 
 The proxy is a fast first gate; the layout check and the API are the real enforcement.

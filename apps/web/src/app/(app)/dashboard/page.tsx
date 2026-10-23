@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Can } from "@/features/auth/components/session-provider";
+import { Can } from "@/lib/session/session-provider";
 import { DashboardStats } from "@/features/dashboard/components/dashboard-stats";
 import { FindingTrendChart } from "@/features/dashboard/components/finding-trend-chart";
 import { ProjectStatusBreakdown } from "@/features/dashboard/components/project-status-breakdown";

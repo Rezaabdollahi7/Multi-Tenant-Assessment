@@ -3,7 +3,7 @@ import userEvent from "@testing-library/user-event";
 import { http, HttpResponse } from "msw";
 import { ThemeProvider } from "next-themes";
 import { beforeEach, describe, expect, it } from "vitest";
-import { SessionProvider } from "@/features/auth/components/session-provider";
+import { SessionProvider } from "@/lib/session/session-provider";
 import type { CurrentUser } from "@/lib/api/types";
 import { apiUrl, server } from "@/test/msw/server";
 import { renderWithProviders } from "@/test/render";
