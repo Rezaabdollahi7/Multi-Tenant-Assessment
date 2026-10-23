@@ -10,9 +10,12 @@ export const router = {
   prefetch: vi.fn(),
 };
 
+/** The path usePathname returns; tests set it before rendering. */
+export const navigation = { pathname: "/" };
+
 vi.mock("next/navigation", () => ({
   useRouter: () => router,
-  usePathname: () => "/",
+  usePathname: () => navigation.pathname,
   useSearchParams: () => new URLSearchParams(),
   redirect: vi.fn(),
 }));
