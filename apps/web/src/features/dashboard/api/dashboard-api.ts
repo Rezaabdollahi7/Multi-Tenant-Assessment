@@ -1,8 +1,9 @@
 import { unwrap } from "@/lib/api/api-error";
 import { api } from "@/lib/api/client";
+import { QUERY_ROOTS } from "@/lib/query-keys";
 
 export const dashboardKeys = {
-  all: ["dashboard"] as const,
+  all: [QUERY_ROOTS.dashboard] as const,
   summary: () => [...dashboardKeys.all, "summary"] as const,
   trend: () => [...dashboardKeys.all, "trend"] as const,
   activities: () => [...dashboardKeys.all, "activities"] as const,
