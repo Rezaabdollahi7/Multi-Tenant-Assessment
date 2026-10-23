@@ -111,16 +111,15 @@
   },
   "dashboard": {
     "title": "Dashboard",
-    "intro": "The security posture of your Organization at a glance.",
-    "stats": {
+    "welcome": "Welcome, {name}",
+    "intro": "The security posture of {organization} at a glance.",
+    "overview": {
+      "label": "Overview",
       "projects": "Projects",
-      "projectsHint": "{count, number} in progress",
       "findings": "Findings",
-      "findingsHint": "Across every Project",
       "criticalAndHigh": "Critical and high",
-      "criticalAndHighHint": "{count, number} critical",
-      "completedProjects": "Completed Projects",
-      "completedProjectsHint": "{count, number} planned",
+      "projectStatus": "Project Status",
+      "projectCount": "{count, plural, one {# Project} other {# Projects}}",
       "error": "Could not load the summary"
     },
     "severity": {
@@ -129,18 +128,13 @@
       "error": "Could not load the Severity breakdown",
       "empty": "No Findings reported yet"
     },
-    "projectStatus": {
-      "title": "Project Status",
-      "description": "Where each Project is in its life",
-      "error": "Could not load the Project Status breakdown",
-      "empty": "No Projects yet"
-    },
     "trend": {
       "title": "Finding trend",
       "description": "Findings reported per day, last 30 days",
       "error": "Could not load the Finding trend",
       "empty": "No Findings in the last 30 days",
-      "series": "Findings",
+      "totalLabel": "{count, plural, one {Finding} other {Findings}} in the last 30 days",
+      "viewFindings": "View Findings",
       "summary": "{total, plural, one {# Finding} other {# Findings}} reported; the busiest day was {day} with {count, number}.",
       "tooltip": "{day}: {count, plural, one {# Finding} other {# Findings}}",
       "tableCaption": "Findings reported per day",
@@ -176,7 +170,7 @@
     "error": "Could not load Projects",
     "count": "{count, plural, one {# Project} other {# Projects}}",
     "details": {
-      "summary": "{findings, plural, one {# Finding} other {# Findings}} · {members, plural, one {# Member} other {# Members}} · Created {created}",
+      "info": "About this Project",
       "severityTitle": "Findings by Severity",
       "emptyFindings": "No Findings reported yet",
       "error": "Could not load this Project",
@@ -221,6 +215,7 @@
     "error": "Could not load Findings",
     "count": "{count, plural, one {# Finding} other {# Findings}}",
     "details": {
+      "info": "About this Finding",
       "description": "Description",
       "noDescription": "No description yet.",
       "project": "Project",

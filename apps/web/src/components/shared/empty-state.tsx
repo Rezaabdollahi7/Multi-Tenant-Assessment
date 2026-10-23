@@ -27,7 +27,11 @@ export function EmptyState({
         className,
       )}
     >
-      {Icon && <Icon aria-hidden className="size-6 text-muted-foreground" />}
+      {Icon && (
+        <span className="flex size-12 items-center justify-center rounded-full bg-muted">
+          <Icon aria-hidden className="size-5 text-muted-foreground" />
+        </span>
+      )}
       <div className="space-y-1">
         <p className="font-medium">{title}</p>
         {description && (

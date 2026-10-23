@@ -29,7 +29,9 @@ export function ErrorState({
         className,
       )}
     >
-      <CircleAlert aria-hidden className="size-6 text-destructive" />
+      <span className="flex size-12 items-center justify-center rounded-full bg-muted">
+        <CircleAlert aria-hidden className="size-5 text-destructive" />
+      </span>
       <div className="space-y-1">
         <p className="font-medium">{title}</p>
         {description && (

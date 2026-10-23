@@ -25,8 +25,7 @@ import { useFindings, useProjectOptions } from "../hooks/use-findings";
 import { findingListParamsSchema } from "../schemas";
 import { FindingStatusBadge } from "./finding-status-badge";
 
-const LINK_CLASSES =
-  "rounded-sm underline-offset-4 hover:underline focus-visible:ring-2 focus-visible:ring-ring focus-visible:outline-none";
+const LINK_CLASSES = "rounded-sm underline-offset-4 hover:underline";
 
 /** The Organization's Findings, searchable, filterable and paginated. */
 export function FindingsList() {
@@ -57,9 +56,9 @@ export function FindingsList() {
       cell: (finding) => (
         <Link
           href={routes.finding(finding.id)}
-          className={`font-medium text-primary ${LINK_CLASSES}`}
+          className={`font-medium ${LINK_CLASSES}`}
         >
-          {finding.title}
+          <bdi>{finding.title}</bdi>
         </Link>
       ),
       className: "max-w-80 whitespace-normal",
@@ -83,7 +82,7 @@ export function FindingsList() {
           href={routes.project(finding.project.id)}
           className={LINK_CLASSES}
         >
-          {finding.project.name}
+          <bdi>{finding.project.name}</bdi>
         </Link>
       ),
       className: "hidden md:table-cell",
@@ -97,7 +96,7 @@ export function FindingsList() {
   ];
 
   return (
-    <div className="space-y-4">
+    <Card className="gap-4 rounded-3xl p-4 sm:p-6">
       <div role="search" className="flex flex-col gap-3 lg:flex-row">
         <SearchInput
           label={t("findings.search")}
@@ -130,7 +129,7 @@ export function FindingsList() {
         </div>
       </div>
 
-      <Card className="py-0">
+      <div>
         {error ? (
           <ErrorState
             title={t("findings.error")}
@@ -168,7 +167,7 @@ export function FindingsList() {
             getRowId={(finding) => finding.id}
           />
         )}
-      </Card>
+      </div>
 
       {data && data.meta.totalItems > 0 && (
         <Pagination
@@ -177,6 +176,6 @@ export function FindingsList() {
           hrefForPage={(page) => hrefWith({ page })}
         />
       )}
-    </div>
+    </Card>
   );
 }

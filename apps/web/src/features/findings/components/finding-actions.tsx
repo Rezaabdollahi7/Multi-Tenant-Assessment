@@ -29,7 +29,7 @@ export function FindingActions({ finding }: { finding: Finding }) {
   return (
     <div className="flex gap-2">
       <Can permission="finding:update">
-        <Button variant="outline" size="sm" asChild>
+        <Button variant="outline" asChild>
           <Link href={routes.editFinding(finding.id)}>
             <PencilIcon aria-hidden />
             {t("edit")}
@@ -69,7 +69,7 @@ function DeleteFindingButton({ finding }: { finding: Finding }) {
       onOpenChange={(next) => !deleteFinding.isPending && setOpen(next)}
     >
       <AlertDialogTrigger asChild>
-        <Button variant="destructive" size="sm">
+        <Button variant="destructive">
           <Trash2Icon aria-hidden />
           {t("findings.actions.delete")}
         </Button>

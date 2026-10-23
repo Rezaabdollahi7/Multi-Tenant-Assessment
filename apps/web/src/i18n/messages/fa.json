@@ -111,16 +111,15 @@
   },
   "dashboard": {
     "title": "داشبورد",
-    "intro": "نمای کلی وضعیت امنیتی سازمان شما.",
-    "stats": {
+    "welcome": "{name}، خوش آمدید",
+    "intro": "نمای کلی وضعیت امنیتی {organization}.",
+    "overview": {
+      "label": "نمای کلی",
       "projects": "پروژه‌ها",
-      "projectsHint": "{count, number} در حال انجام",
       "findings": "یافته‌ها",
-      "findingsHint": "در همهٔ پروژه‌ها",
       "criticalAndHigh": "بحرانی و بالا",
-      "criticalAndHighHint": "{count, number} بحرانی",
-      "completedProjects": "پروژه‌های تکمیل‌شده",
-      "completedProjectsHint": "{count, number} برنامه‌ریزی‌شده",
+      "projectStatus": "وضعیت پروژه",
+      "projectCount": "{count, plural, other {# پروژه}}",
       "error": "خلاصه بارگذاری نشد"
     },
     "severity": {
@@ -129,18 +128,13 @@
       "error": "تفکیک شدت بارگذاری نشد",
       "empty": "هنوز یافته‌ای ثبت نشده است"
     },
-    "projectStatus": {
-      "title": "وضعیت پروژه",
-      "description": "هر پروژه در چه مرحله‌ای است",
-      "error": "تفکیک وضعیت پروژه بارگذاری نشد",
-      "empty": "هنوز پروژه‌ای وجود ندارد"
-    },
     "trend": {
       "title": "روند یافته‌ها",
       "description": "یافته‌های ثبت‌شده در هر روز، ۳۰ روز گذشته",
       "error": "روند یافته‌ها بارگذاری نشد",
       "empty": "در ۳۰ روز گذشته یافته‌ای ثبت نشده است",
-      "series": "یافته‌ها",
+      "totalLabel": "یافته در ۳۰ روز گذشته",
+      "viewFindings": "مشاهدهٔ یافته‌ها",
       "summary": "{total, plural, other {# یافته}} ثبت شد؛ پرکارترین روز {day} با {count, number} یافته بود.",
       "tooltip": "{day}: {count, plural, other {# یافته}}",
       "tableCaption": "یافته‌های ثبت‌شده در هر روز",
@@ -176,7 +170,7 @@
     "error": "پروژه‌ها بارگذاری نشدند",
     "count": "{count, plural, other {# پروژه}}",
     "details": {
-      "summary": "{findings, plural, other {# یافته}} · {members, plural, other {# عضو}} · ایجاد در {created}",
+      "info": "دربارهٔ این پروژه",
       "severityTitle": "یافته‌ها بر اساس شدت",
       "emptyFindings": "هنوز یافته‌ای ثبت نشده است",
       "error": "این پروژه بارگذاری نشد",
@@ -221,6 +215,7 @@
     "error": "یافته‌ها بارگذاری نشدند",
     "count": "{count, plural, other {# یافته}}",
     "details": {
+      "info": "دربارهٔ این یافته",
       "description": "توضیحات",
       "noDescription": "هنوز توضیحی ثبت نشده است.",
       "project": "پروژه",

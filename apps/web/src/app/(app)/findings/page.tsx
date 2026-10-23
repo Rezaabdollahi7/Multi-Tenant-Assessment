@@ -15,14 +15,14 @@ export async function generateMetadata(): Promise<Metadata> {
 export default async function FindingsPage() {
   const t = await getTranslations("findings");
   return (
-    <div className="space-y-6">
+    <div className="space-y-8">
       <header className="flex flex-wrap items-start justify-between gap-3">
         <div className="space-y-1">
-          <h1 className="text-xl font-semibold">{t("title")}</h1>
-          <p className="text-sm text-muted-foreground">{t("intro")}</p>
+          <h1 className="text-display font-light">{t("title")}</h1>
+          <p className="text-muted-foreground">{t("intro")}</p>
         </div>
         <Can permission="finding:create">
-          <Button size="sm" asChild>
+          <Button asChild>
             <Link href={routes.newFinding()}>
               <PlusIcon aria-hidden />
               {t("report")}

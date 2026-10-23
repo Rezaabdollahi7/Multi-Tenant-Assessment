@@ -3,6 +3,7 @@ import { getTranslations } from "next-intl/server";
 import Link from "next/link";
 import { PermissionDenied } from "@/components/shared/permission-denied";
 import { Button } from "@/components/ui/button";
+import { Card } from "@/components/ui/card";
 import { getCurrentUser } from "@/features/auth/api/get-current-user";
 import { CreateFindingForm } from "@/features/findings/components/finding-form";
 import { routes } from "@/lib/routes";
@@ -40,14 +41,18 @@ export default async function NewFindingPage({
   }
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-8">
       <header className="space-y-1">
-        <h1 className="text-xl font-semibold">{t("form.newTitle")}</h1>
-        <p className="text-sm text-muted-foreground">{t("form.newIntro")}</p>
+        <h1 className="text-display font-light">{t("form.newTitle")}</h1>
+        <p className="text-muted-foreground">{t("form.newIntro")}</p>
       </header>
-      <CreateFindingForm
-        defaultProjectId={typeof projectId === "string" ? projectId : undefined}
-      />
+      <Card className="max-w-3xl rounded-3xl p-6 sm:p-8">
+        <CreateFindingForm
+          defaultProjectId={
+            typeof projectId === "string" ? projectId : undefined
+          }
+        />
+      </Card>
     </div>
   );
 }

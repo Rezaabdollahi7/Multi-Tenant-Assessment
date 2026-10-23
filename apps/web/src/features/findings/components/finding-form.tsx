@@ -109,7 +109,7 @@ export function CreateFindingForm({
   );
 
   return (
-    <form noValidate onSubmit={onSubmit} className="max-w-2xl space-y-5">
+    <form noValidate onSubmit={onSubmit} className="space-y-6">
       <FormErrorAlert message={errors.root?.message} />
       <FormField
         id="projectId"
@@ -227,7 +227,7 @@ export function EditFindingForm({ finding }: { finding: Finding }) {
   );
 
   return (
-    <form noValidate onSubmit={onSubmit} className="max-w-2xl space-y-5">
+    <form noValidate onSubmit={onSubmit} className="space-y-6">
       <FormErrorAlert message={errors.root?.message} />
       <div className="space-y-2">
         <p className="text-sm font-medium">{t("findings.form.project")}</p>

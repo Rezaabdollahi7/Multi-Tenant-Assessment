@@ -39,7 +39,7 @@ src/
 ├── app/                 # routes only: layout, page, loading, error
 ├── features/<feature>/  # api/ components/ hooks/ schemas/ (create a folder only when it has a file)
 ├── components/ui/       # shadcn primitives, kept close to upstream
-├── components/app-shell/ # sidebar, header, user menu, theme toggle
+├── components/app-shell/ # top bar, navigation, language and theme menus, user menu
 ├── components/shared/   # our reusable components, each with a story
 ├── hooks/               # app-wide React hooks
 └── lib/                 # api client, session, generic utilities
@@ -51,7 +51,7 @@ A feature may import from `components/`, `hooks/`, `lib/` and its own folder. Fe
 
 - Server data: **TanStack Query only**. Query keys come from one factory per feature (`findingKeys.list(filters)`). Mutations invalidate the keys they affect.
 - Search, filters, sort and pagination: **the URL**. Read and write them through one typed hook per page.
-- Client-only UI state stays with its owner: the sidebar in `SidebarProvider` (cookie-backed), the theme in `next-themes`, anything else local to its component. There is no global client store (ADR 0006).
+- Client-only UI state stays with its owner: the theme in `next-themes`, anything else local to its component. There is no global client store (ADR 0006).
 - Never copy server data into `useState` or context.
 
 ### Data and types
@@ -74,7 +74,7 @@ A feature may import from `components/`, `hooks/`, `lib/` and its own folder. Fe
 - Styling uses Tailwind and the design tokens in `docs/design-system.md`. No hard-coded colours; both light and dark themes must work.
 - **No hard-coded UI text.** Every string the User reads comes from `src/i18n/messages/{fa,en}.json` through `next-intl` (`useTranslations`, `getTranslations`), and every date and number through its formatter with a named format from `src/i18n/formats.ts`. A test fails when the two message files have different keys.
 - **Layout works in both directions.** Use logical utilities (`ms-*`, `pe-*`, `start-*`, `text-start`, `text-end`); directional icons get `rtl:rotate-180`. Phone numbers and codes are wrapped in `dir="ltr"`.
-- `components/ui` holds unmodified shadcn primitives; change their look through tokens, and build variations in `components/shared`.
+- `components/ui` holds shadcn primitives, changed only as `docs/design-system.md` lists (logical properties, the design's shapes); change their look through tokens, and build variations in `components/shared`.
 
 ### Accessibility and responsiveness
 

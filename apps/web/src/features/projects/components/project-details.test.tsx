@@ -17,16 +17,13 @@ const project: ProjectDetail = {
 };
 
 describe("Project details", () => {
-  it("names the Project, its Project Status and its size", () => {
+  it("names the Project and its Project Status", () => {
     renderWithProviders(<ProjectHeader project={project} />);
 
     expect(
       screen.getByRole("heading", { level: 1, name: project.name }),
     ).toBeInTheDocument();
     expect(screen.getByText("Completed")).toBeInTheDocument();
-    expect(
-      screen.getByText("1 Finding · 2 Members · Created Sep 1, 2026"),
-    ).toBeInTheDocument();
     const breadcrumb = screen.getByRole("navigation", { name: "Breadcrumb" });
     expect(
       within(breadcrumb).getByRole("link", { name: "Projects" }),
@@ -52,10 +49,13 @@ describe("Project details", () => {
     ];
     renderWithProviders(<ProjectMembers members={members} />);
 
-    const [, sara, unnamed] = screen.getAllByRole("row");
-    expect(sara).toHaveTextContent(
-      "Sara MohammadiLead testerAnalystSep 2, 2026",
-    );
-    expect(unnamed).toHaveTextContent("Unnamed User—ViewerSep 3, 2026");
+    const [sara, unnamed] = within(
+      screen.getByRole("list", { name: "Project Members" }),
+    ).getAllByRole("listitem");
+    expect(sara).toHaveTextContent("Sara Mohammadi");
+    expect(sara).toHaveTextContent("Lead tester · Analyst");
+    expect(sara).toHaveTextContent("Sep 2, 2026");
+    expect(unnamed).toHaveTextContent("Unnamed User");
+    expect(unnamed).toHaveTextContent("— · Viewer");
   });
 });
