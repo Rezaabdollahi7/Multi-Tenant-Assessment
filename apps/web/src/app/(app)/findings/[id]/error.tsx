@@ -16,6 +16,7 @@ export default function FindingError({
     <Card className="py-0">
       <ErrorState
         title={t("error")}
+        titleAs="h1"
         description={t("errorDescription")}
         onRetry={unstable_retry}
       />

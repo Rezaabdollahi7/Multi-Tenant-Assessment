@@ -20,7 +20,8 @@
     "reportFinding": "Report Finding",
     "editFinding": "Edit {title}",
     "projectNotFound": "Project not found",
-    "findingNotFound": "Finding not found"
+    "findingNotFound": "Finding not found",
+    "pageNotFound": "Page not found"
   },
   "nav": {
     "label": "Main",
@@ -79,6 +80,11 @@
   },
   "permissionDenied": {
     "description": "Your Role does not include this Permission. Ask an Admin if you need it."
+  },
+  "pageNotFound": {
+    "title": "Page not found",
+    "description": "This address does not exist or has moved.",
+    "home": "Go to the Dashboard"
   },
   "pagination": {
     "label": "Pagination",

@@ -11,7 +11,7 @@ type PermissionDeniedProps = {
   action?: ReactNode;
 };
 
-/** Shown on a page the User's Role has no Permission for. */
+/** Stands in for a page the User's Role has no Permission for, so its title is the page heading. */
 export function PermissionDenied({ title, action }: PermissionDeniedProps) {
   const t = useTranslations("permissionDenied");
   return (
@@ -19,6 +19,7 @@ export function PermissionDenied({ title, action }: PermissionDeniedProps) {
       <EmptyState
         icon={ShieldX}
         title={title}
+        titleAs="h1"
         description={t("description")}
         action={action}
       />

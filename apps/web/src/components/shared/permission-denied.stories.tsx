@@ -1,4 +1,5 @@
 import type { Meta, StoryObj } from "@storybook/nextjs-vite";
+import { expect, within } from "storybook/test";
 import { Button } from "@/components/ui/button";
 import { PermissionDenied } from "./permission-denied";
 
@@ -12,7 +13,14 @@ const meta = {
 export default meta;
 type Story = StoryObj<typeof meta>;
 
-export const Default: Story = {};
+/** It stands in for a whole page, so its title is the page's only heading. */
+export const Default: Story = {
+  play: async ({ canvasElement }) => {
+    await expect(
+      within(canvasElement).getByRole("heading", { level: 1 }),
+    ).toHaveTextContent("شما نمی‌توانید یافته گزارش کنید");
+  },
+};
 
 export const WithWayBack: Story = {
   args: {

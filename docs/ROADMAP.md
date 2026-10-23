@@ -65,8 +65,8 @@ Each milestone is delivered as one or more pull requests into `main`. Tick items
 ## M5 · Quality: 1405/08/04 (Oct 26)
 
 - [x] **F.** ≥ 5 reusable components in `components/shared`, each with stories and documented props (16 components, 34 stories, run as tests)
-- [ ] **G.** ≥ 10 meaningful tests covering rendering, interaction, form validation, API error, loading, role-based UI, session expiry, filtering, component behaviour
-- [ ] **H.** Responsive 360px → desktop; keyboard navigation; semantic HTML; visible focus; Storybook a11y addon clean
+- [x] **G.** ≥ 10 meaningful tests covering rendering, interaction, form validation, API error, loading, role-based UI, session expiry, filtering, component behaviour
+- [x] **H.** Responsive 360px → desktop; keyboard navigation; semantic HTML; visible focus; Storybook a11y addon clean (axe clean on every page in both languages and themes, at 360px and desktop)
 - [ ] Optional, only if time remains: Playwright smoke tests (sign in as each Role)
 
 ## M6 · Delivery: 1405/08/05 (Oct 27)

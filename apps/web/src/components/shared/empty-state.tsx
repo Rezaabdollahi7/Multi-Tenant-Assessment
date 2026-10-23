@@ -9,6 +9,8 @@ type EmptyStateProps = {
   icon?: LucideIcon;
   /** A next step, such as a link to create the first item. */
   action?: ReactNode;
+  /** The title's element: `h1` when the state stands in for the whole page. */
+  titleAs?: "p" | "h1";
   className?: string;
 };
 
@@ -18,6 +20,7 @@ export function EmptyState({
   description,
   icon: Icon,
   action,
+  titleAs: Title = "p",
   className,
 }: EmptyStateProps) {
   return (
@@ -33,7 +36,7 @@ export function EmptyState({
         </span>
       )}
       <div className="space-y-1">
-        <p className="font-medium">{title}</p>
+        <Title className="text-base font-medium">{title}</Title>
         {description && (
           <p className="text-sm text-muted-foreground">{description}</p>
         )}
