@@ -10,17 +10,10 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { initials } from "@/components/shared/user-avatar";
 import { useSignOut } from "@/features/auth/hooks/use-sign-out";
 import { useCurrentUser } from "@/lib/session/session-provider";
 import { ShellButton } from "./shell-button";
-
-function initials(name: string | null, fallback: string): string {
-  const letters = (name ?? fallback)
-    .split(/\s+/)
-    .map((part) => part[0])
-    .join("");
-  return letters.slice(0, 2).toUpperCase();
-}
 
 export function UserMenu() {
   const user = useCurrentUser();
@@ -31,11 +24,12 @@ export function UserMenu() {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <ShellButton
-          aria-label={t("userMenu.trigger", { name: displayName })}
-          className="text-xs font-medium"
-        >
-          {initials(user.name, user.phone)}
+        <ShellButton className="text-xs font-medium">
+          {/* The name is spoken in full; the initials are only its picture. */}
+          <span aria-hidden>{initials(user.name, user.phone)}</span>
+          <span className="sr-only">
+            {t("userMenu.trigger", { name: displayName })}
+          </span>
         </ShellButton>
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end" className="w-60">
