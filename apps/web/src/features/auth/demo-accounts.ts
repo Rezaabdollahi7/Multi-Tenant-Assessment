@@ -64,9 +64,3 @@ export const DEMO_ACCOUNTS: DemoAccount[] = [
     phone: "09933330003",
   },
 ];
-
-export const ROLE_LABELS: Record<Role, string> = {
-  ADMIN: "Admin",
-  ANALYST: "Analyst",
-  VIEWER: "Viewer",
-};

@@ -12,8 +12,8 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { SidebarMenuButton } from "@/components/ui/sidebar";
 import { useCurrentUser } from "@/features/auth/components/session-provider";
-import { ROLE_LABELS } from "@/features/auth/demo-accounts";
 import { useSignOut } from "@/features/auth/hooks/use-sign-out";
+import { ROLE_LABELS } from "@/lib/roles";
 
 function initials(name: string | null, fallback: string): string {
   const letters = (name ?? fallback)

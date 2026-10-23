@@ -4,12 +4,13 @@ import { History } from "lucide-react";
 import Link from "next/link";
 import { EmptyState } from "@/components/shared/empty-state";
 import { ErrorState } from "@/components/shared/error-state";
+import { Panel } from "@/components/shared/panel";
 import { Skeleton } from "@/components/ui/skeleton";
 import type { Activity } from "@/lib/api/types";
 import { formatDateTime, formatRelativeTime } from "@/lib/format";
 import { routes } from "@/lib/routes";
+import { displayName } from "@/lib/users";
 import { useRecentActivities } from "../hooks/use-dashboard";
-import { DashboardPanel } from "./dashboard-panel";
 
 const ACTION_PHRASES: Record<Activity["action"], string> = {
   "finding.created": "reported",
@@ -23,7 +24,7 @@ export function RecentActivity({ className }: { className?: string }) {
   const { data, error, refetch } = useRecentActivities();
 
   return (
-    <DashboardPanel
+    <Panel
       title="Recent Activity"
       description="The latest changes to Findings"
       className={className}
@@ -49,7 +50,7 @@ export function RecentActivity({ className }: { className?: string }) {
           ))}
         </ol>
       )}
-    </DashboardPanel>
+    </Panel>
   );
 }
 
@@ -58,7 +59,7 @@ function ActivityItem({ activity }: { activity: Activity }) {
   return (
     <li className="flex flex-col gap-0.5 py-2.5 text-sm first:pt-0 last:pb-0 sm:flex-row sm:items-baseline sm:justify-between sm:gap-4">
       <p className="min-w-0">
-        <span className="font-medium">{actor.name}</span>{" "}
+        <span className="font-medium">{displayName(actor.name)}</span>{" "}
         {ACTION_PHRASES[action]}{" "}
         {action === "finding.deleted" ? (
           <span className="text-muted-foreground">{target.name}</span>

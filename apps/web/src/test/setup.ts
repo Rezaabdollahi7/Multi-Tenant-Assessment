@@ -25,6 +25,14 @@ if (typeof window !== "undefined") {
     }) satisfies MediaQueryList;
 }
 
+// Radix Select captures the pointer and scrolls the selected option into view;
+// jsdom implements neither.
+if (typeof Element !== "undefined") {
+  Element.prototype.hasPointerCapture ??= () => false;
+  Element.prototype.releasePointerCapture ??= () => {};
+  Element.prototype.scrollIntoView ??= () => {};
+}
+
 beforeAll(() => server.listen({ onUnhandledFrame: "error" }));
 afterEach(() => {
   server.resetHandlers();
