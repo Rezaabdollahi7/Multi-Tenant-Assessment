@@ -10,6 +10,8 @@ type ErrorStateProps = {
   description?: string;
   /** Offers a "Try again" button when given. */
   onRetry?: () => void;
+  /** The title's element: `h1` when the state stands in for the whole page. */
+  titleAs?: "p" | "h1";
   className?: string;
 };
 
@@ -18,6 +20,7 @@ export function ErrorState({
   title,
   description,
   onRetry,
+  titleAs: Title = "p",
   className,
 }: ErrorStateProps) {
   const t = useTranslations("common");
@@ -33,7 +36,7 @@ export function ErrorState({
         <CircleAlert aria-hidden className="size-5 text-destructive" />
       </span>
       <div className="space-y-1">
-        <p className="font-medium">{title}</p>
+        <Title className="text-base font-medium">{title}</Title>
         {description && (
           <p className="text-sm text-muted-foreground">{description}</p>
         )}

@@ -14,6 +14,7 @@ export default async function FindingNotFound() {
       <EmptyState
         icon={SearchX}
         title={t("notFound")}
+        titleAs="h1"
         description={t("notFoundDescription")}
         action={
           <Button variant="outline" size="sm" asChild>
