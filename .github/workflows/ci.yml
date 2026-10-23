@@ -41,7 +41,7 @@ jobs:
       - name: API contract is up to date
         run: |
           pnpm api:contract
-          git diff --exit-code -- apps/api/openapi.json apps/web/src/lib/api/schema.d.ts \
+          git diff --exit-code -- apps/api/openapi.json apps/web/src/assets/types/api-schema.d.ts \
             || { echo "::error::Run 'pnpm api:contract' and commit the result."; exit 1; }
 
       - name: Lint
