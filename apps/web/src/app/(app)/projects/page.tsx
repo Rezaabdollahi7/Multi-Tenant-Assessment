@@ -3,6 +3,7 @@ import { ProjectsList } from "@/features/projects/components/block/projects-list
 import { listProjects } from "@/features/projects/lib/projects-api";
 import { projectListParamsSchema } from "@/features/projects/lib/schemas";
 import { revealOrder } from "@/lib/motion";
+import SectionLayout from "@/components/shared/section-layout";
 
 type ProjectsPageProps = {
   searchParams: Promise<Record<string, string | string[] | undefined>>;
@@ -15,7 +16,7 @@ export default async function page({
   const projects = await listProjects(params);
 
   return (
-    <div className="space-y-8">
+    <SectionLayout>
       <header className="reveal space-y-1" style={revealOrder(0)}>
         <H1 className="text-display font-light text-start">پروژه‌ها</H1>
         <Muted>
@@ -25,6 +26,6 @@ export default async function page({
       <div className="reveal" style={revealOrder(1)}>
         <ProjectsList projects={projects} />
       </div>
-    </div>
+    </SectionLayout>
   );
 }

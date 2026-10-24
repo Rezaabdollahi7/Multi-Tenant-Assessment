@@ -6,13 +6,14 @@ import { SeverityBreakdown } from "@/features/dashboard/components/block/severit
 import { getCurrentUser } from "@/features/auth/lib/get-current-user";
 import { revealOrder } from "@/lib/motion";
 import { can } from "@/lib/session/permissions";
+import SectionLayout from "@/components/shared/section-layout";
 
 export default async function page() {
   const user = await getCurrentUser();
   const firstName = user?.name?.split(/\s+/)[0] ?? "کاربر بی‌ نام";
 
   return (
-    <div className="space-y-8">
+    <SectionLayout>
       <header className="reveal space-y-2" style={revealOrder(0)}>
         <H1 className="text-display font-light text-start">
           {firstName}، خوش امدید
@@ -34,6 +35,6 @@ export default async function page() {
         </div>
         {can(user, "activity", "read") && <RecentActivity />}
       </div>
-    </div>
+    </SectionLayout>
   );
 }

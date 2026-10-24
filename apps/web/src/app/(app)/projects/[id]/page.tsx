@@ -16,6 +16,7 @@ import {
 import { revealOrder } from "@/lib/motion";
 import { routes } from "@/lib/routes";
 import { can } from "@/lib/session/permissions";
+import SectionLayout from "@/components/shared/section-layout";
 
 type ProjectPageProps = { params: Promise<{ id: string }> };
 
@@ -30,7 +31,7 @@ export default async function page({ params }: ProjectPageProps) {
   ]);
 
   return (
-    <div className="space-y-8">
+    <SectionLayout>
       <ProjectHeader
         project={project}
         action={
@@ -57,6 +58,6 @@ export default async function page({ params }: ProjectPageProps) {
           {members && <ProjectMembers members={members} />}
         </div>
       </div>
-    </div>
+    </SectionLayout>
   );
 }

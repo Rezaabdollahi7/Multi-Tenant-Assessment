@@ -12,6 +12,7 @@ import { findingListParamsSchema } from "@/features/findings/lib/schemas";
 import { revealOrder } from "@/lib/motion";
 import { routes } from "@/lib/routes";
 import { can } from "@/lib/session/permissions";
+import SectionLayout from "@/components/shared/section-layout";
 
 type FindingsPageProps = {
   searchParams: Promise<Record<string, string | string[] | undefined>>;
@@ -28,7 +29,7 @@ export default async function page({
   ]);
 
   return (
-    <div className="space-y-8">
+    <SectionLayout>
       <header
         className="reveal flex flex-wrap items-start justify-between gap-3"
         style={revealOrder(0)}
@@ -51,6 +52,6 @@ export default async function page({
       <div className="reveal" style={revealOrder(1)}>
         <FindingsList findings={findings} projectOptions={projectOptions} />
       </div>
-    </div>
+    </SectionLayout>
   );
 }

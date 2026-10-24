@@ -9,6 +9,7 @@ import { listProjectOptions } from "@/features/findings/lib/findings-api";
 import { revealOrder } from "@/lib/motion";
 import { routes } from "@/lib/routes";
 import { can } from "@/lib/session/permissions";
+import SectionLayout from "@/components/shared/section-layout";
 
 type NewFindingPageProps = {
   searchParams: Promise<{ projectId?: string | string[] }>;
@@ -38,7 +39,7 @@ export default async function page({
   const projectOptions = await listProjectOptions();
 
   return (
-    <div className="space-y-8">
+    <SectionLayout>
       <header className="reveal space-y-1" style={revealOrder(0)}>
         <H1 className="text-display font-light text-start">ثبت یافته</H1>
         <Muted>
@@ -56,6 +57,6 @@ export default async function page({
           }
         />
       </Card>
-    </div>
+    </SectionLayout>
   );
 }
