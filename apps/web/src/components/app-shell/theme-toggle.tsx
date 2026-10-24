@@ -3,7 +3,6 @@
 import { MonitorIcon, MoonIcon, SunIcon } from "lucide-react";
 import { useTheme } from "next-themes";
 import { useRef } from "react";
-import { flushSync } from "react-dom";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -13,6 +12,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { ShellButton } from "./shell-button";
+import { applyThemeWithSpread } from "./theme-spread";
 
 const THEMES = [
   { value: "light", label: "روشن", icon: SunIcon },
@@ -20,49 +20,9 @@ const THEMES = [
   { value: "system", label: "هماهنگ با سیستم", icon: MonitorIcon },
 ] as const;
 
-const SPREAD_DURATION = 550;
-
-function prefersReducedMotion() {
-  if (typeof window === "undefined") return false;
-  return window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-}
-
 export function ThemeToggle() {
   const { theme, setTheme } = useTheme();
   const triggerRef = useRef<HTMLButtonElement>(null);
-
-  function changeTheme(value: string) {
-    const button = triggerRef.current;
-    if (!document.startViewTransition || prefersReducedMotion() || !button) {
-      setTheme(value);
-      return;
-    }
-    const { left, top, width, height } = button.getBoundingClientRect();
-    const x = left + width / 2;
-    const y = top + height / 2;
-    const radius = Math.hypot(
-      Math.max(x, window.innerWidth - x),
-      Math.max(y, window.innerHeight - y),
-    );
-    const transition = document.startViewTransition(() => {
-      flushSync(() => setTheme(value));
-    });
-    void transition.ready.then(() =>
-      document.documentElement.animate(
-        {
-          clipPath: [
-            `circle(0px at ${x}px ${y}px)`,
-            `circle(${radius}px at ${x}px ${y}px)`,
-          ],
-        },
-        {
-          duration: SPREAD_DURATION,
-          easing: "cubic-bezier(0.22, 1, 0.36, 1)",
-          pseudoElement: "::view-transition-new(root)",
-        },
-      ),
-    );
-  }
 
   return (
     <DropdownMenu>
@@ -74,7 +34,12 @@ export function ThemeToggle() {
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end">
         <DropdownMenuLabel>پوسته</DropdownMenuLabel>
-        <DropdownMenuRadioGroup value={theme} onValueChange={changeTheme}>
+        <DropdownMenuRadioGroup
+          value={theme}
+          onValueChange={(value) =>
+            applyThemeWithSpread(triggerRef.current, value, setTheme)
+          }
+        >
           {THEMES.map(({ value, label, icon: Icon }) => (
             <DropdownMenuRadioItem key={value} value={value}>
               <Icon aria-hidden />
