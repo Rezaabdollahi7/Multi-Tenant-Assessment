@@ -1,15 +1,10 @@
-import { ChevronLeft } from "lucide-react";
-import Link from "next/link";
 import type { ReactNode } from "react";
-import { DetailList } from "@/components/shared/detail-list";
 import { Panel } from "@/components/shared/panel";
-import { SeverityBadge } from "@/components/shared/severity-badge";
-import { H1, Muted, P } from "@/components/shared/typography";
+import { Muted, P } from "@/components/shared/typography";
 import type { Finding } from "@/assets/types/finding";
-import { formatDate, formatDateTime } from "@/lib/format";
-import { routes } from "@/lib/routes";
-import { FindingStatusBadge } from "../ui/finding-status-badge";
 import { revealOrder } from "@/lib/motion";
+import { FindingHeader } from "../ui/finding-header";
+import { FindingMetaPanel } from "../ui/finding-meta-panel";
 
 type FindingDetailsProps = {
   finding: Finding;
@@ -19,38 +14,7 @@ type FindingDetailsProps = {
 export function FindingDetails({ finding, actions }: FindingDetailsProps) {
   return (
     <article className="space-y-8">
-      <header className="reveal space-y-4" style={revealOrder(0)}>
-        <nav aria-label="مسیر صفحه">
-          <ol className="flex items-center gap-1 text-sm text-muted-foreground">
-            <li>
-              <Link
-                href={routes.findings()}
-                className="rounded-sm hover:text-foreground hover:underline"
-              >
-                یافته‌ها
-              </Link>
-            </li>
-            <li aria-hidden>
-              <ChevronLeft className="size-3.5" />
-            </li>
-            <li aria-current="page" className="truncate text-foreground">
-              <bdi>{finding.title}</bdi>
-            </li>
-          </ol>
-        </nav>
-        <div className="flex flex-wrap items-end justify-between gap-4">
-          <div className="space-y-3">
-            <H1 className="max-w-4xl text-4xl leading-tight font-light text-start">
-              <bdi>{finding.title}</bdi>
-            </H1>
-            <div className="flex flex-wrap gap-2">
-              <SeverityBadge severity={finding.severity} />
-              <FindingStatusBadge status={finding.status} />
-            </div>
-          </div>
-          {actions}
-        </div>
-      </header>
+      <FindingHeader finding={finding} actions={actions} />
 
       <div
         className="reveal grid items-start gap-6 lg:grid-cols-3"
@@ -65,43 +29,7 @@ export function FindingDetails({ finding, actions }: FindingDetailsProps) {
             <Muted>هنوز توضیحی ثبت نشده است.</Muted>
           )}
         </Panel>
-        <Panel title="دربارهٔ این یافته">
-          <DetailList
-            details={[
-              {
-                label: "پروژه",
-                value: (
-                  <Link
-                    href={routes.project(finding.project.id)}
-                    className="underline decoration-border-strong underline-offset-4 hover:decoration-foreground"
-                  >
-                    <bdi>{finding.project.name}</bdi>
-                  </Link>
-                ),
-              },
-              {
-                label: "ثبت‌کننده",
-                value: <bdi>{finding.createdBy.name ?? "کاربر بی‌نام"}</bdi>,
-              },
-              {
-                label: "تاریخ ثبت",
-                value: (
-                  <time dateTime={finding.createdAt}>
-                    {formatDate(finding.createdAt)}
-                  </time>
-                ),
-              },
-              {
-                label: "آخرین به‌روزرسانی",
-                value: (
-                  <time dateTime={finding.updatedAt}>
-                    {formatDateTime(finding.updatedAt)}
-                  </time>
-                ),
-              },
-            ]}
-          />
-        </Panel>
+        <FindingMetaPanel finding={finding} />
       </div>
     </article>
   );
