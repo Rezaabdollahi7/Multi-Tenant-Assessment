@@ -6,12 +6,10 @@ import {
   Trash2Icon,
   type LucideIcon,
 } from "lucide-react";
-import { motion } from "motion/react";
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import type { Activity } from "@/assets/types/dashboard";
 import { formatDateTime, formatRelativeTime } from "@/lib/format";
-import { DURATION, EASE_OUT, STAGGER } from "@/lib/motion";
 import { routes } from "@/lib/routes";
 
 const ACTION_VERBS: Record<Activity["action"], string> = {
@@ -32,13 +30,8 @@ export function ActivityList({ activities }: { activities: Activity[] }) {
   const now = useNow();
   return (
     <ol className="space-y-1">
-      {activities.map((activity, index) => (
-        <ActivityItem
-          key={activity.id}
-          activity={activity}
-          index={index}
-          now={now}
-        />
+      {activities.map((activity) => (
+        <ActivityItem key={activity.id} activity={activity} now={now} />
       ))}
     </ol>
   );
@@ -60,27 +53,16 @@ function useNow() {
 
 function ActivityItem({
   activity,
-  index,
   now,
 }: {
   activity: Activity;
-  index: number;
   now: number | null;
 }) {
   const { actor, action, target, createdAt } = activity;
   const Icon = ACTION_ICONS[action];
 
   return (
-    <motion.li
-      className="flex items-center gap-3 rounded-2xl py-2 text-sm"
-      initial={{ opacity: 0, y: 8 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{
-        duration: DURATION.base,
-        ease: EASE_OUT,
-        delay: index * STAGGER,
-      }}
-    >
+    <li className="flex items-center gap-3 rounded-2xl py-2 text-sm">
       <span
         aria-hidden
         className="flex size-10 shrink-0 items-center justify-center rounded-full bg-ink-subtle"
@@ -113,6 +95,6 @@ function ActivityItem({
             : formatRelativeTime(createdAt, now)}
         </time>
       </div>
-    </motion.li>
+    </li>
   );
 }

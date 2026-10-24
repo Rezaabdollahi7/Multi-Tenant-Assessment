@@ -1,14 +1,11 @@
 "use client";
 
-import { motion } from "motion/react";
 import type { TrendPoint } from "@/assets/types/dashboard";
 import { formatDay, formatNumber } from "@/lib/format";
-import { DURATION, EASE_OUT } from "@/lib/motion";
 import { SEVERITIES, SEVERITY_LABELS } from "@/lib/severity";
 import { cn } from "@/lib/utils";
 
 const LABEL_EVERY_DAYS = 7;
-const BAR_STAGGER = 0.02;
 
 export function FindingTrendChart({ points }: { points: TrendPoint[] }) {
   const total = points.reduce((sum, point) => sum + point.total, 0);
@@ -28,10 +25,9 @@ export function FindingTrendChart({ points }: { points: TrendPoint[] }) {
       </p>
 
       <div aria-hidden className="flex h-44 items-end gap-1 pt-8 sm:gap-1.5">
-        {points.map((point, index) => (
+        {points.map((point) => (
           <DayBar
             key={point.date}
-            index={index}
             point={point}
             height={point.total / busiest.total}
             busiest={point === busiest}
@@ -59,24 +55,17 @@ export function FindingTrendChart({ points }: { points: TrendPoint[] }) {
 }
 
 function DayBar({
-  index,
   point,
   height,
   busiest,
 }: {
-  index: number;
   point: TrendPoint;
   height: number;
   busiest: boolean;
 }) {
-  const rise = {
-    duration: DURATION.base,
-    ease: EASE_OUT,
-    delay: index * BAR_STAGGER,
-  };
   return (
     <div className="group relative flex h-full flex-1 flex-col items-center justify-end gap-2">
-      <motion.div
+      <div
         className={cn(
           "relative w-full max-w-2.5 origin-bottom rounded-full transition-colors",
           busiest
@@ -86,24 +75,13 @@ function DayBar({
               : "bg-border-strong",
         )}
         style={{ height: `${Math.max(height * 100, 4)}%` }}
-        initial={{ scaleY: 0 }}
-        animate={{ scaleY: 1 }}
-        transition={rise}
       >
         {busiest && (
-          <motion.span
-            className="absolute bottom-full left-1/2 mb-2 -translate-x-1/2 rounded-full bg-highlight px-2 py-0.5 text-xs font-medium text-highlight-foreground tabular-nums"
-            initial={{ opacity: 0, y: 6 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{
-              duration: DURATION.quick,
-              delay: rise.delay + DURATION.base,
-            }}
-          >
+          <span className="absolute bottom-full left-1/2 mb-2 -translate-x-1/2 rounded-full bg-highlight px-2 py-0.5 text-xs font-medium text-highlight-foreground tabular-nums">
             {formatNumber(point.total)}
-          </motion.span>
+          </span>
         )}
-      </motion.div>
+      </div>
       <span className="size-1 rounded-full bg-foreground/30" />
       <div className="pointer-events-none absolute bottom-full left-1/2 z-10 mb-2 hidden -translate-x-1/2 group-hover:block">
         <TrendTooltip point={point} />

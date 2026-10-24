@@ -1,7 +1,6 @@
 "use client";
 
 import type { LucideIcon } from "lucide-react";
-import { motion } from "motion/react";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useCountUp } from "@/hooks/use-count-up";
 import { formatNumber } from "@/lib/format";
@@ -37,7 +36,7 @@ function CountUp({ value }: { value: number }) {
   return (
     <>
       <span className="sr-only">{formatNumber(value)}</span>
-      <motion.span aria-hidden>{text}</motion.span>
+      <span aria-hidden>{text}</span>
     </>
   );
 }

@@ -1,8 +1,6 @@
 "use client";
 
-import { motion } from "motion/react";
 import { formatPercent } from "@/lib/format";
-import { DURATION, EASE_OUT } from "@/lib/motion";
 import { cn } from "@/lib/utils";
 
 export type SegmentTone = "ink" | "highlight" | "hatch" | "outline";
@@ -41,13 +39,10 @@ export function SegmentedBar({
       {segments.map((segment) => {
         const share = total === 0 ? 0 : segment.value / total;
         return (
-          <motion.li
+          <li
             key={segment.id}
             className="flex min-w-16 flex-col gap-2"
-            style={{ flexBasis: 0 }}
-            initial={{ flexGrow: MIN_GROW }}
-            animate={{ flexGrow: Math.max(share, MIN_GROW) }}
-            transition={{ duration: DURATION.base, ease: EASE_OUT }}
+            style={{ flexBasis: 0, flexGrow: Math.max(share, MIN_GROW) }}
           >
             <span className="truncate text-sm text-muted-foreground">
               {segment.label}
@@ -61,7 +56,7 @@ export function SegmentedBar({
             >
               {formatPercent(share)}
             </span>
-          </motion.li>
+          </li>
         );
       })}
     </ul>

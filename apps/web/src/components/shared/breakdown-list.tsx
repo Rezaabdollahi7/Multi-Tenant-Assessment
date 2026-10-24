@@ -1,8 +1,6 @@
 "use client";
 
-import { motion } from "motion/react";
 import { formatNumber, formatPercent } from "@/lib/format";
-import { DURATION, EASE_OUT, STAGGER } from "@/lib/motion";
 import { cn } from "@/lib/utils";
 
 type BreakdownItem = {
@@ -21,7 +19,7 @@ export function BreakdownList({ items, className }: BreakdownListProps) {
   const total = items.reduce((sum, item) => sum + item.value, 0);
   return (
     <ul className={cn("space-y-4", className)}>
-      {items.map((item, index) => {
+      {items.map((item) => {
         const share = total === 0 ? 0 : item.value / total;
         return (
           <li key={item.id} className="space-y-2">
@@ -35,15 +33,11 @@ export function BreakdownList({ items, className }: BreakdownListProps) {
               </span>
             </div>
             <div aria-hidden className="bg-hatch h-2.5 rounded-full">
-              <motion.div
+              <div
                 className="h-full rounded-full"
-                style={{ backgroundColor: item.color }}
-                initial={{ width: 0 }}
-                animate={{ width: `${share * 100}%` }}
-                transition={{
-                  duration: DURATION.base,
-                  ease: EASE_OUT,
-                  delay: index * STAGGER,
+                style={{
+                  backgroundColor: item.color,
+                  width: `${share * 100}%`,
                 }}
               />
             </div>

@@ -1,7 +1,6 @@
 "use client";
 
 import { MonitorIcon, MoonIcon, SunIcon } from "lucide-react";
-import { useReducedMotion } from "motion/react";
 import { useTheme } from "next-themes";
 import { useRef } from "react";
 import { flushSync } from "react-dom";
@@ -23,14 +22,18 @@ const THEMES = [
 
 const SPREAD_DURATION = 550;
 
+function prefersReducedMotion() {
+  if (typeof window === "undefined") return false;
+  return window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+}
+
 export function ThemeToggle() {
   const { theme, setTheme } = useTheme();
   const triggerRef = useRef<HTMLButtonElement>(null);
-  const reduceMotion = useReducedMotion();
 
   function changeTheme(value: string) {
     const button = triggerRef.current;
-    if (!document.startViewTransition || reduceMotion || !button) {
+    if (!document.startViewTransition || prefersReducedMotion() || !button) {
       setTheme(value);
       return;
     }
