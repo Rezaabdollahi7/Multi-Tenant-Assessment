@@ -1,6 +1,6 @@
 import type { NextRequest } from "next/server";
 
-const API_URL = process.env.API_URL ?? "http://localhost:3001";
+const BASE_URL = process.env.BASE_URL ?? "http://localhost:3001";
 
 export type RenewResult = { ok: true; setCookies: string[] } | { ok: false };
 
@@ -11,7 +11,7 @@ export type RenewResult = { ok: true; setCookies: string[] } | { ok: false };
 export async function renewSession(request: NextRequest): Promise<RenewResult> {
   let response: Response;
   try {
-    response = await fetch(`${API_URL}/api/auth/refresh`, {
+    response = await fetch(`${BASE_URL}/api/auth/refresh`, {
       method: "POST",
       headers: { cookie: request.headers.get("cookie") ?? "" },
       cache: "no-store",
