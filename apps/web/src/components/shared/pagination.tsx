@@ -4,24 +4,9 @@ import type { ReactNode } from "react";
 import type { PaginationMeta } from "@/assets/types/api";
 import { formatNumber } from "@/lib/format";
 import { cn } from "@/lib/utils";
+import { GAP, pageItems } from "./page-items";
 
-const GAP = "gap" as const;
-
-export function pageItems(
-  page: number,
-  totalPages: number,
-): (number | typeof GAP)[] {
-  const pages = new Set([1, totalPages, page - 1, page, page + 1]);
-  const shown = [...pages]
-    .filter((candidate) => candidate >= 1 && candidate <= totalPages)
-    .sort((a, b) => a - b);
-  return shown.flatMap((current, index) => {
-    const previous = shown[index - 1];
-    return previous !== undefined && current - previous > 1
-      ? [GAP, current]
-      : [current];
-  });
-}
+export { pageItems } from "./page-items";
 
 function pageLabel(page: number, total: number) {
   return `صفحهٔ ${formatNumber(page)} از ${formatNumber(total)}`;
