@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { PermissionDenied } from "@/components/shared/permission-denied";
+import { H1, Muted } from "@/components/shared/typography";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { getCurrentUser } from "@/features/auth/lib/get-current-user";
@@ -43,10 +44,10 @@ export default async function EditFindingPage({
   return (
     <div className="space-y-8">
       <header className="reveal space-y-1" style={revealOrder(0)}>
-        <h1 className="text-display font-light">ویرایش یافته</h1>
-        <p className="truncate text-sm text-muted-foreground">
+        <H1 className="text-display font-light text-start">ویرایش یافته</H1>
+        <Muted className="truncate text-sm">
           {finding.title}
-        </p>
+        </Muted>
       </header>
       <Card
         className="reveal max-w-3xl rounded-3xl p-6 sm:p-8"

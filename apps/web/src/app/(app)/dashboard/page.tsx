@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { H1, Muted } from "@/components/shared/typography";
 import { DashboardOverview } from "@/features/dashboard/components/block/dashboard-overview";
 import { FindingTrend } from "@/features/dashboard/components/block/finding-trend";
 import { RecentActivity } from "@/features/dashboard/components/block/recent-activity";
@@ -16,10 +17,12 @@ export default async function DashboardPage() {
   return (
     <div className="space-y-8">
       <header className="reveal space-y-2" style={revealOrder(0)}>
-        <h1 className="text-display font-light">{firstName}، خوش آمدید</h1>
-        <p className="text-muted-foreground">
+        <H1 className="text-display font-light text-start">
+          {firstName}، خوش آمدید
+        </H1>
+        <Muted>
           نمای کلی وضعیت امنیتی {user?.organization.name}.
-        </p>
+        </Muted>
       </header>
       <div className="reveal" style={revealOrder(1)}>
         <DashboardOverview />

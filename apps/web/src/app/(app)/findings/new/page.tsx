@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { PermissionDenied } from "@/components/shared/permission-denied";
+import { H1, Muted } from "@/components/shared/typography";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { getCurrentUser } from "@/features/auth/lib/get-current-user";
@@ -42,10 +43,10 @@ export default async function NewFindingPage({
   return (
     <div className="space-y-8">
       <header className="reveal space-y-1" style={revealOrder(0)}>
-        <h1 className="text-display font-light">ثبت یافته</h1>
-        <p className="text-muted-foreground">
+        <H1 className="text-display font-light text-start">ثبت یافته</H1>
+        <Muted>
           یافته‌های جدید با وضعیت «باز» ثبت می‌شوند.
-        </p>
+        </Muted>
       </header>
       <Card
         className="reveal max-w-3xl rounded-3xl p-6 sm:p-8"

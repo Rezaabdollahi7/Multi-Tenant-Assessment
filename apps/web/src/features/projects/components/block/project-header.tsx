@@ -2,6 +2,7 @@ import { ChevronLeft } from "lucide-react";
 import Link from "next/link";
 import type { ReactNode } from "react";
 import type { ProjectDetail } from "@/assets/types/project";
+import { H1, Muted } from "@/components/shared/typography";
 import { routes } from "@/lib/routes";
 import { ProjectStatusBadge } from "../ui/project-status-badge";
 import { revealOrder } from "@/lib/motion";
@@ -35,15 +36,15 @@ export function ProjectHeader({ project, action }: ProjectHeaderProps) {
       <div className="flex flex-wrap items-end justify-between gap-4">
         <div className="space-y-3">
           <div className="flex flex-wrap items-center gap-3">
-            <h1 className="text-display font-light">
+            <H1 className="text-display font-light text-start">
               <bdi>{project.name}</bdi>
-            </h1>
+            </H1>
             <ProjectStatusBadge status={project.status} />
           </div>
           {project.description && (
-            <p dir="auto" className="max-w-prose text-muted-foreground">
+            <Muted dir="auto" className="max-w-prose">
               {project.description}
-            </p>
+            </Muted>
           )}
         </div>
         {action}

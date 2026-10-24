@@ -4,6 +4,7 @@ import type { ReactNode } from "react";
 import { DetailList } from "@/components/shared/detail-list";
 import { Panel } from "@/components/shared/panel";
 import { SeverityBadge } from "@/components/shared/severity-badge";
+import { H1, Muted, P } from "@/components/shared/typography";
 import type { Finding } from "@/assets/types/finding";
 import { formatDate, formatDateTime } from "@/lib/format";
 import { routes } from "@/lib/routes";
@@ -39,9 +40,9 @@ export function FindingDetails({ finding, actions }: FindingDetailsProps) {
         </nav>
         <div className="flex flex-wrap items-end justify-between gap-4">
           <div className="space-y-3">
-            <h1 className="max-w-4xl text-4xl leading-tight font-light">
+            <H1 className="max-w-4xl text-4xl leading-tight font-light text-start">
               <bdi>{finding.title}</bdi>
-            </h1>
+            </H1>
             <div className="flex flex-wrap gap-2">
               <SeverityBadge severity={finding.severity} />
               <FindingStatusBadge status={finding.status} />
@@ -57,11 +58,11 @@ export function FindingDetails({ finding, actions }: FindingDetailsProps) {
       >
         <Panel title="توضیحات" className="lg:col-span-2">
           {finding.description ? (
-            <p dir="auto" className="leading-loose whitespace-pre-wrap">
+            <P dir="auto" className="leading-loose whitespace-pre-wrap">
               {finding.description}
-            </p>
+            </P>
           ) : (
-            <p className="text-muted-foreground">هنوز توضیحی ثبت نشده است.</p>
+            <Muted>هنوز توضیحی ثبت نشده است.</Muted>
           )}
         </Panel>
         <Panel title="دربارهٔ این یافته">

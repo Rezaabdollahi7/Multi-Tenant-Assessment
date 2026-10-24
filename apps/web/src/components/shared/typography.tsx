@@ -1,4 +1,4 @@
-import { ListItemTypograph, TypographyTs } from "@/assets/types/Typography";
+import { ListItemTypograph, TypographyTs } from "@/assets/types/typography";
 import { cn } from "@/lib/utils";
 import { HTMLAttributes } from "react";
 

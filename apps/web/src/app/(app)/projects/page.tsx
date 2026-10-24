@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { H1, Muted } from "@/components/shared/typography";
 import { ProjectsList } from "@/features/projects/components/block/projects-list";
 import { listProjects } from "@/features/projects/lib/projects-api";
 import { projectListParamsSchema } from "@/features/projects/lib/schemas";
@@ -19,10 +20,10 @@ export default async function ProjectsPage({
   return (
     <div className="space-y-8">
       <header className="reveal space-y-1" style={revealOrder(0)}>
-        <h1 className="text-display font-light">پروژه‌ها</h1>
-        <p className="text-muted-foreground">
+        <H1 className="text-display font-light text-start">پروژه‌ها</H1>
+        <Muted>
           همهٔ پروژه‌های ارزیابی امنیت سازمان شما.
-        </p>
+        </Muted>
       </header>
       <div className="reveal" style={revealOrder(1)}>
         <ProjectsList projects={projects} />

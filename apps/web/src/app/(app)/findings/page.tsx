@@ -2,6 +2,7 @@ import { PlusIcon } from "lucide-react";
 import type { Metadata } from "next";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
+import { H1, Muted } from "@/components/shared/typography";
 import { getCurrentUser } from "@/features/auth/lib/get-current-user";
 import { FindingsList } from "@/features/findings/components/block/findings-list";
 import {
@@ -36,10 +37,10 @@ export default async function FindingsPage({
         style={revealOrder(0)}
       >
         <div className="space-y-1">
-          <h1 className="text-display font-light">یافته‌ها</h1>
-          <p className="text-muted-foreground">
+          <H1 className="text-display font-light text-start">یافته‌ها</H1>
+          <Muted>
             همهٔ یافته‌های ثبت‌شده در پروژه‌های سازمان شما.
-          </p>
+          </Muted>
         </div>
         {can(user, "finding", "create") && (
           <Button asChild>
