@@ -1,5 +1,4 @@
 import { PlusIcon } from "lucide-react";
-import type { Metadata } from "next";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { H1, Muted } from "@/components/shared/typography";
@@ -14,13 +13,11 @@ import { revealOrder } from "@/lib/motion";
 import { routes } from "@/lib/routes";
 import { can } from "@/lib/session/permissions";
 
-export const metadata: Metadata = { title: "یافته‌ها" };
-
 type FindingsPageProps = {
   searchParams: Promise<Record<string, string | string[] | undefined>>;
 };
 
-export default async function FindingsPage({
+export default async function page({
   searchParams,
 }: FindingsPageProps) {
   const params = findingListParamsSchema.parse(await searchParams);

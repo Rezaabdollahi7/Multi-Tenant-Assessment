@@ -1,4 +1,3 @@
-import type { Metadata } from "next";
 import Link from "next/link";
 import { PermissionDenied } from "@/components/shared/permission-denied";
 import { H1, Muted } from "@/components/shared/typography";
@@ -11,13 +10,11 @@ import { revealOrder } from "@/lib/motion";
 import { routes } from "@/lib/routes";
 import { can } from "@/lib/session/permissions";
 
-export const metadata: Metadata = { title: "ثبت یافته" };
-
 type NewFindingPageProps = {
   searchParams: Promise<{ projectId?: string | string[] }>;
 };
 
-export default async function NewFindingPage({
+export default async function page({
   searchParams,
 }: NewFindingPageProps) {
   const [user, { projectId }] = await Promise.all([

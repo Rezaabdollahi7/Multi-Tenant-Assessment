@@ -1,4 +1,3 @@
-import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { PermissionDenied } from "@/components/shared/permission-denied";
@@ -14,14 +13,7 @@ import { can } from "@/lib/session/permissions";
 
 type EditFindingPageProps = { params: Promise<{ id: string }> };
 
-export async function generateMetadata({
-  params,
-}: EditFindingPageProps): Promise<Metadata> {
-  const finding = await getFinding((await params).id);
-  return { title: finding ? `ویرایش ${finding.title}` : "یافته پیدا نشد" };
-}
-
-export default async function EditFindingPage({
+export default async function page({
   params,
 }: EditFindingPageProps) {
   const { id } = await params;

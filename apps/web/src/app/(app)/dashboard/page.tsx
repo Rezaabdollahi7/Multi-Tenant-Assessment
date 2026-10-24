@@ -1,4 +1,3 @@
-import type { Metadata } from "next";
 import { H1, Muted } from "@/components/shared/typography";
 import { DashboardOverview } from "@/features/dashboard/components/block/dashboard-overview";
 import { FindingTrend } from "@/features/dashboard/components/block/finding-trend";
@@ -8,9 +7,7 @@ import { getCurrentUser } from "@/features/auth/lib/get-current-user";
 import { revealOrder } from "@/lib/motion";
 import { can } from "@/lib/session/permissions";
 
-export const metadata: Metadata = { title: "داشبورد" };
-
-export default async function DashboardPage() {
+export default async function page() {
   const user = await getCurrentUser();
   const firstName = user?.name?.split(/\s+/)[0] ?? "کاربر بی‌ نام";
 

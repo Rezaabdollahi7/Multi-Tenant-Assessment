@@ -1,5 +1,4 @@
 import { ShieldCheckIcon } from "lucide-react";
-import type { Metadata } from "next";
 import { redirect } from "next/navigation";
 import {
   Card,
@@ -18,13 +17,11 @@ import { getCurrentUser } from "@/features/auth/lib/get-current-user";
 import { safeNextPath } from "@/lib/routes";
 import { revealOrder } from "@/lib/motion";
 
-export const metadata: Metadata = { title: "ورود" };
-
 type LoginPageProps = {
   searchParams: Promise<{ next?: string; reason?: string }>;
 };
 
-export default async function LoginPage({ searchParams }: LoginPageProps) {
+export default async function page({ searchParams }: LoginPageProps) {
   const { next, reason } = await searchParams;
   if (await getCurrentUser()) redirect(safeNextPath(next));
 

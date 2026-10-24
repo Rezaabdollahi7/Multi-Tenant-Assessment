@@ -1,17 +1,14 @@
-import type { Metadata } from "next";
 import { H1, Muted } from "@/components/shared/typography";
 import { ProjectsList } from "@/features/projects/components/block/projects-list";
 import { listProjects } from "@/features/projects/lib/projects-api";
 import { projectListParamsSchema } from "@/features/projects/lib/schemas";
 import { revealOrder } from "@/lib/motion";
 
-export const metadata: Metadata = { title: "پروژه‌ها" };
-
 type ProjectsPageProps = {
   searchParams: Promise<Record<string, string | string[] | undefined>>;
 };
 
-export default async function ProjectsPage({
+export default async function page({
   searchParams,
 }: ProjectsPageProps) {
   const params = projectListParamsSchema.parse(await searchParams);
