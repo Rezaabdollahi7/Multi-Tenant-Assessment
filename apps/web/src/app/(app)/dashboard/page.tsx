@@ -12,13 +12,13 @@ export const metadata: Metadata = { title: "داشبورد" };
 
 export default async function DashboardPage() {
   const user = await getCurrentUser();
-  const firstName = user?.name?.split(/\s+/)[0] ?? "کاربر بی‌نام";
+  const firstName = user?.name?.split(/\s+/)[0] ?? "کاربر بی‌ نام";
 
   return (
     <div className="space-y-8">
       <header className="reveal space-y-2" style={revealOrder(0)}>
         <H1 className="text-display font-light text-start">
-          {firstName}، خوش آمدید
+          {firstName}، خوش امدید
         </H1>
         <Muted>
           نمای کلی وضعیت امنیتی {user?.organization.name}.
