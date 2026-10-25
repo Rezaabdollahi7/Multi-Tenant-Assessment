@@ -198,18 +198,6 @@
   );
 }
 
-@keyframes reveal-rise {
-  from {
-    opacity: 0;
-    translate: 0 16px;
-  }
-}
-
-@utility reveal {
-  animation: reveal-rise 0.6s cubic-bezier(0.22, 1, 0.36, 1) both;
-  animation-delay: calc(var(--reveal-index, 0) * 70ms);
-}
-
 @utility glass {
   background-color: var(--card);
   backdrop-filter: blur(18px) saturate(1.2);
@@ -253,12 +241,6 @@
       var(--background);
     background-attachment: fixed;
     min-height: 100svh;
-  }
-
-  ::view-transition-old(root),
-  ::view-transition-new(root) {
-    animation: none;
-    mix-blend-mode: normal;
   }
 
   :focus-visible {

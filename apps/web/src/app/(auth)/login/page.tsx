@@ -15,7 +15,6 @@ import {
 } from "@/features/auth/components/ui/sign-in-notice";
 import { getCurrentUser } from "@/features/auth/lib/get-current-user";
 import { safeNextPath } from "@/lib/routes";
-import { revealOrder } from "@/lib/motion";
 
 type LoginPageProps = {
   searchParams: Promise<{ next?: string; reason?: string }>;
@@ -30,7 +29,7 @@ export default async function page({ searchParams }: LoginPageProps) {
 
   return (
     <main className="flex min-h-svh items-center justify-center p-4">
-      <div className="reveal w-full max-w-md space-y-6" style={revealOrder(0)}>
+      <div className="w-full max-w-md space-y-6">
         <div className="flex justify-center">
           <span className="flex h-11 items-center gap-2 rounded-full border border-border-strong px-4 text-base font-medium">
             <ShieldCheckIcon className="size-5" aria-hidden />

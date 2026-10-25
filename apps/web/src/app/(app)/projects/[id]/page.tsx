@@ -13,7 +13,6 @@ import {
   getProject,
   getProjectMembers,
 } from "@/features/projects/lib/projects-api";
-import { revealOrder } from "@/lib/motion";
 import { routes } from "@/lib/routes";
 import { can } from "@/lib/session/permissions";
 import SectionLayout from "@/components/shared/section-layout";
@@ -46,8 +45,7 @@ export default async function page({ params }: ProjectPageProps) {
         }
       />
       <div
-        className="reveal grid items-start gap-6 lg:grid-cols-3"
-        style={revealOrder(1)}
+        className="grid items-start gap-6 lg:grid-cols-3"
       >
         <div className="grid gap-6 lg:col-span-2">
           <ProjectSeverityPanel project={project} />

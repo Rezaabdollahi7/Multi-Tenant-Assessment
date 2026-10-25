@@ -2,7 +2,6 @@ import { H1, Muted } from "@/components/shared/typography";
 import { ProjectsList } from "@/features/projects/components/block/projects-list";
 import { listProjects } from "@/features/projects/lib/projects-api";
 import { projectListParamsSchema } from "@/features/projects/lib/schemas";
-import { revealOrder } from "@/lib/motion";
 import SectionLayout from "@/components/shared/section-layout";
 
 type ProjectsPageProps = {
@@ -17,13 +16,13 @@ export default async function page({
 
   return (
     <SectionLayout>
-      <header className="reveal space-y-1" style={revealOrder(0)}>
+      <header className="space-y-1">
         <H1 className="text-display font-light text-start">پروژه‌ها</H1>
         <Muted>
           همهٔ پروژه‌های ارزیابی امنیت سازمان شما.
         </Muted>
       </header>
-      <div className="reveal" style={revealOrder(1)}>
+      <div>
         <ProjectsList projects={projects} />
       </div>
     </SectionLayout>

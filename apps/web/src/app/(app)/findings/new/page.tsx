@@ -6,7 +6,6 @@ import { Card } from "@/components/ui/card";
 import { getCurrentUser } from "@/features/auth/lib/get-current-user";
 import { CreateFindingForm } from "@/features/findings/components/block/finding-form";
 import { listProjectOptions } from "@/features/findings/lib/findings-api";
-import { revealOrder } from "@/lib/motion";
 import { routes } from "@/lib/routes";
 import { can } from "@/lib/session/permissions";
 import SectionLayout from "@/components/shared/section-layout";
@@ -40,15 +39,14 @@ export default async function page({
 
   return (
     <SectionLayout>
-      <header className="reveal space-y-1" style={revealOrder(0)}>
+      <header className="space-y-1">
         <H1 className="text-display font-light text-start">ثبت یافته</H1>
         <Muted>
           یافته‌های جدید با وضعیت «باز» ثبت می‌شوند.
         </Muted>
       </header>
       <Card
-        className="reveal max-w-3xl rounded-3xl p-6 sm:p-8"
-        style={revealOrder(1)}
+        className="max-w-3xl rounded-3xl p-6 sm:p-8"
       >
         <CreateFindingForm
           projectOptions={projectOptions}

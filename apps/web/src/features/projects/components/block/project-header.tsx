@@ -3,7 +3,6 @@ import type { ProjectDetail } from "@/assets/types/project";
 import { Breadcrumb } from "@/components/shared/breadcrumb";
 import { H1, Muted } from "@/components/shared/typography";
 import { routes } from "@/lib/routes";
-import { revealOrder } from "@/lib/motion";
 import { ProjectStatusBadge } from "../ui/project-status-badge";
 
 type ProjectHeaderProps = {
@@ -13,7 +12,7 @@ type ProjectHeaderProps = {
 
 export function ProjectHeader({ project, action }: ProjectHeaderProps) {
   return (
-    <header className="reveal space-y-4" style={revealOrder(0)}>
+    <header className="space-y-4">
       <Breadcrumb
         items={[
           { label: "پروژه‌ها", href: routes.projects() },

@@ -9,7 +9,6 @@ import {
   listProjectOptions,
 } from "@/features/findings/lib/findings-api";
 import { findingListParamsSchema } from "@/features/findings/lib/schemas";
-import { revealOrder } from "@/lib/motion";
 import { routes } from "@/lib/routes";
 import { can } from "@/lib/session/permissions";
 import SectionLayout from "@/components/shared/section-layout";
@@ -31,8 +30,7 @@ export default async function page({
   return (
     <SectionLayout>
       <header
-        className="reveal flex flex-wrap items-start justify-between gap-3"
-        style={revealOrder(0)}
+        className="flex flex-wrap items-start justify-between gap-3"
       >
         <div className="space-y-1">
           <H1 className="text-display font-light text-start">یافته‌ها</H1>
@@ -49,7 +47,7 @@ export default async function page({
           </Button>
         )}
       </header>
-      <div className="reveal" style={revealOrder(1)}>
+      <div>
         <FindingsList findings={findings} projectOptions={projectOptions} />
       </div>
     </SectionLayout>

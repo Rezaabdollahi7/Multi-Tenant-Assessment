@@ -4,7 +4,6 @@ import { SeverityBadge } from "@/components/shared/severity-badge";
 import { H1 } from "@/components/shared/typography";
 import type { Finding } from "@/assets/types/finding";
 import { routes } from "@/lib/routes";
-import { revealOrder } from "@/lib/motion";
 import { FindingStatusBadge } from "./finding-status-badge";
 
 type FindingHeaderProps = {
@@ -14,7 +13,7 @@ type FindingHeaderProps = {
 
 export function FindingHeader({ finding, actions }: FindingHeaderProps) {
   return (
-    <header className="reveal space-y-4" style={revealOrder(0)}>
+    <header className="space-y-4">
       <Breadcrumb
         items={[
           { label: "یافته‌ها", href: routes.findings() },
