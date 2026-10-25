@@ -218,6 +218,14 @@
     var(--shadow-card);
 }
 
+@utility section-layout {
+  @apply w-full;
+}
+
+@utility pages-container {
+  @apply space-y-8;
+}
+
 @layer base {
   * {
     @apply border-border outline-ring/50;

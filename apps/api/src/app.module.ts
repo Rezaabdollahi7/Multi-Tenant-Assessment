@@ -1,3 +1,4 @@
+import { AppCacheModule } from '@common/modules/cache.module';
 import { AuthorizationModule } from '@common/modules/authorization.module';
 import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
@@ -16,6 +17,7 @@ import { HealthModule } from './modules/health/health.module';
   imports: [
     ConfigModule.forRoot({ isGlobal: true, validate: validateEnvironment }),
     TypeOrmModule.forRootAsync({ useClass: TypeOrmConfig }),
+    AppCacheModule,
     AuthorizationModule,
     AuthModule,
     OrganizationModule,

@@ -1,5 +1,4 @@
 import { PlusIcon } from "lucide-react";
-import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { Button } from "@/components/ui/button";
@@ -17,17 +16,11 @@ import {
 import { revealOrder } from "@/lib/motion";
 import { routes } from "@/lib/routes";
 import { can } from "@/lib/session/permissions";
+import SectionLayout from "@/components/shared/section-layout";
 
 type ProjectPageProps = { params: Promise<{ id: string }> };
 
-export async function generateMetadata({
-  params,
-}: ProjectPageProps): Promise<Metadata> {
-  const project = await getProject((await params).id);
-  return { title: project?.name ?? "پروژه پیدا نشد" };
-}
-
-export default async function ProjectPage({ params }: ProjectPageProps) {
+export default async function page({ params }: ProjectPageProps) {
   const { id } = await params;
   const [project, user] = await Promise.all([getProject(id), getCurrentUser()]);
   if (!project) notFound();
@@ -38,7 +31,7 @@ export default async function ProjectPage({ params }: ProjectPageProps) {
   ]);
 
   return (
-    <div className="space-y-8">
+    <SectionLayout>
       <ProjectHeader
         project={project}
         action={
@@ -65,6 +58,6 @@ export default async function ProjectPage({ params }: ProjectPageProps) {
           {members && <ProjectMembers members={members} />}
         </div>
       </div>
-    </div>
+    </SectionLayout>
   );
 }

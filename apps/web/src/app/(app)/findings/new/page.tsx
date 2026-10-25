@@ -1,6 +1,6 @@
-import type { Metadata } from "next";
 import Link from "next/link";
 import { PermissionDenied } from "@/components/shared/permission-denied";
+import { H1, Muted } from "@/components/shared/typography";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { getCurrentUser } from "@/features/auth/lib/get-current-user";
@@ -9,14 +9,13 @@ import { listProjectOptions } from "@/features/findings/lib/findings-api";
 import { revealOrder } from "@/lib/motion";
 import { routes } from "@/lib/routes";
 import { can } from "@/lib/session/permissions";
-
-export const metadata: Metadata = { title: "ثبت یافته" };
+import SectionLayout from "@/components/shared/section-layout";
 
 type NewFindingPageProps = {
   searchParams: Promise<{ projectId?: string | string[] }>;
 };
 
-export default async function NewFindingPage({
+export default async function page({
   searchParams,
 }: NewFindingPageProps) {
   const [user, { projectId }] = await Promise.all([
@@ -40,12 +39,12 @@ export default async function NewFindingPage({
   const projectOptions = await listProjectOptions();
 
   return (
-    <div className="space-y-8">
+    <SectionLayout>
       <header className="reveal space-y-1" style={revealOrder(0)}>
-        <h1 className="text-display font-light">ثبت یافته</h1>
-        <p className="text-muted-foreground">
+        <H1 className="text-display font-light text-start">ثبت یافته</H1>
+        <Muted>
           یافته‌های جدید با وضعیت «باز» ثبت می‌شوند.
-        </p>
+        </Muted>
       </header>
       <Card
         className="reveal max-w-3xl rounded-3xl p-6 sm:p-8"
@@ -58,6 +57,6 @@ export default async function NewFindingPage({
           }
         />
       </Card>
-    </div>
+    </SectionLayout>
   );
 }

@@ -1,6 +1,5 @@
 "use client";
 
-import { motion } from "motion/react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { can } from "@/lib/session/permissions";
@@ -21,11 +20,9 @@ export function MainNav({ className }: { className?: string }) {
           return (
             <li key={href} className="relative flex-1 md:flex-none">
               {active && (
-                <motion.span
-                  layoutId="main-nav-current"
+                <span
                   aria-hidden
                   className="absolute inset-0 rounded-full bg-primary"
-                  transition={{ type: "spring", stiffness: 380, damping: 32 }}
                 />
               )}
               <Link

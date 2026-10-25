@@ -1,5 +1,4 @@
 import { ShieldCheckIcon } from "lucide-react";
-import type { Metadata } from "next";
 import { redirect } from "next/navigation";
 import {
   Card,
@@ -8,6 +7,7 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
+import { H1 } from "@/components/shared/typography";
 import { LoginForm } from "@/features/auth/components/block/login-form";
 import {
   isSignInReason,
@@ -17,13 +17,11 @@ import { getCurrentUser } from "@/features/auth/lib/get-current-user";
 import { safeNextPath } from "@/lib/routes";
 import { revealOrder } from "@/lib/motion";
 
-export const metadata: Metadata = { title: "ورود" };
-
 type LoginPageProps = {
   searchParams: Promise<{ next?: string; reason?: string }>;
 };
 
-export default async function LoginPage({ searchParams }: LoginPageProps) {
+export default async function page({ searchParams }: LoginPageProps) {
   const { next, reason } = await searchParams;
   if (await getCurrentUser()) redirect(safeNextPath(next));
 
@@ -43,7 +41,7 @@ export default async function LoginPage({ searchParams }: LoginPageProps) {
         <Card className="gap-8 rounded-3xl px-2 py-8 sm:px-4">
           <CardHeader className="gap-3">
             <CardTitle>
-              <h1 className="text-display font-light">ورود</h1>
+              <H1 className="text-display font-light">ورود</H1>
             </CardTitle>
             <CardDescription>
               یک کد یک‌بارمصرف به شمارهٔ موبایل شما پیامک می‌کنیم.

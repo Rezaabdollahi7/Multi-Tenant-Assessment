@@ -1,5 +1,6 @@
 import { useId, type ReactNode } from "react";
 import { Card } from "@/components/ui/card";
+import { H2, Muted } from "@/components/shared/typography";
 import { cn } from "@/lib/utils";
 
 type PanelProps = {
@@ -24,18 +25,17 @@ export function Panel({
     <>
       <header className="flex items-start justify-between gap-3 px-6">
         <div className="space-y-1">
-          <h2 id={headingId} className="text-xl leading-tight font-normal">
+          <H2 id={headingId} className="text-xl leading-tight font-normal pb-0">
             {title}
-          </h2>
+          </H2>
           {description && (
-            <p
+            <Muted
               className={cn(
-                "text-sm",
-                variant === "ink" ? "text-ink-muted" : "text-muted-foreground",
+                variant === "ink" ? "text-ink-muted" : undefined,
               )}
             >
               {description}
-            </p>
+            </Muted>
           )}
         </div>
         {action}

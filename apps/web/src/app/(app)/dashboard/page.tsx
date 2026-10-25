@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+import { H1, Muted } from "@/components/shared/typography";
 import { DashboardOverview } from "@/features/dashboard/components/block/dashboard-overview";
 import { FindingTrend } from "@/features/dashboard/components/block/finding-trend";
 import { RecentActivity } from "@/features/dashboard/components/block/recent-activity";
@@ -6,20 +6,21 @@ import { SeverityBreakdown } from "@/features/dashboard/components/block/severit
 import { getCurrentUser } from "@/features/auth/lib/get-current-user";
 import { revealOrder } from "@/lib/motion";
 import { can } from "@/lib/session/permissions";
+import SectionLayout from "@/components/shared/section-layout";
 
-export const metadata: Metadata = { title: "داشبورد" };
-
-export default async function DashboardPage() {
+export default async function page() {
   const user = await getCurrentUser();
-  const firstName = user?.name?.split(/\s+/)[0] ?? "کاربر بی‌نام";
+  const firstName = user?.name?.split(/\s+/)[0] ?? "کاربر بی‌ نام";
 
   return (
-    <div className="space-y-8">
+    <SectionLayout>
       <header className="reveal space-y-2" style={revealOrder(0)}>
-        <h1 className="text-display font-light">{firstName}، خوش آمدید</h1>
-        <p className="text-muted-foreground">
+        <H1 className="text-display font-light text-start">
+          {firstName}، خوش امدید
+        </H1>
+        <Muted>
           نمای کلی وضعیت امنیتی {user?.organization.name}.
-        </p>
+        </Muted>
       </header>
       <div className="reveal" style={revealOrder(1)}>
         <DashboardOverview />
@@ -34,6 +35,6 @@ export default async function DashboardPage() {
         </div>
         {can(user, "activity", "read") && <RecentActivity />}
       </div>
-    </div>
+    </SectionLayout>
   );
 }

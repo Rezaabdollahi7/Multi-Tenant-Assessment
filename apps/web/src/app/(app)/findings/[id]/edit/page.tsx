@@ -1,7 +1,7 @@
-import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { PermissionDenied } from "@/components/shared/permission-denied";
+import { H1, Muted } from "@/components/shared/typography";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { getCurrentUser } from "@/features/auth/lib/get-current-user";
@@ -10,17 +10,11 @@ import { getFinding } from "@/features/findings/lib/findings-api";
 import { revealOrder } from "@/lib/motion";
 import { routes } from "@/lib/routes";
 import { can } from "@/lib/session/permissions";
+import SectionLayout from "@/components/shared/section-layout";
 
 type EditFindingPageProps = { params: Promise<{ id: string }> };
 
-export async function generateMetadata({
-  params,
-}: EditFindingPageProps): Promise<Metadata> {
-  const finding = await getFinding((await params).id);
-  return { title: finding ? `ویرایش ${finding.title}` : "یافته پیدا نشد" };
-}
-
-export default async function EditFindingPage({
+export default async function page({
   params,
 }: EditFindingPageProps) {
   const { id } = await params;
@@ -41,12 +35,12 @@ export default async function EditFindingPage({
   }
 
   return (
-    <div className="space-y-8">
+    <SectionLayout>
       <header className="reveal space-y-1" style={revealOrder(0)}>
-        <h1 className="text-display font-light">ویرایش یافته</h1>
-        <p className="truncate text-sm text-muted-foreground">
+        <H1 className="text-display font-light text-start">ویرایش یافته</H1>
+        <Muted className="truncate text-sm">
           {finding.title}
-        </p>
+        </Muted>
       </header>
       <Card
         className="reveal max-w-3xl rounded-3xl p-6 sm:p-8"
@@ -54,6 +48,6 @@ export default async function EditFindingPage({
       >
         <EditFindingForm finding={finding} />
       </Card>
-    </div>
+    </SectionLayout>
   );
 }
