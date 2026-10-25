@@ -65,9 +65,11 @@ export class AuthService {
 
   async requestOtp(phone: string): Promise<RequestOtpResponseDto> {
     const keys = otpKeys(phone);
+
     await this.enforceRequestLimit(phone);
 
     const failedAttempts = await this.failedAttempts(phone);
+
     if (failedAttempts >= OTP_MAX_ATTEMPTS) {
       throw new TooManyRequestsException(
         'Too many failed attempts. Please try again later.',
@@ -75,10 +77,20 @@ export class AuthService {
     }
 
     const exposeCode = process.env.NODE_ENV !== 'production';
+
     const code = exposeCode
       ? (process.env.DEV_OTP ?? DEFAULT_DEV_OTP)
       : generateOtp();
-    await this.cacheService.set(keys.hash, await hash(code), OTP_TTL_SECONDS);
+
+    const otpHash = await hash(code);
+
+    await this.cacheService.set(keys.hash, otpHash, OTP_TTL_SECONDS);
+
+    const savedHash = await this.cacheService.get<string>(keys.hash);
+
+    this.logger.debug(
+      `OTP cache write/read: ${savedHash ? 'SUCCESS' : 'FAILED'}`,
+    );
 
     return {
       message: 'Verification code sent',

@@ -1,6 +1,5 @@
 "use client";
 
-import { SearchX } from "lucide-react";
 import type { Option } from "@/assets/types/common";
 import type { FindingList } from "@/assets/types/finding";
 import { DataTable } from "@/components/shared/data-table";
@@ -11,16 +10,18 @@ import { Card } from "@/components/ui/card";
 import { useListParams } from "@/hooks/use-list-params";
 import { formatNumber } from "@/lib/format";
 import { cn } from "@/lib/utils";
+import { SearchX } from "lucide-react";
 import { findingListParamsSchema } from "../../lib/schemas";
 import { FINDINGS_COLUMNS } from "../ui/findings-columns";
 import { FindingsFilters } from "../ui/findings-filters";
 
-type FindingsListProps = {
+export function FindingsList({
+  findings,
+  projectOptions,
+}: {
   findings: FindingList;
   projectOptions: Option[];
-};
-
-export function FindingsList({ findings, projectOptions }: FindingsListProps) {
+}) {
   const { params, hrefWith, update, pending } = useListParams(
     findingListParamsSchema,
   );

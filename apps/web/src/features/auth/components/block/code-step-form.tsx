@@ -19,6 +19,7 @@ import { verifyOtp } from "../../lib/auth-api";
 import { codeFormSchema, type CodeForm } from "../../lib/schemas";
 import { LeftToRight } from "../ui/left-to-right";
 import type { CodeStep } from "./phone-step-form";
+import { P } from "@/components/shared/typography";
 
 const CODE_LENGTH = 5;
 
@@ -70,15 +71,14 @@ export function CodeStepForm({
       )}
       <div className="space-y-2">
         <Label htmlFor="code">کد تأیید</Label>
-        <p id="code-hint" className="text-muted-foreground text-sm">
+        <P id="code-hint" className="text-muted-foreground text-sm">
           ارسال‌شده به <LeftToRight>{phone}</LeftToRight>
           {demoCode && (
             <>
-              {" · "}
               کد دمو: <LeftToRight>{demoCode}</LeftToRight>
             </>
           )}
-        </p>
+        </P>
         <div dir="ltr" className="flex justify-end">
           <InputOTP
             id="code"
